@@ -146,7 +146,7 @@ public class AddOrder extends javafx.application.Application
     SimpleCalendar simpleCalendar2 = new SimpleCalendar();
     final TextField dateField = new TextField("");
     dateField.setDisable(true);
-    simpleCalendar1.dateProperty().addListener(new ChangeListener()
+    simpleCalendar1.dateProperty().addListener(new ChangeListener<Date>()
     {
 
       public void changed(ObservableValue<? extends Date> ov, Date oldDate, Date newDate)
@@ -155,7 +155,7 @@ public class AddOrder extends javafx.application.Application
       }
       
     });
-    simpleCalendar2.dateProperty().addListener(new ChangeListener()
+    simpleCalendar2.dateProperty().addListener(new ChangeListener<Date>()
     {
 
       public void changed(ObservableValue<? extends Date> ov, Date oldDate, Date newDate)
@@ -367,14 +367,8 @@ public class AddOrder extends javafx.application.Application
           if ((sc > 0) && (p > 0.0D) && (sum > 0.0D))
           {
             int id = db.getIdProductOrder(sn);
-            
-
-
-
-
-
-
-            gatereg.add(0, new GateReg(AddOrder.access$008(AddOrder.this), sn, Integer.toString(id), size.getText(), price.getText(), Double.parseDouble(summa.getText())));
+            // не известен первый аргумент AddOrder.this.index
+            gatereg.add(0, new GateReg(AddOrder.this.index, sn, Integer.toString(id), size.getText(), price.getText(), Double.parseDouble(summa.getText())));
             int index = gatereg.size() - 1;
             double sumbreak = ((GateReg)gatereg.get(index)).getSum();
             sumbreak += sum;

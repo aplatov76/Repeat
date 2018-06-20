@@ -38,7 +38,7 @@ import javafx.stage.Stage;
 
 public class HistoryProcurement
 {
-  public static final ObservableList<Procurement_product_hist> contract = ;
+  public static final ObservableList<Procurement_product_hist> contract = FXCollections.observableArrayList();
   
   public HistoryProcurement() {}
   
@@ -95,7 +95,7 @@ public class HistoryProcurement
     final TextField dateField = new TextField("Select date");
     final TextField dataField = new TextField("Select date");
     
-    simpleCalender.dateProperty().addListener(new ChangeListener()
+    simpleCalender.dateProperty().addListener(new ChangeListener<Date>()
     {
       public void changed(ObservableValue<? extends Date> ov, Date oldDate, Date newDate)
       {
@@ -103,7 +103,7 @@ public class HistoryProcurement
       }
       
     });
-    simpleCalendar.dateProperty().addListener(new ChangeListener()
+    simpleCalendar.dateProperty().addListener(new ChangeListener<Date>()
     {
 
       public void changed(ObservableValue<? extends Date> ov, Date oldDate, Date newDate)
@@ -113,7 +113,7 @@ public class HistoryProcurement
       
 
     });
-    add.setOnMouseClicked(new EventHandler()
+    add.setOnMouseClicked(new EventHandler<MouseEvent>()
     {
       public void handle(MouseEvent event)
       {

@@ -23,25 +23,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 public class AddMetall
   extends Application
 {
-  static ObservableList<MetallList> ml = ;
+  static ObservableList<MetallList> ml = FXCollections.observableArrayList();
   
   public String USER_NAME;
   

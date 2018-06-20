@@ -28,16 +28,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-
-
-
-
-
-
-
-
-
-
 public class GraphicsHistMetall
   extends Application
 {
@@ -96,7 +86,7 @@ public class GraphicsHistMetall
     chart.setVerticalGridLinesVisible(true);
     
 
-    final ObservableList<XYChart.Series> series = FXCollections.observableArrayList();
+    final ObservableList<LineChart.Series> series = FXCollections.observableArrayList();
     
     ObservableList data = FXCollections.observableArrayList();
     
@@ -132,8 +122,8 @@ public class GraphicsHistMetall
     stage.setScene(scene);
     Dimension sSize = Toolkit.getDefaultToolkit().getScreenSize();
     
-    stage.setWidth(width);
-    stage.setHeight(height);
+    stage.setWidth(sSize.width);
+    stage.setHeight(sSize.height);
     stage.show();
   }
   
@@ -141,20 +131,20 @@ public class GraphicsHistMetall
 
   public static void main(String[] args) { Application.launch(args); }
   
-  private final void addChart(String name, ObservableList<XYChart.Series> series, ObservableList<String> datashow, ObservableList<Integer> sizeshow, ConnectDB db, LineChart<String, Number> chart) {
+  private final void addChart(String name, ObservableList<LineChart.Series> series, ObservableList<String> datashow, ObservableList<Integer> sizeshow, ConnectDB db, LineChart<String, Number> chart) {
     int id = db.getMetallID(name);
     
     if (id != -1) {
-      series.add(new XYChart.Series());
+      series.add(new LineChart.Series());
       int size = series.size() - 1;
       
-      ((XYChart.Series)series.get(size)).setName(name);
+      ((LineChart.Series)series.get(size)).setName(name);
       db.getGraphicsSizeMetall(a, b, id, datashow, sizeshow);
       int n = datashow.size();
       
-      for (int i = 0; i < n; i++) { ((XYChart.Series)series.get(size)).getData().add(new XYChart.Data(datashow.get(i), sizeshow.get(i)));
+      for (int i = 0; i < n; i++) { ((LineChart.Series)series.get(size)).getData().add(new LineChart.Data(datashow.get(i), sizeshow.get(i)));
       }
-      chart.getData().addAll(new XYChart.Series[] { (XYChart.Series)series.get(size) });
+      chart.getData().addAll(new LineChart.Series[] { (LineChart.Series)series.get(size) });
     }
   }
 }

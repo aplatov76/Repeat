@@ -113,7 +113,7 @@ public class AdminAdd
         }
       }
     });
-    chois.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener()
+    chois.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>()
     {
       public void changed(ObservableValue ov, Number value, Number new_value)
       {

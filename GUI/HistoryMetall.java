@@ -40,7 +40,7 @@ import javafx.stage.Stage;
 
 public class HistoryMetall
 {
-  public static final ObservableList<HistoryMetallOtchet> contract = ;
+  public static final ObservableList<HistoryMetallOtchet> contract = FXCollections.observableArrayList();
   
   public HistoryMetall() {}
   
@@ -107,7 +107,7 @@ public class HistoryMetall
     final TextField dateField = new TextField("Select date");
     final TextField dataField = new TextField("Select date");
     
-    simpleCalender.dateProperty().addListener(new ChangeListener()
+    simpleCalender.dateProperty().addListener(new ChangeListener<Date>()
     {
       public void changed(ObservableValue<? extends Date> ov, Date oldDate, Date newDate)
       {
@@ -115,7 +115,7 @@ public class HistoryMetall
       }
       
     });
-    simpleCalendar.dateProperty().addListener(new ChangeListener()
+    simpleCalendar.dateProperty().addListener(new ChangeListener<Date>()
     {
 
       public void changed(ObservableValue<? extends Date> ov, Date oldDate, Date newDate)

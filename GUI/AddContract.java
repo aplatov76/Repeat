@@ -55,7 +55,7 @@ public class AddContract extends javafx.application.Application
     ConnectDB db = new ConnectDB();
     db.loadProduct(data);
     BorderPane root = new BorderPane();
-    root.setPadding(new Insets(20.0D, 20.0D, 20.0D, 20.0D));
+    root.setPadding(new Insets(20.0, 20.0, 20.0, 20.0));
     VBox but = createBut(stage);
     stage.setTitle("Договор с рассрочкой платежа");
     root.setId("bp");
@@ -137,7 +137,7 @@ public class AddContract extends javafx.application.Application
     SimpleCalendar simpleCalendar2 = new SimpleCalendar();
     final TextField dateField = new TextField("");
     dateField.setDisable(true);
-    simpleCalendar1.dateProperty().addListener(new ChangeListener()
+    simpleCalendar1.dateProperty().addListener(new ChangeListener<Date>()
     {
 
       public void changed(ObservableValue<? extends Date> ov, Date oldDate, Date newDate)
@@ -146,7 +146,7 @@ public class AddContract extends javafx.application.Application
       }
       
     });
-    simpleCalendar2.dateProperty().addListener(new ChangeListener()
+    simpleCalendar2.dateProperty().addListener(new ChangeListener<Date>()
     {
 
       public void changed(ObservableValue<? extends Date> ov, Date oldDate, Date newDate)
@@ -275,9 +275,10 @@ public class AddContract extends javafx.application.Application
           double p = Double.parseDouble(price.getText());
           double sum = Double.parseDouble(summa.getText());
           
-          if ((sc > 0) && (p > 0.0D) && (sum > 0.0D) && (bds >= sc))
+          if ((sc > 0) && (p > 0.0) && (sum > 0.0) && (bds >= sc))
           {
-            gatereg.add(0, new GateReg(AddContract.access$008(AddContract.this), sn, Integer.toString(db.setID(sn)), size.getText(), price.getText(), Double.parseDouble(summa.getText())));
+              // первый аргумент неизвестен - AddContract.this.index
+            gatereg.add(0, new GateReg(AddContract.this.index, sn, Integer.toString(db.setID(sn)), size.getText(), price.getText(), Double.parseDouble(summa.getText())));
             int index = gatereg.size() - 1;
             double sumbreak = ((GateReg)gatereg.get(index)).getSum();
             sumbreak += sum;
@@ -290,7 +291,7 @@ public class AddContract extends javafx.application.Application
             control.setText("0");
           }
           else {
-            Dialogs.showErrorDialog(stage, "Ooops, there was an error!", "Error Dialog", "Сколько там ?");
+            Dialogs.showErrorDialog(stage, "Ooops, there was an error!", "Error Dialog", "# 99b");
           }
         }
         catch (NumberFormatException ex) {

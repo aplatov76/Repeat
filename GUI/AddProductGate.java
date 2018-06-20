@@ -25,16 +25,11 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 
-
-
-
-
-
 public class AddProductGate
 {
   public AddProductGate() {}
   
-  public static final ObservableList<Procurement_product_hist> expected = ;
+  public static final ObservableList<Procurement_product_hist> expected = FXCollections.observableArrayList();;
   public static int typecontract = 0;
   
   public void start(Stage stage) { stage.setTitle("Прием товара");

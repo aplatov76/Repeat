@@ -103,8 +103,8 @@ public class Repeat extends javafx.application.Application
     scene.getStylesheets().add(getClass().getResource("login.css").toExternalForm());
     stage.setScene(scene);
     
-    stage.setWidth(width);
-    stage.setHeight(height);
+    stage.setWidth(sSize.width);
+    stage.setHeight(sSize.height);
     
     stage.show();
   }

@@ -32,7 +32,7 @@ public class CorrectUser
 {
   public CorrectUser() {}
   
-  public static ObservableList<Users> prod = ;
+  public static ObservableList<Users> prod = FXCollections.observableArrayList();
   public static ObservableList<Rules> rules = FXCollections.observableArrayList();
   
   public void start(Stage stage) { BorderPane root = new BorderPane();

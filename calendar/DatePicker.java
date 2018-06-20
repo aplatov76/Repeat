@@ -22,326 +22,348 @@ import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.PathElement;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.shape.LineTo;
+import javafx.scene.shape.MoveTo;
+import javafx.scene.shape.Path;
 
+public class DatePicker extends StackPane {
+    private boolean isSundayFirstDay = true;
+    private Calendar today;
+    private ObjectProperty<Date> dateProperty;
+    private final DayCell[] dayCells;
+    private int month;
+    private int year;
+    private final static int COLUMN_NUMBER = 7;
+    private final static int ROW_NUMBER = 6;
+    private final static double CELL_HEIGHT = 20;
+    private final static double CELL_WIDTH = 25;
+    private final static double ARROW_SIZE = CELL_HEIGHT * 0.3;
+    private final static String DATEPICKER_OTHERMONTH = "datepicker-othermonth-cell";
+    private final static String DATEPICKER_TODAY = "datepicker-today-cell";
+    private final static String DATEPICKER_MONTH = "datepicker-month-cell";
+    private final static String DATEPICKER_WEEKDAY = "datepicker-weekday-row";
+    private final static String DATEPICKER_MONTHYEAR = "datepicker-monthyear-row";
+    private final static String DATEPICKER_ARROW = "DatepickerArrow";
+    private final static String DATEPICKER_DAYCELL = "DatepickerDayCell";
+    private final static String DATEPICKER_TODAYBUTTON = "DatepickerTodayButton";
+    private final static String DATEPICKER_TODAYBUTTONBOX = "DatepickerTodayButtonBox";
+    private String[] cellStyleList = { DATEPICKER_OTHERMONTH,
+            DATEPICKER_TODAY, DATEPICKER_MONTH };
 
+    /**
+     * Constructor of DatePicker class
+     */
+    public DatePicker() {
+        //super();
+        VBox pickerBox = new VBox();
+        setId("DatePicker");
+        today = Calendar.getInstance();
+        // Check whether Sunday is the first day of the week
+        isSundayFirstDay = today.getFirstDayOfWeek() == 1 ? true : false;
+        month = today.get(Calendar.MONTH);
+        year = today.get(Calendar.YEAR);
+        dateProperty = new SimpleObjectProperty<Date>(
+                (new GregorianCalendar()).getTime());
 
+        // First block of the picker pane, which is constructed to show month and year and to change them by decreasing and increasing.
+        HBox monthYearRow = new HBox();
+        final Label monthYear = new Label(
+                getMonthYear((new GregorianCalendar()).getTime()));
+        monthYear.setMinHeight(CELL_HEIGHT * 1.5);
+        monthYear.setMinWidth(CELL_WIDTH * 6.0);
+        monthYear.setAlignment(Pos.CENTER);
+        monthYearRow.getStyleClass().add(DATEPICKER_MONTHYEAR);
+        Path decrementArrow = new Path();
+        decrementArrow.setId(DATEPICKER_ARROW);
+        decrementArrow.getElements().addAll(new MoveTo(0, ARROW_SIZE),
+                new LineTo(0, -ARROW_SIZE), new LineTo(-ARROW_SIZE, 0),
+                new LineTo(0, ARROW_SIZE));
+        decrementArrow.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent me) {
+                month--;
+                if (month < 0) {
+                    month = Calendar.DECEMBER;
+                    year--;
+                }
+                monthYear.setText(getMonthYear((new GregorianCalendar(year,
+                        month, 1)).getTime()));
+                setDayCells();
+                me.consume();
+            }
+        });
+        Path inreamentArrow = new Path();
+        inreamentArrow.setId(DATEPICKER_ARROW);
+        inreamentArrow.getElements().addAll(new MoveTo(0, ARROW_SIZE),
+                new LineTo(0, -ARROW_SIZE), new LineTo(ARROW_SIZE, 0),
+                new LineTo(0, ARROW_SIZE));
+        inreamentArrow.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent me) {
+                month++;
+                if (month > Calendar.DECEMBER) {
+                    month = Calendar.JANUARY;
+                    year++;
+                }
+                monthYear.setText(getMonthYear((new GregorianCalendar(year,
+                        month, 1)).getTime()));
+                setDayCells();
+                me.consume();
+            }
+        });
+        monthYearRow.getChildren().addAll(decrementArrow, monthYear,
+                inreamentArrow);
+        monthYearRow.setAlignment(Pos.CENTER);
 
-public class DatePicker
-  extends StackPane
-{
-  private boolean isSundayFirstDay = true;
-  private Calendar today;
-  private ObjectProperty<Date> dateProperty;
-  private final DayCell[] dayCells;
-  private int month;
-  private int year;
-  private static final int COLUMN_NUMBER = 7;
-  private static final int ROW_NUMBER = 6;
-  private static final double CELL_HEIGHT = 20.0D;
-  private static final double CELL_WIDTH = 25.0D;
-  private static final double ARROW_SIZE = 6.0D;
-  private static final String DATEPICKER_OTHERMONTH = "datepicker-othermonth-cell";
-  private static final String DATEPICKER_TODAY = "datepicker-today-cell";
-  private static final String DATEPICKER_MONTH = "datepicker-month-cell";
-  private static final String DATEPICKER_WEEKDAY = "datepicker-weekday-row";
-  private static final String DATEPICKER_MONTHYEAR = "datepicker-monthyear-row";
-  private static final String DATEPICKER_ARROW = "DatepickerArrow";
-  private static final String DATEPICKER_DAYCELL = "DatepickerDayCell";
-  private static final String DATEPICKER_TODAYBUTTON = "DatepickerTodayButton";
-  private static final String DATEPICKER_TODAYBUTTONBOX = "DatepickerTodayButtonBox";
-  private String[] cellStyleList = { "datepicker-othermonth-cell", "datepicker-today-cell", "datepicker-month-cell" };
-  
-
-
-
-  public DatePicker()
-  {
-    VBox pickerBox = new VBox();
-    setId("DatePicker");
-    today = Calendar.getInstance();
-    
-    isSundayFirstDay = (today.getFirstDayOfWeek() == 1);
-    month = today.get(2);
-    year = today.get(1);
-    dateProperty = new SimpleObjectProperty(new GregorianCalendar().getTime());
-    
-
-    HBox monthYearRow = new HBox();
-    final Label monthYear = new Label(getMonthYear(new GregorianCalendar().getTime()));
-    monthYear.setMinHeight(30.0D);
-    monthYear.setMinWidth(150.0D);
-    monthYear.setAlignment(Pos.CENTER);
-    monthYearRow.getStyleClass().add("datepicker-monthyear-row");
-    Path decrementArrow = new Path();
-    decrementArrow.setId("DatepickerArrow");
-    decrementArrow.getElements().addAll(new PathElement[] { new MoveTo(0.0D, 6.0D), new LineTo(0.0D, -6.0D), new LineTo(-6.0D, 0.0D), new LineTo(0.0D, 6.0D) });
-    
-    decrementArrow.setOnMouseClicked(new EventHandler<MouseEvent>()
-    {
-      public void handle(MouseEvent me) {
-        DatePicker.access$010(DatePicker.this);
-        if (month < 0) {
-          month = 11;
-          DatePicker.access$110(DatePicker.this);
+        // Second block of the picker pane, which is constructed to show the first letter of names of days in the week.        
+        HBox firstLetterOfDayRow = new HBox();
+        firstLetterOfDayRow.getStyleClass().add(DATEPICKER_WEEKDAY);
+        String[] weekDays = getFirstLettersOfDays();
+        for (int i = 0; i < weekDays.length; i++) {
+            Label cell = new Label(weekDays[i]);
+            cell.setMinHeight(CELL_HEIGHT);
+            cell.setMinWidth(CELL_WIDTH);
+            cell.setAlignment(Pos.CENTER);
+            firstLetterOfDayRow.getChildren().add(cell);
         }
-        monthYear.setText(DatePicker.this.getMonthYear(new GregorianCalendar(year, month, 1).getTime()));
-        DatePicker.this.setDayCells();
-        me.consume();
-      }
-    });
-    Path inreamentArrow = new Path();
-    inreamentArrow.setId("DatepickerArrow");
-    inreamentArrow.getElements().addAll(new PathElement[] { new MoveTo(0.0D, 6.0D), new LineTo(0.0D, -6.0D), new LineTo(6.0D, 0.0D), new LineTo(0.0D, 6.0D) });
-    
-    inreamentArrow.setOnMouseClicked(new EventHandler<MouseEvent>()
-    {
-      public void handle(MouseEvent me) {
-        DatePicker.access$008(DatePicker.this);
-        if (month > 11) {
-          month = 0;
-          DatePicker.access$108(DatePicker.this);
+        pickerBox.getChildren().addAll(monthYearRow, firstLetterOfDayRow);
+
+        // Third block of the picker pane, which is constructed to show the days in a ROW_NUMBER by COLUMN_NUMBER matrix.
+        // The matrix constitutes of DayCell class which extends Label class and holds date information.
+        dayCells = new DayCell[COLUMN_NUMBER * ROW_NUMBER];
+        int index = 0;
+        for (int i = 0; i < ROW_NUMBER; i++) {
+            HBox row = new HBox();
+            for (int j = 0; j < COLUMN_NUMBER; j++) {
+                DayCell cell = createCell(0, 0, 0);
+                row.getChildren().add(cell);
+                cell.setId(DATEPICKER_DAYCELL);
+                dayCells[index++] = cell;
+            }
+            pickerBox.getChildren().add(row);
         }
-        monthYear.setText(DatePicker.this.getMonthYear(new GregorianCalendar(year, month, 1).getTime()));
-        DatePicker.this.setDayCells();
-        me.consume();
-      }
-    });
-    monthYearRow.getChildren().addAll(new Node[] { decrementArrow, monthYear, inreamentArrow });
-    monthYearRow.setAlignment(Pos.CENTER);
-    
 
-    HBox firstLetterOfDayRow = new HBox();
-    firstLetterOfDayRow.getStyleClass().add("datepicker-weekday-row");
-    String[] weekDays = getFirstLettersOfDays();
-    for (int i = 0; i < weekDays.length; i++) {
-      Label cell = new Label(weekDays[i]);
-      cell.setMinHeight(20.0D);
-      cell.setMinWidth(25.0D);
-      cell.setAlignment(Pos.CENTER);
-      firstLetterOfDayRow.getChildren().add(cell);
+        Button todayButton = new Button("Today");
+        todayButton.setId(DATEPICKER_TODAYBUTTON);
+        todayButton.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent ae) {
+                dateProperty.setValue((new GregorianCalendar(0, 0, 0))
+                        .getTime());
+                dateProperty.setValue((new GregorianCalendar(today
+                        .get(Calendar.YEAR), today.get(Calendar.MONTH),
+                        today.get(Calendar.DAY_OF_MONTH))).getTime());
+
+            }
+        });
+
+        HBox todayButtonBox = new HBox();
+        todayButtonBox.setId(DATEPICKER_TODAYBUTTONBOX);
+        todayButtonBox.setAlignment(Pos.CENTER);
+        todayButtonBox.getChildren().add(todayButton);
+
+        pickerBox.getChildren().add(todayButtonBox);
+
+        getChildren().add(pickerBox);
+
+        // Setter of the day cells
+        setDayCells();
     }
-    pickerBox.getChildren().addAll(new Node[] { monthYearRow, firstLetterOfDayRow });
-    
 
-
-    dayCells = new DayCell[42];
-    int index = 0;
-    for (int i = 0; i < 6; i++) {
-      HBox row = new HBox();
-      for (int j = 0; j < 7; j++) {
-        DayCell cell = createCell(0, 0, 0);
-        row.getChildren().add(cell);
-        cell.setId("DatepickerDayCell");
-        dayCells[(index++)] = cell;
-      }
-      pickerBox.getChildren().add(row);
+    /**
+     * @return DateProperty to bind to parent node 
+     */
+    public ObjectProperty<Date> dateProperty() {
+        return dateProperty;
     }
-    
-    Button todayButton = new Button("Today");
-    todayButton.setId("DatepickerTodayButton");
-    todayButton.setOnAction(new EventHandler<ActionEvent>()
-    {
-      public void handle(ActionEvent ae)
-      {
-        dateProperty.setValue(new GregorianCalendar(0, 0, 0).getTime());
-        dateProperty.setValue(new GregorianCalendar(today.get(1), today.get(2), today.get(5)).getTime());
 
+    /**
+     * @return an array of first letters of the week days based on default locale. 
+     * Monday is defined as the first day of the week in some locales. This property
+     * is controlled by <code>isSundayFirstDay</code> variable in the constructor of the
+     * <code>DatePicker</code> class. 
+     */
+    private String[] getFirstLettersOfDays() {
+        String[] firstLettersOfDays = new String[7];
+        int d = isSundayFirstDay ? 1 : 2;
+        // Use sequential dates to get the names of days of the week.  
+        for (int i = 0; i < firstLettersOfDays.length; i++) {
+            firstLettersOfDays[i] = (new SimpleDateFormat("EEEE")).format(
+                    (new GregorianCalendar(0, 0, 3 + d + i)).getTime())
+                    .substring(0, 1);
+        }
 
-      }
-      
-
-
-
-    });
-    HBox todayButtonBox = new HBox();
-    todayButtonBox.setId("DatepickerTodayButtonBox");
-    todayButtonBox.setAlignment(Pos.CENTER);
-    todayButtonBox.getChildren().add(todayButton);
-    
-    pickerBox.getChildren().add(todayButtonBox);
-    
-    getChildren().add(pickerBox);
-    
-
-    setDayCells();
-  }
-  
-
-
-  public ObjectProperty<Date> dateProperty()
-  {
-    return dateProperty;
-  }
-  
-
-
-
-
-
-  private String[] getFirstLettersOfDays()
-  {
-    String[] firstLettersOfDays = new String[7];
-    int d = isSundayFirstDay ? 1 : 2;
-    
-    for (int i = 0; i < firstLettersOfDays.length; i++) {
-      firstLettersOfDays[i] = new SimpleDateFormat("EEEE").format(new GregorianCalendar(0, 0, 3 + d + i).getTime()).substring(0, 1);
+        return firstLettersOfDays;
     }
-    
 
+    /**
+     * @param date is the Gregorian date to be formatted
+     * @return the formatted date in the form of "Month, Year" like "January, 2012"
+     */
+    private String getMonthYear(Date date) {
 
-
-
-    return firstLettersOfDays;
-  }
-  
-
-
-
-
-  private String getMonthYear(Date date)
-  {
-    return new SimpleDateFormat("MMMM, YYYY").format(date);
-  }
-  
-
-
-
-
-
-  private void setDayCells()
-  {
-    Calendar calendar = Calendar.getInstance();
-    calendar.set(1, year);
-    calendar.set(2, month);
-    calendar.set(5, 1);
-    
-    int firstDayOfMonth = calendar.get(7) - 1;
-    
-    if (!isSundayFirstDay) {
-      firstDayOfMonth += 6;
-      if (firstDayOfMonth > 7)
-        firstDayOfMonth -= 7;
+        return (new SimpleDateFormat("MMMM, YYYY")).format(date);
     }
-    int daysInMonth = calendar.getActualMaximum(5);
-    calendar.set(2, month - 1);
-    int daysInPreviousMonth = calendar.getActualMaximum(5);
-    
 
-    for (int i = 0; i < firstDayOfMonth; i++) {
-      int m = month - 1;
-      int y = year;
-      if (m < 0) {
-        m = 11;
-        y--;
-      }
-      DayCell cell = dayCells[i];
-      cell.setDate(daysInPreviousMonth - firstDayOfMonth + i + 1, m, y);
-      cell.getStyleClass().removeAll(cellStyleList);
-      cell.getStyleClass().add("datepicker-othermonth-cell");
+    /**
+     * Setter of cells in the matrix based on the month and the year. It takes 1 as the first day of the month
+     * to create a calendar. Once the calendar created it is calculated which day of the week is the first
+     * day of the month. Firstly, the cells for the days of previous month are set if any, and then the cells 
+     * for the days of present month are set, and finally the cells for the next month are set.  
+     */
+    private void setDayCells() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, year);
+        calendar.set(Calendar.MONTH, month);
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        // Calendar.DAY_OF_WEEK uses base 1. That's why one is subtracted.
+        int firstDayOfMonth = calendar.get(Calendar.DAY_OF_WEEK) - 1;
+        // Check whether Sunday is the first day of the week. If not, shift the first day 
+        if (!isSundayFirstDay) {
+            firstDayOfMonth += 6;
+            if (firstDayOfMonth > 7)
+                firstDayOfMonth -= 7;
+        }
+        int daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+        calendar.set(Calendar.MONTH, month - 1);
+        int daysInPreviousMonth = calendar
+                .getActualMaximum(Calendar.DAY_OF_MONTH);
+
+        // Set the cells for the days of previous month
+        for (int i = 0; i < firstDayOfMonth; i++) {
+            int m = month - 1;
+            int y = year;
+            if (m < 0) {
+                m = Calendar.DECEMBER;
+                y--;
+            }
+            DayCell cell = dayCells[i];
+            cell.setDate(daysInPreviousMonth - (firstDayOfMonth) + i + 1,
+                    m, y);
+            cell.getStyleClass().removeAll(cellStyleList);
+            cell.getStyleClass().add(DATEPICKER_OTHERMONTH);
+        }
+
+        // Set the cells for the days of month to be presented 
+        int day = 1;
+        for (int i = firstDayOfMonth; i < daysInMonth + firstDayOfMonth; i++) {
+            DayCell cell = dayCells[i];
+            cell.setDate(day++, month, year);
+            calendar.set(Calendar.YEAR, year);
+            calendar.set(Calendar.MONTH, month);
+            calendar.set(Calendar.DAY_OF_MONTH, cell.getDay());
+            cell.getStyleClass().removeAll(cellStyleList);
+            if (isToday(calendar))
+                cell.getStyleClass().add(DATEPICKER_TODAY);
+            else
+                cell.getStyleClass().add(DATEPICKER_MONTH);
+        }
+
+        // Set the cells for the days of next month
+        day = 1;
+        for (int i = firstDayOfMonth + daysInMonth; i < COLUMN_NUMBER
+                * ROW_NUMBER; i++) {
+            int m = month + 1;
+            int y = year;
+            if (m > Calendar.DECEMBER) {
+                m = Calendar.JANUARY;
+                y++;
+            }
+            DayCell cell = dayCells[i];
+            cell.setDate(day++, m, y);
+            cell.getStyleClass().removeAll(cellStyleList);
+            cell.getStyleClass().add(DATEPICKER_OTHERMONTH);
+        }
     }
-    
 
-    int day = 1;
-    for (int i = firstDayOfMonth; i < daysInMonth + firstDayOfMonth; i++) {
-      DayCell cell = dayCells[i];
-      cell.setDate(day++, month, year);
-      calendar.set(1, year);
-      calendar.set(2, month);
-      calendar.set(5, cell.getDay());
-      cell.getStyleClass().removeAll(cellStyleList);
-      if (isToday(calendar)) {
-        cell.getStyleClass().add("datepicker-today-cell");
-      } else {
-        cell.getStyleClass().add("datepicker-month-cell");
-      }
+    /**
+     * @param calendar is to be compared 
+     * @return true if the compared calendar is today
+     */
+    private boolean isToday(Calendar calendar) {
+
+        return today.get(Calendar.YEAR) == calendar.get(Calendar.YEAR)
+                && today.get(Calendar.MONTH) == calendar
+                        .get(Calendar.MONTH)
+                && today.get(Calendar.DAY_OF_MONTH) == calendar
+                        .get(Calendar.DAY_OF_MONTH);
+
     }
-    
-    day = 1;
-    for (int i = firstDayOfMonth + daysInMonth; i < 42; i++) {
-      int m = month + 1;
-      int y = year;
-      if (m > 11) {
-        m = 0;
-        y++;
-      }
-      DayCell cell = dayCells[i];
-      cell.setDate(day++, m, y);
-      cell.getStyleClass().removeAll(cellStyleList);
-      cell.getStyleClass().add("datepicker-othermonth-cell");
+
+    /**
+     * @param dayNumber is the day contained by the cell and used for label text
+     * @param month is the month contained by the cell. Its base is 0.
+     * @param year is the year contained by the cell
+     * @return the created cell which will be located in the matrix.
+     */
+    private DayCell createCell(int dayNumber, int month, int year) {
+        final DayCell cell = new DayCell(dayNumber, month, year);
+        cell.setMinHeight(CELL_HEIGHT);
+        cell.setMinWidth(CELL_WIDTH);
+        cell.setAlignment(Pos.CENTER);
+        cell.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent me) {
+                dateProperty.setValue((new GregorianCalendar(0, 0, 0))
+                        .getTime());
+                dateProperty.setValue((new GregorianCalendar(
+                        cell.getYear(), cell.getMonth(), cell.getDay()))
+                        .getTime());
+                me.consume();
+            }
+        });
+
+        return cell;
     }
-  }
-  
 
+    /**
+     * DayCell class is an extension of Label class and designed to hold the date
+     * information. The day of the date is used to set the text of super class.
+     * 
+     */
+    private class DayCell extends Label {
+        private int d;
+        private int m;
+        private int y;
 
+        public DayCell(int day, int month, int year) {
+            super(String.valueOf(day));
+        }
 
+        public int getDay() {
+            return d;
+        }
 
-  private boolean isToday(Calendar calendar)
-  {
-    return (today.get(1) == calendar.get(1)) && (today.get(2) == calendar.get(2)) && (today.get(5) == calendar.get(5));
-  }
-  
+        public int getMonth() {
+            return m;
+        }
 
+        public int getYear() {
+            return y;
+        }
 
-
-
-
-
-
-
-  private DayCell createCell(int dayNumber, int month, int year)
-  {
-    final DayCell cell = new DayCell(dayNumber, month, year);
-    cell.setMinHeight(20.0D);
-    cell.setMinWidth(25.0D);
-    cell.setAlignment(Pos.CENTER);
-    cell.setOnMouseClicked(new EventHandler<MouseEvent>()
-    {
-      public void handle(MouseEvent me) {
-        dateProperty.setValue(new GregorianCalendar(0, 0, 0).getTime());
-        dateProperty.setValue(new GregorianCalendar(cell.getYear(), cell.getMonth(), cell.getDay()).getTime());
-        
-
-
-
-        me.consume();
-      }
-      
-    });
-    return cell;
-  }
-  
-
-  private class DayCell
-    extends Label
-  {
-    private int d;
-    
-    private int m;
-    private int y;
-    
-    public DayCell(int day, int month, int year)
-    {
-      super();
+        public void setDate(int day, int month, int year) {
+            this.d = day;
+            setText(String.valueOf(day));
+            this.m = month;
+            this.y = year;
+        }
     }
-    
-    public int getDay() {
-      return d;
-    }
-    
-    public int getMonth() {
-      return m;
-    }
-    
-    public int getYear() {
-      return y;
-    }
-    
-    public void setDate(int day, int month, int year) {
-      d = day;
-      setText(String.valueOf(day));
-      m = month;
-      y = year;
-    }
-  }
 }

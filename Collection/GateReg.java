@@ -3,14 +3,6 @@ package Collection;
 import javafx.beans.property.SimpleStringProperty;
 
 
-
-
-
-
-
-
-
-
 public class GateReg
 {
   private SimpleStringProperty n;
@@ -27,7 +19,7 @@ public class GateReg
     id = new SimpleStringProperty();
     size = new SimpleStringProperty();
     price = new SimpleStringProperty("Итого: ");
-    sum = 0.0D;
+    sum = 0.0;
   }
   
   public GateReg(int pid, String name, String id, String size, String price, double sum) { n = new SimpleStringProperty("" + pid);

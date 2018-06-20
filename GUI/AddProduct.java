@@ -298,7 +298,8 @@ public class AddProduct
           
           if ((sc > 0) && (p > 0.0D) && (sum > 0.0D) && (bds >= sc))
           {
-            prod.add(0, new GateReg(AddProduct.access$008(AddProduct.this), sn, Integer.toString(db.setID(sn)), size.getText(), price.getText(), Double.parseDouble(summa.getText())));
+            // неизвестен первый аргумент  AddProduct.access$008(AddProduct.this)
+            prod.add(0, new GateReg(AddProduct.this.ni, sn, Integer.toString(db.setID(sn)), size.getText(), price.getText(), Double.parseDouble(summa.getText())));
             int index = prod.size() - 1;
             double sumbreak = ((GateReg)prod.get(index)).getSum();
             sumbreak += sum;

@@ -30,7 +30,7 @@ import javafx.stage.Stage;
 public class CorrectGroup
   extends Application
 {
-  public static ObservableList<GroupProduct> groups = ;
+  public static ObservableList<GroupProduct> groups = FXCollections.observableArrayList();
   
   public CorrectGroup() {}
   

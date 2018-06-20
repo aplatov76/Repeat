@@ -36,7 +36,7 @@ public class ListCustomerProduct
 {
   public ListCustomerProduct() {}
   
-  public static final ObservableList<ListCustProduct> list = ;
+  public static final ObservableList<ListCustProduct> list = FXCollections.observableArrayList();
   Desktop desktop = null;
   public static int indexnewcontract = -1;
   public static int typecontract = 0;

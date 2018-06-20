@@ -246,7 +246,7 @@ public class PFilterActualInfoProduct
     final Label lbl10 = new Label("");
     lbl10.setTextFill(Color.DARKORANGE);
     
-    slider.valueProperty().addListener(new ChangeListener()
+    slider.valueProperty().addListener(new ChangeListener<Number>()
     {
       public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
         int d = t1.intValue();

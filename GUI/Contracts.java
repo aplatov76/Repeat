@@ -38,7 +38,7 @@ public class Contracts
 {
   public Contracts() {}
   
-  public static final ObservableList<contract> contract = ;
+  public static final ObservableList<contract> contract = FXCollections.observableArrayList();
   Desktop desktop = null;
   public static int indexnewcontract = -1;
   public static int typecontract = 0;

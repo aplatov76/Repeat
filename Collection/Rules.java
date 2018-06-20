@@ -2,16 +2,6 @@ package Collection;
 
 import javafx.scene.control.CheckBox;
 
-
-
-
-
-
-
-
-
-
-
 public class Rules
 {
   private String name;
