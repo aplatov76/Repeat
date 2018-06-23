@@ -100,7 +100,7 @@ public class Repeat extends javafx.application.Application
     but.setId("but");
     
     Scene scene = new Scene(root);
-    scene.getStylesheets().add(getClass().getResource("login.css").toExternalForm());
+    scene.getStylesheets().add(getClass().getResource("/css/login.css").toExternalForm());
     stage.setScene(scene);
     
     stage.setWidth(sSize.width);
@@ -297,8 +297,8 @@ public class Repeat extends javafx.application.Application
     {
       public void handle(MouseEvent event)
       {
-        AddProduct add = new AddProduct(Repeat.prod);
-        add.start(new Stage());
+//        AddProduct add = new AddProduct(Repeat.prod);
+  //      add.start(new Stage());
         USER_NAME = Repeat.user.getName();
       }
     });
@@ -815,10 +815,10 @@ public class Repeat extends javafx.application.Application
   
   private VBox createVBoxAdmin(final BorderPane root, final TableView tb) {
     VBox node = new VBox();
-    ObservableList data = FXCollections.observableArrayList();
+    ObservableList<String> data = FXCollections.observableArrayList();
     ObservableList<Integer> datacode = FXCollections.observableArrayList();
     
-    ObservableList group = FXCollections.observableArrayList();
+    ObservableList<String> group = FXCollections.observableArrayList();
     
     node.setPadding(new Insets(20.0D, 10.0D, 20.0D, 10.0D));
     node.setSpacing(8.0D);
@@ -1763,7 +1763,7 @@ public class Repeat extends javafx.application.Application
     menu.setId("but");
     menu.setPadding(new Insets(10.0D, 10.0D, 10.0D, 10.0D));
     
-    ObservableList data = FXCollections.observableArrayList();
+    ObservableList<String> data = FXCollections.observableArrayList();
     ObservableList<Integer> datacode = FXCollections.observableArrayList();
     
     connectordb.loadProduct(data);

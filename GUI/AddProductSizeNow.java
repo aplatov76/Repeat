@@ -46,7 +46,7 @@ public final class AddProductSizeNow
   public void start(final Stage stage)
   {
     final ConnectDB db = new ConnectDB();
-    ObservableList data = FXCollections.observableArrayList();
+    ObservableList<String> data = FXCollections.observableArrayList();
     ObservableList<Integer> datacode = FXCollections.observableArrayList();
     
 

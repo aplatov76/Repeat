@@ -52,7 +52,7 @@ public class AddOrder extends javafx.application.Application
   public void start(Stage stage)
   {
     ObservableList data = FXCollections.observableArrayList();
-    ObservableList<Integer> cdata = FXCollections.observableArrayList();
+    ObservableList<String> cdata = FXCollections.observableArrayList();
     ConnectDB db = new ConnectDB();
     
     db.loadProductCustomerOrder(data);

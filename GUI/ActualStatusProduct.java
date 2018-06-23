@@ -29,7 +29,7 @@ public class ActualStatusProduct
 {
   public ActualStatusProduct() {}
   
-  private final ObservableList<Prices> no_actual = FXCollections.observableArrayList();
+  private static ObservableList<Prices> no_actual = FXCollections.observableArrayList();
   
   public void start(Stage stage) {
     BorderPane root = new BorderPane();
@@ -40,24 +40,25 @@ public class ActualStatusProduct
     info.setText("* Cейчас отображаются категории, исключенныe из списка продуктов доступных к реализации.");
     info.setTextFill(Color.RED);
     
-    TableView table = createTable();
+    TableView<Prices> table = createTable();
     
-    main.getChildren().addAll(new Node[] { info, table });
+    //main.getChildren().addAll(new Node[] { info, table });
+    main.getChildren().addAll(info, table);
     root.setLeft(main);
     VBox box = createBut(stage, info, table);
     root.setId("bp");
-    box.setSpacing(10.0D);
+    box.setSpacing(10.0);
     root.setRight(box);
     
     stage.setTitle("Информация об неиспользуемых/малоиспользуемых продуктах");
     Scene scene = new Scene(root);
     box.setId("but");
-    root.setPadding(new Insets(10.0D, 10.0D, 10.0D, 10.0D));
+    root.setPadding(new Insets(10.0, 10.0, 10.0, 10.0));
     scene.getStylesheets().add(getClass().getResource("/fxuidemo/login.css").toExternalForm());
     stage.setScene(scene);
     
-    stage.setWidth(1150.0D);
-    stage.setHeight(700.0D);
+    stage.setWidth(1150.0);
+    stage.setHeight(700.0);
     stage.show();
   }
   
@@ -111,63 +112,62 @@ public class ActualStatusProduct
     return node;
   }
   
-  private TableView createTable() {
-    TableView table = new TableView();
+  private TableView<Prices> createTable() {
+    TableView<Prices> table = new TableView<Prices>();
     
-
-
-    TableColumn index = new TableColumn("№");
-    index.setMinWidth(20.0D);
-    index.setMaxWidth(40.0D);
+    TableColumn<Prices,Integer> index = new TableColumn<Prices,Integer>("№");
+    index.setMinWidth(20.0);
+    index.setMaxWidth(40.0);
     index.setCellValueFactory(new PropertyValueFactory("code"));
+    //index.setCellFactory(value);
     
 
-    TableColumn name = new TableColumn("Наименование");
-    name.setMinWidth(400.0D);
+    TableColumn<Prices, String> name = new TableColumn<Prices, String>("Наименование");
+    name.setMinWidth(400.0);
     
     name.setCellValueFactory(new PropertyValueFactory("name"));
     
 
-    TableColumn id = new TableColumn("Код");
-    id.setMinWidth(20.0D);
-    id.setMaxWidth(50.0D);
-    id.setCellValueFactory(new PropertyValueFactory("id"));
-    
+    TableColumn<Prices,Integer> id = new TableColumn<Prices,Integer>("Код");
+    id.setMinWidth(20.0);
+    id.setMaxWidth(50.0);
+    id.setCellValueFactory(new PropertyValueFactory("id"));    
 
-    TableColumn size = new TableColumn("Кол.eд.");
-    size.setMinWidth(40.0D);
-    size.setMaxWidth(60.0D);
+    TableColumn<Prices,Integer> size = new TableColumn<Prices,Integer>("Кол.eд.");
+    size.setMinWidth(40.0);
+    size.setMaxWidth(60.0);
     size.setCellValueFactory(new PropertyValueFactory("size"));
     
 
-    TableColumn price = new TableColumn("Цена");
-    price.setMinWidth(50.0D);
+    TableColumn<Prices,Double> price = new TableColumn<Prices,Double>("Цена");
+    price.setMinWidth(50.0);
     
     price.setCellValueFactory(new PropertyValueFactory("price"));
     
 
-    TableColumn group = new TableColumn("Группа");
-    group.setMinWidth(20.0D);
+    TableColumn<Prices,Integer> group = new TableColumn<Prices,Integer>("Группа");
+    group.setMinWidth(20.0);
     
     group.setCellValueFactory(new PropertyValueFactory("group"));
     
 
-    TableColumn status = new TableColumn("Статус");
-    status.setMinWidth(20.0D);
+    TableColumn<Prices,Integer> status = new TableColumn<Prices,Integer>("Статус");
+    status.setMinWidth(20.0);
     
     status.setCellValueFactory(new PropertyValueFactory("actual_status"));
-    
-
 
     table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-    table.setMinWidth(970.0D);
-    table.setMinHeight(610.0D);
+    table.setMinWidth(970.0);
+    table.setMinHeight(610.0);
     
 
     table.setStyle("-fx-font: normal 11 Arial;");
-    table.getColumns().addAll(new Object[] { index, id, name, size, price, group, status });
-    
     table.setItems(no_actual);
+    table.getColumns().addAll(index, id, name, group, size, price, status);  
+    
+
+  //  table.getColumns().addAll(elements)
+    //                                    (int id, int co, String name, int group, int size, double price, int as)
     return table;
   }
   

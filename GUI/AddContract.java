@@ -51,7 +51,7 @@ public class AddContract extends javafx.application.Application
 
   public void start(Stage stage)
   {
-    ObservableList data = FXCollections.observableArrayList();
+    ObservableList<String> data = FXCollections.observableArrayList();
     ConnectDB db = new ConnectDB();
     db.loadProduct(data);
     BorderPane root = new BorderPane();
@@ -200,7 +200,7 @@ public class AddContract extends javafx.application.Application
     grid.add(new Label("Наличие: "), 0, 12);
     grid.add(control, 1, 12, gy, 1);
     
-    final TableView tl = createTableReg();
+    final TableView<GateReg> tl = createTableReg();
     
 
     grid.add(tl, 0, 13, 2, 1);
@@ -428,12 +428,10 @@ public class AddContract extends javafx.application.Application
     return grid;
   }
   
-  private TableView createTableReg()
+  private TableView<GateReg> createTableReg()
   {
-    TableView<GateReg> table = new TableView();
+    TableView<GateReg> table = new TableView<GateReg>();
     
-
-
     TableColumn n = new TableColumn("№");
     n.setMinWidth(30.0D);
     n.setMaxWidth(40.0D);
@@ -461,14 +459,10 @@ public class AddContract extends javafx.application.Application
     
     price.setCellValueFactory(new PropertyValueFactory("price"));
     
-
     TableColumn sum = new TableColumn("Сумма");
     sum.setMinWidth(90.0D);
     
     sum.setCellValueFactory(new PropertyValueFactory("sum"));
-    
-
-
 
     table.setStyle("-fx-font: normal 11 Arial;");
     table.setMaxWidth(770.0D);
@@ -476,7 +470,7 @@ public class AddContract extends javafx.application.Application
     gatereg.add(new GateReg());
     table.setItems(gatereg);
     
-    table.getColumns().addAll(new TableColumn[] { n, name, id, size, price, sum });
+    table.getColumns().addAll(n, name, id, size, price, sum);
     
 
     return table;

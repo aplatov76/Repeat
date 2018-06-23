@@ -26,7 +26,7 @@ import javafx.stage.Stage;
 public class AddMetall
   extends Application
 {
-  static ObservableList<MetallList> ml = FXCollections.observableArrayList();
+  public static ObservableList<MetallList> ml = FXCollections.observableArrayList();
   
   public String USER_NAME;
   
@@ -92,7 +92,7 @@ public class AddMetall
     grid.setPadding(new Insets(10.0D, 10.0D, 10.0D, 10.0D));
     grid.setSpacing(8.0D);
     
-    TableView tl = createTableReg();
+    TableView<MetallList> tl = createTableReg();
     
     grid.getChildren().add(tl);
     
@@ -124,7 +124,8 @@ public class AddMetall
     return grid;
   }
   
-  private TableView createTableReg() { TableView<MetallList> table = new TableView();
+  private TableView<MetallList> createTableReg() { 
+     TableView<MetallList> table = new TableView<MetallList>();
     
     table.columnResizePolicyProperty();
     table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
@@ -171,7 +172,7 @@ public class AddMetall
 
     table.setItems(ml);
     
-    table.getColumns().addAll(new TableColumn[] { n, id, name, size, price, sum });
+    table.getColumns().addAll(n, id, name, size, price, sum);
     
 
     return table;

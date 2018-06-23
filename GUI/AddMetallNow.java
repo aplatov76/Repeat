@@ -26,17 +26,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
-
-
-
-
-
-
-
-
-
-
-
 public final class AddMetallNow
   extends Application
 {

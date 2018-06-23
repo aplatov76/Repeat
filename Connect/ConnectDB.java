@@ -28,8 +28,8 @@ public class ConnectDB
   public ConnectDB()
   {
     properties = new Properties();
-    properties.setProperty("user", "godvin");
-    properties.setProperty("password", "bol26set03ka");
+    properties.setProperty("user", "root");
+    properties.setProperty("password", "767690");
     properties.setProperty("useUnicode", "true");
     properties.setProperty("characterEncoding", "cp1251");
     
@@ -146,27 +146,6 @@ public class ConnectDB
       ResultSet rs = stmt.executeQuery(query);
       while (rs.next()) { rules.add(new Collection.Rules(rs.getString(2), rs.getBoolean(3), rs.getBoolean(4), rs.getBoolean(5), rs.getBoolean(6), rs.getBoolean(7), rs.getBoolean(8), rs.getBoolean(9), rs.getBoolean(10), rs.getBoolean(11), rs.getBoolean(12), rs.getBoolean(13), rs.getBoolean(14), rs.getBoolean(15), rs.getBoolean(16), rs.getBoolean(17), rs.getBoolean(18), rs.getBoolean(19), rs.getBoolean(20), rs.getBoolean(21), rs.getBoolean(22), rs.getBoolean(23)));
       }
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
       rs.close();
       
@@ -178,7 +157,7 @@ public class ConnectDB
 
 
 
-  public void loadProduct(ObservableList data)
+  public void loadProduct(ObservableList<String> data)
   {
     try
     {
@@ -265,7 +244,7 @@ public class ConnectDB
   }
   
 
-  public void loadGroupList(ObservableList data)
+  public void loadGroupList(ObservableList<String> data)
   {
     data.clear();
     try {
@@ -290,7 +269,7 @@ public class ConnectDB
 
 
 
-  public void loadRules(ObservableList data)
+  public void loadRules(ObservableList<String> data)
   {
     try
     {
@@ -1973,7 +1952,7 @@ public class ConnectDB
     return size;
   }
   
-  public void loadProductCustomerOrder(ObservableList data)
+  public void loadProductCustomerOrder(ObservableList<String> data)
   {
     try
     {
@@ -1997,7 +1976,7 @@ public class ConnectDB
   }
   
 
-  public void loadProductIdOrder(ObservableList data)
+  public void loadProductIdOrder(ObservableList<String> data)
   {
     try
     {

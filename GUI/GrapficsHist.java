@@ -88,7 +88,7 @@ public class GrapficsHist
     
     final ObservableList<LineChart.Series> series = FXCollections.observableArrayList();
     
-    ObservableList data = FXCollections.observableArrayList();
+    ObservableList<String> data = FXCollections.observableArrayList();
     db.loadProduct(data);
     final AutoFillTextBox box = new AutoFillTextBox(data);
     box.setListLimit(100);

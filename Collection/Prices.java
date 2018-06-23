@@ -3,78 +3,73 @@ package Collection;
 
 public class Prices
 {
-  private Integer code;
-  
-  private Integer id;
-  
+  private int code;
+  private int id;  
   private String name;
-  
   private int group;
-  
   private Integer size;
-  
   private Double price;
   private int actual_status;
   
   public Prices()
   {
-    code = Integer.valueOf(0);
-    id = Integer.valueOf(0);
+    code = 0;
+    id = 0;
     name = "";
-    size = Integer.valueOf(0);
+    size = 0;
     group = 0;
-    price = Double.valueOf(0.0D);
+    price = 0.0D;
     actual_status = 0;
   }
   
-  public Prices(int id, int co, String name, int group, int size, double price, int as) {
-    code = Integer.valueOf(co);
-    this.id = Integer.valueOf(id);
+  public Prices(int id, int code, String name, int group, int size, double price, int as) {
+    this.code = code;
+    this.id = id;
     this.name = name;
-    this.size = Integer.valueOf(size);
+    this.size = size;
     this.group = group;
-    this.price = Double.valueOf(price);
+    this.price = price;
     actual_status = as;
   }
   
   public void setId(int i)
   {
-    id = Integer.valueOf(i);
+    id = i;
   }
   
   public void setCode(int i) {
-    code = Integer.valueOf(i);
+    code = i;
   }
   
   public void setName(String n) { name = n; }
   
   public void setSize(int s) {
-    size = Integer.valueOf(s);
+    size = s;
   }
   
   public void setGroup(int s) { group = s; }
   
   public void setPrice(double p)
   {
-    price = Double.valueOf(p);
+    price = p;
   }
   
-  public int getId() { return id.intValue(); }
+  public int getId() { return id; }
   
   public String getName() {
     return name;
   }
   
-  public int getSize() { return size.intValue(); }
+  public int getSize() { return size; }
   
   public double getPrice() {
-    return price.doubleValue();
+    return price;
   }
   
   public int getGroup() { return group; }
   
   public int getCode() {
-    return code.intValue();
+    return code;
   }
   
   public void setActual_status(int actual_status) { this.actual_status = actual_status; }

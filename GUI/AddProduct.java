@@ -36,8 +36,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-public class AddProduct
-  extends Application
+public class AddProduct extends Application
 {
   ObservableList<GateReg> prod = FXCollections.observableArrayList();
   
@@ -45,7 +44,9 @@ public class AddProduct
   private int ni = 1;
   
 
-  public AddProduct(ObservableList<Registration> p) {}
+  public AddProduct(ObservableList<Registration> p){
+      
+  }
   
 
   public void start(Stage stage)
@@ -58,7 +59,7 @@ public class AddProduct
     db.loadProduct(data);
     db.loadProductId(cdata);
     BorderPane root = new BorderPane();
-    root.setPadding(new Insets(20.0D, 20.0D, 20.0D, 20.0D));
+    root.setPadding(new Insets(20.0D, 20.0, 20.0, 20.0));
     VBox but = createBut(stage);
     
     stage.setTitle("Регистрация продаж");
@@ -73,8 +74,8 @@ public class AddProduct
     
     stage.setScene(scene);
     
-    stage.setWidth(1050.0D);
-    stage.setHeight(640.0D);
+    stage.setWidth(1050.0);
+    stage.setHeight(640.0);
     stage.show();
   }
   
@@ -83,18 +84,18 @@ public class AddProduct
   {
     VBox node = new VBox();
     Label lbl = new Label();
-    node.setSpacing(8.0D);
+    node.setSpacing(8.0);
     Button add = new Button("Добавить");
     Button clear = new Button("Удалить");
     Button good = new Button("Готово");
     
     Button close = new Button("Закрыть");
     
-    add.setMinSize(130.0D, 50.0D);
-    clear.setMinSize(130.0D, 50.0D);
-    good.setMinSize(130.0D, 50.0D);
+    add.setMinSize(130.0, 50.0);
+    clear.setMinSize(130.0, 50.0);
+    good.setMinSize(130.0, 50.0);
     
-    close.setMinSize(130.0D, 50.0D);
+    close.setMinSize(130.0, 50.0);
     
     close.setOnMouseClicked(new EventHandler<MouseEvent>()
     {
@@ -115,17 +116,17 @@ public class AddProduct
   private GridPane createGrid(ObservableList data1, ObservableList cdata, final ConnectDB db, final Stage stage, VBox but)
   {
     GridPane grid = new GridPane();
-    grid.setPadding(new Insets(20.0D, 20.0D, 20.0D, 20.0D));
-    grid.setHgap(5.0D);
-    grid.setVgap(5.0D);
+    grid.setPadding(new Insets(20.0, 20.0, 20.0, 20.0));
+    grid.setHgap(5.0);
+    grid.setVgap(5.0);
     
     final AutoFillTextBox box = new AutoFillTextBox(data1);
     final AutoFillTextBox codebox = new AutoFillTextBox(cdata);
     box.setListLimit(100);
     codebox.setListLimit(100);
-    box.getListview().setMinHeight(100.0D);
-    box.setMinWidth(654.0D);
-    codebox.setMinWidth(654.0D);
+    box.getListview().setMinHeight(100.0);
+    box.setMinWidth(654.0);
+    codebox.setMinWidth(654.0);
     box.setId("box");
     codebox.setId("box");
     
@@ -194,18 +195,6 @@ public class AddProduct
         try {
           int id_product = db.setID(sn);
           int ssize = Integer.parseInt(size.getText());
-          
-
-
-
-
-
-
-
-
-
-
-
 
           price.setText(Double.toString(db.price(id_product)));
           control.setText(String.valueOf(db.getSize(sn)));
@@ -393,10 +382,8 @@ public class AddProduct
     return grid;
   }
   
-  private TableView createTableReg() { TableView<GateReg> table = new TableView();
-    
-
-
+  private TableView createTableReg() { 
+    TableView<GateReg> table = new TableView();
 
     TableColumn n = new TableColumn("№");
     n.setMinWidth(30.0D);
@@ -405,29 +392,29 @@ public class AddProduct
     
 
     TableColumn name = new TableColumn("Наименование");
-    name.setMinWidth(450.0D);
-    name.setMaxWidth(480.0D);
+    name.setMinWidth(450.0);
+    name.setMaxWidth(480.0);
     name.setCellValueFactory(new PropertyValueFactory("name"));
     
 
     TableColumn id = new TableColumn("Код");
-    id.setMinWidth(58.0D);
+    id.setMinWidth(58.0);
     id.setCellValueFactory(new PropertyValueFactory("id"));
     
 
     TableColumn size = new TableColumn("Кол.eд.");
-    size.setMinWidth(50.0D);
+    size.setMinWidth(50.0);
     size.setCellValueFactory(new PropertyValueFactory("size"));
     
 
     TableColumn price = new TableColumn("Цена");
-    price.setMinWidth(90.0D);
+    price.setMinWidth(90.0);
     
     price.setCellValueFactory(new PropertyValueFactory("price"));
     
 
     TableColumn sum = new TableColumn("Сумма");
-    sum.setMinWidth(90.0D);
+    sum.setMinWidth(90.0);
     
     sum.setCellValueFactory(new PropertyValueFactory("sum"));
     
@@ -435,8 +422,8 @@ public class AddProduct
 
 
     table.setStyle("-fx-font: normal 11 Arial;");
-    table.setMaxWidth(770.0D);
-    table.setMaxHeight(350.0D);
+    table.setMaxWidth(770.0);
+    table.setMaxHeight(350.0);
     
     table.setItems(prod);
     
