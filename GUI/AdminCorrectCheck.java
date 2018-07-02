@@ -113,7 +113,7 @@ public final class AdminCorrectCheck
       }
       
     });
-    scene.getStylesheets().add(getClass().getResource("/fxuidemo/login.css").toExternalForm());
+    scene.getStylesheets().add(getClass().getResource("/css/login.css").toExternalForm());
     stage.setScene(scene);
     stage.setWidth(600.0D);
     stage.setHeight(280.0D);

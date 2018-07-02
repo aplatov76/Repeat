@@ -68,7 +68,7 @@ public class AddOrder extends javafx.application.Application
     
     root.setCenter(createGrid(data, cdata, db, stage, but));
     Scene scene = new Scene(root);
-    scene.getStylesheets().add(getClass().getResource("/fxuidemo/login.css").toExternalForm());
+    scene.getStylesheets().add(getClass().getResource("/css/login.css").toExternalForm());
     
     stage.setScene(scene);
     
@@ -212,7 +212,7 @@ public class AddOrder extends javafx.application.Application
     grid.add(new Label("Наличие: "), 0, 13);
     grid.add(control, 1, 13, gy, 1);
     
-    final TableView tl = createTableReg();
+    final TableView<GateReg> tl = createTableReg();
     
 
     grid.add(tl, 0, 14, 2, 1);
@@ -520,11 +520,9 @@ public class AddOrder extends javafx.application.Application
     return grid;
   }
   
-  private TableView createTableReg() {
-    TableView<GateReg> table = new TableView();
+  private TableView<GateReg> createTableReg() {
+    TableView<GateReg> table = new TableView<GateReg>();
     
-
-
     TableColumn n = new TableColumn("№");
     n.setMinWidth(30.0D);
     n.setMaxWidth(40.0D);
@@ -567,7 +565,7 @@ public class AddOrder extends javafx.application.Application
     gatereg.add(new GateReg());
     table.setItems(gatereg);
     
-    table.getColumns().addAll(new TableColumn[] { n, name, id, size, price, sum });
+    table.getColumns().addAll(n, name, id, size, price, sum );
     
 
     return table;

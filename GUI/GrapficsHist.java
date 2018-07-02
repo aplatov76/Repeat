@@ -116,7 +116,7 @@ public class GrapficsHist
     
     Scene scene = new Scene(grid);
     grid.setId("bp");
-    scene.getStylesheets().add(getClass().getResource("/fxuidemo/login.css").toExternalForm());
+    scene.getStylesheets().add(getClass().getResource("/css/login.css").toExternalForm());
     
     stage.setScene(scene);
     Dimension sSize = Toolkit.getDefaultToolkit().getScreenSize();

@@ -63,12 +63,12 @@ public final class AddProductSizeNow
     close.setId("dark-blue");
     pane.setSpacing(8.0D);
     
-    final AutoFillTextBox box = new AutoFillTextBox(data);
-    final AutoFillTextBox boxcode = new AutoFillTextBox(datacode);
-    box.getListview().setMinSize(100.0D, 100.0D);
+    final AutoFillTextBox<String> box = new AutoFillTextBox(data);
+    final AutoFillTextBox<Integer> boxcode = new AutoFillTextBox(datacode);
+    box.getListview().setMinSize(100.0, 100.0);
     
     box.setListLimit(100);
-    box.setMinWidth(570.0D);
+    box.setMinWidth(570.0);
     box.setId("box");
     boxcode.getListview().setMinSize(100.0D, 100.0D);
     boxcode.setListLimit(100);
@@ -109,51 +109,19 @@ public final class AddProductSizeNow
             int sid = db.getSize(id_product);
             
             int indexend = db.setAddProductSizeIsnow(sn, id_product, size_product, Repeat.user.getName(), true);
-            
-
-
-
-
-
-
-
-
 
             int searchindex = AddProductSizeNow.this.searchIndexTable(indexend);
             if (searchindex != -1) {
               Procurement_product_hist tmp = (Procurement_product_hist)AddProductGate.expected.get(searchindex);
               AddProductGate.expected.set(searchindex, new Procurement_product_hist(tmp.getIndex(), tmp.getDate(), tmp.getName_product(), id_product, tmp.getSize_first(), tmp.getSize_second() + size_product, tmp.getSize_total() + size_product, tmp.getUser(), true));
 
-
-
-
-
-
             }
             else
             {
 
-
-
-
-
               AddProductGate.expected.add(new Procurement_product_hist(indexend, AddProductSizeNow.this.Datenow(), sn, id_product, sid, size_product, sid + size_product, Repeat.user.getName(), false));
             }
-            
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+      
             lbl.setText("Добавленно.");
             lbl.setTextFill(Color.GREEN);
             boxcode.getTextbox().setText("");
@@ -225,7 +193,7 @@ public final class AddProductSizeNow
 
 
     });
-    scene.getStylesheets().add(getClass().getResource("/fxuidemo/login.css").toExternalForm());
+    scene.getStylesheets().add(getClass().getResource("/css/login.css").toExternalForm());
     stage.setScene(scene);
     stage.setWidth(600.0D);
     stage.setHeight(280.0D);

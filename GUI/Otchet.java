@@ -41,7 +41,7 @@ public class Otchet
     Scene scene = new Scene(root);
     box.setId("but");
     root.setPadding(new Insets(20.0D, 20.0D, 20.0D, 20.0D));
-    scene.getStylesheets().add(getClass().getResource("login.css").toExternalForm());
+    scene.getStylesheets().add(getClass().getResource("/css/login.css").toExternalForm());
     stage.setScene(scene);
     
     stage.setWidth(1000.0D);
@@ -78,8 +78,8 @@ public class Otchet
     return node;
   }
   
-  private TableView createTable() {
-    TableView table = new TableView();
+  private TableView<Repot> createTable() {
+    TableView<Repot> table = new TableView<Repot>();
     
     ConnectDB mysql = new ConnectDB();
     
@@ -112,12 +112,9 @@ public class Otchet
     sum.setMinWidth(90.0D);
     sum.setCellValueFactory(new PropertyValueFactory("sum"));
     
-
-
-
     table.setMaxWidth(782.0D);
     table.setStyle("-fx-font: normal 11 Arial;");
-    table.getColumns().addAll(new Object[] { name, id, size, price, sum });
+    table.getColumns().addAll(name, id, size, price, sum);
     
     table.setItems(collect_otchet);
     return table;

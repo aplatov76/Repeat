@@ -34,7 +34,7 @@ public class AddProductGate
   
   public void start(Stage stage) { stage.setTitle("Прием товара");
     BorderPane root = new BorderPane();
-    TableView table = createTable();
+    TableView<Procurement_product_hist> table = createTable();
     root.setLeft(table);
     VBox box = createBut(stage, table);
     root.setId("bp");
@@ -44,7 +44,7 @@ public class AddProductGate
     Scene scene = new Scene(root);
     box.setId("but");
     root.setPadding(new Insets(20.0D, 20.0D, 20.0D, 20.0D));
-    scene.getStylesheets().add(getClass().getResource("/fxuidemo/login.css").toExternalForm());
+    scene.getStylesheets().add(getClass().getResource("/css/login.css").toExternalForm());
     stage.setScene(scene);
     String title = typecontract == 0 ? "Закупки ожидающие проверки" : "История закупок";
     stage.setTitle(title);
@@ -152,7 +152,7 @@ public class AddProductGate
   }
   
   private TableView createTable() {
-    TableView table = new TableView();
+    TableView<Procurement_product_hist> table = new TableView<Procurement_product_hist>();
     table.setStyle("-fx-font: normal 11 Arial;");
     table.columnResizePolicyProperty();
     
@@ -199,7 +199,7 @@ public class AddProductGate
     
 
     table.setMaxWidth(962.0D);
-    table.getColumns().addAll(new Object[] { id, name, dstart, dend, price, sum, remain, user });
+    table.getColumns().addAll(id, name, dstart, dend, price, sum, remain, user);
     
 
     table.setItems(expected);

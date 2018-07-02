@@ -50,7 +50,7 @@ public class AddMetall
     
     root.setCenter(createVBox(db, stage, but));
     Scene scene = new Scene(root);
-    scene.getStylesheets().add(getClass().getResource("login.css").toExternalForm());
+    scene.getStylesheets().add(getClass().getResource("/css/login.css").toExternalForm());
     
     stage.setScene(scene);
     

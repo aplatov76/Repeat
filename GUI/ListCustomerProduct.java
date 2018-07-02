@@ -43,7 +43,7 @@ public class ListCustomerProduct
   
   public void start(Stage stage) {
     BorderPane root = new BorderPane();
-    TableView table = createTable();
+    TableView<ListCustProduct> table = createTable();
     root.setLeft(table);
     VBox box = createBut(stage, table);
     root.setId("bp");
@@ -53,7 +53,7 @@ public class ListCustomerProduct
     Scene scene = new Scene(root);
     box.setId("but");
     root.setPadding(new Insets(20.0D, 20.0D, 20.0D, 20.0D));
-    scene.getStylesheets().add(getClass().getResource("/fxuidemo/login.css").toExternalForm());
+    scene.getStylesheets().add(getClass().getResource("/css/login.css").toExternalForm());
     stage.setScene(scene);
     String title = "Cписок продуктов , только под заказ";
     stage.setTitle(title);
@@ -320,8 +320,8 @@ public class ListCustomerProduct
     return node;
   }
   
-  private TableView createTable() {
-    TableView table = new TableView();
+  private TableView<ListCustProduct> createTable() {
+    TableView<ListCustProduct> table = new TableView<ListCustProduct>();
     table.setStyle("-fx-font: normal 11 Arial;");
     table.columnResizePolicyProperty();
     table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
@@ -354,7 +354,7 @@ public class ListCustomerProduct
 
 
     table.setMinWidth(768.0D);
-    table.getColumns().addAll(new Object[] { id, name, dstart, dend, price });
+    table.getColumns().addAll(id, name, dstart, dend, price);
     
     getContract();
     table.setItems(list);

@@ -47,9 +47,6 @@ public class AdminAdd
     final TextField sname = new TextField();
     final ChoiceBox<String> chois = new ChoiceBox(group);
     final ChoiceBox<Integer> helf = new ChoiceBox();
-    
-
-
 
     final TextField size = new TextField();
     final TextField price = new TextField();
@@ -77,7 +74,7 @@ public class AdminAdd
     grid.add(button, 1, 6);
     Scene scene = new Scene(grid);
     grid.setId("add");
-    scene.getStylesheets().add(getClass().getResource("login.css").toExternalForm());
+    scene.getStylesheets().add(getClass().getResource("/css/login.css").toExternalForm());
     
     stage.setScene(scene);
     

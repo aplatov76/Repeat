@@ -613,20 +613,6 @@ public class ConnectDB
 
       stmt.executeUpdate("INSERT INTO `prais` (`id`,`name`,`short_name`,`group`,`helf`,`value`,`sell`,`actual_status`) VALUES ('0','" + name + "'," + "'" + sname + "'," + "'" + gr + "'," + "'" + h + "'," + "'" + p + "'," + "'" + size + "'," + "'0');");
       
-
-
-
-
-
-
-
-
-
-
-
-
-
-
       ResultSet rs = stmt.executeQuery("SELECT `id` FROM `prais` WHERE `name` = '" + name + "'");
       if (rs.next()) b = rs.getInt(1);
       rs.close();
@@ -644,7 +630,7 @@ public class ConnectDB
 
   public double getStartSum(String user_name, boolean full_short)
   {
-    double start_sum = 0.0D;
+    double start_sum = 0.0;
     try {
       Class.forName("com.mysql.jdbc.Driver");
       java.sql.Date sysdate = new java.sql.Date(new java.util.Date().getTime());
@@ -667,7 +653,7 @@ public class ConnectDB
 
   public LinkedHashMap<String, Double> getStartSum(String data)
   {
-    LinkedHashMap<String, Double> map = new LinkedHashMap();
+    LinkedHashMap<String, Double> map = new LinkedHashMap<String, Double>();
     try
     {
       Class.forName("com.mysql.jdbc.Driver");

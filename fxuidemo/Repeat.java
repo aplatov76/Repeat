@@ -60,6 +60,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 public class Repeat extends javafx.application.Application
 {
@@ -202,7 +203,7 @@ public class Repeat extends javafx.application.Application
       
 
     });
-    node.getChildren().addAll(new Node[] { lbl, one, two, three, fout, six, seven, close });
+    node.getChildren().addAll(lbl, one, two, three, fout, six, seven, close);
     return node;
   }
   
@@ -297,8 +298,8 @@ public class Repeat extends javafx.application.Application
     {
       public void handle(MouseEvent event)
       {
-//        AddProduct add = new AddProduct(Repeat.prod);
-  //      add.start(new Stage());
+        AddProduct add = new AddProduct(Repeat.prod);
+        add.start(new Stage());
         USER_NAME = Repeat.user.getName();
       }
     });
@@ -388,9 +389,9 @@ public class Repeat extends javafx.application.Application
     root.getChildren().remove(0, root.getChildren().size());
   }
   
-  private TableView createTableReg()
+  private TableView<Collection.Registration> createTableReg()
   {
-    TableView table = new TableView();
+    TableView<Collection.Registration> table = new TableView<Collection.Registration>();
     
     table.columnResizePolicyProperty();
     
@@ -434,7 +435,7 @@ public class Repeat extends javafx.application.Application
       connectordb.getSessionBecap(prod, user.getName()); else {
       connectordb.getSessionBecap(prod);
     }
-    table.getColumns().addAll(new Object[] { time, name, id, size, price, sum, user_name });
+    table.getColumns().addAll(time, name, id, size, price, sum, user_name);
     
     return table;
   }
@@ -495,9 +496,9 @@ public class Repeat extends javafx.application.Application
     return table;
   }
   
-  private TableView createTableAdmin()
+  private TableView<AdminPane> createTableAdmin()
   {
-    TableView<AdminPane> table = new TableView();
+    TableView<AdminPane> table = new TableView<AdminPane>();
     
 
     table.columnResizePolicyProperty();
@@ -730,23 +731,26 @@ public class Repeat extends javafx.application.Application
       public void handle(MouseEvent event)
       {
         Repeat.this.clearPane(root);
-        TableView tb = Repeat.this.createTableReg();
+        TableView<Collection.Registration> tb = Repeat.this.createTableReg();
         root.setRight(Repeat.this.createVBoxRegistration(root, but, tb));
         root.setLeft(tb);
         
 
 
         double p = Repeat.connectordb.getStartSum(Repeat.user.getName(), Repeat.user.getRules(10));
-        if (p == 0.0D)
+        if (p == 0.0)
         {
           try
           {
+              //MainApplication.MAIN_STAGE.initStyle(StageStyle.UNDECORATED);
+             // st.initStyle(StageStyle.UNDECORATED);
+              //Dialogs.showInputDialog(stage, "Please enter your name:", "Input Dialog", "title");
             Cassa.start = Double.parseDouble(Dialogs.showInputDialog(st, "amount in cash now :", "Введите начальную сумму", "Fx Layer "));
           }
           catch (NumberFormatException|NullPointerException ed)
           {
             System.out.println("A");
-            Cassa.start = 0.0D;
+            Cassa.start = 0.0;
           }
           finally {
             if (Cassa.start > 0.0D) {

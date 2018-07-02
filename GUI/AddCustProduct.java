@@ -70,7 +70,7 @@ public class AddCustProduct
     grid.add(button, 1, 4);
     Scene scene = new Scene(grid);
     grid.setId("add");
-    scene.getStylesheets().add(getClass().getResource("login.css").toExternalForm());
+    scene.getStylesheets().add(getClass().getResource("/css/login.css").toExternalForm());
     
     stage.setScene(scene);
     

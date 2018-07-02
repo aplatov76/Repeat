@@ -31,11 +31,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-
-
-
-
-
 public class HistoryProcurement
 {
   public static final ObservableList<Procurement_product_hist> contract = FXCollections.observableArrayList();
@@ -59,7 +54,7 @@ public class HistoryProcurement
     Scene scene = new Scene(root);
     
     root.setPadding(new Insets(20.0D, 20.0D, 20.0D, 20.0D));
-    scene.getStylesheets().add(getClass().getResource("/fxuidemo/login.css").toExternalForm());
+    scene.getStylesheets().add(getClass().getResource("/css/login.css").toExternalForm());
     stage.setScene(scene);
     stage.setTitle("История закупок");
     stage.setWidth(1000.0D);
@@ -72,7 +67,7 @@ public class HistoryProcurement
     Application.launch(args);
   }
   
-  private HBox createBut(final Stage stage, TableView table)
+  private HBox createBut(final Stage stage, TableView<Procurement_product_hist> table)
   {
     HBox node = new HBox();
     node.setAlignment(Pos.TOP_CENTER);
@@ -166,7 +161,7 @@ public class HistoryProcurement
   }
   
   private TableView createTable() {
-    TableView table = new TableView();
+    TableView<Procurement_product_hist> table = new TableView<Procurement_product_hist>();
     table.setStyle("-fx-font: normal 11 Arial;");
     
 
@@ -210,7 +205,7 @@ public class HistoryProcurement
     table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     
     table.setMinWidth(700.0D);
-    table.getColumns().addAll(new Object[] { id, data, name, dstart, price, remain, user });
+    table.getColumns().addAll(id, data, name, dstart, price, remain, user);
     table.setItems(contract);
     return table;
   }

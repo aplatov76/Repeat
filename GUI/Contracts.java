@@ -30,10 +30,6 @@ import javafx.stage.Popup;
 import javafx.stage.Stage;
 
 
-
-
-
-
 public class Contracts
 {
   public Contracts() {}
@@ -45,7 +41,7 @@ public class Contracts
   
   public void start(Stage stage) {
     BorderPane root = new BorderPane();
-    TableView table = createTable();
+    TableView<contract> table = createTable();
     root.setLeft(table);
     VBox box = createBut(stage, table);
     root.setId("bp");
@@ -55,7 +51,7 @@ public class Contracts
     Scene scene = new Scene(root);
     box.setId("but");
     root.setPadding(new Insets(20.0D, 20.0D, 20.0D, 20.0D));
-    scene.getStylesheets().add(getClass().getResource("/fxuidemo/login.css").toExternalForm());
+    scene.getStylesheets().add(getClass().getResource("/css/login.css").toExternalForm());
     stage.setScene(scene);
     String title = typecontract == 0 ? "Договоры рассрочки платежа" : "Customer orders";
     stage.setTitle(title);
@@ -233,8 +229,8 @@ public class Contracts
     return node;
   }
   
-  private TableView createTable() {
-    TableView table = new TableView();
+  private TableView<contract> createTable() {
+    TableView<contract> table = new TableView<contract>();
     table.setStyle("-fx-font: normal 11 Arial;");
     table.columnResizePolicyProperty();
     
@@ -274,13 +270,9 @@ public class Contracts
     TableColumn user = new TableColumn("User");
     user.setMinWidth(90.0D);
     user.setCellValueFactory(new PropertyValueFactory("user"));
-    
-
-
-
 
     table.setMaxWidth(922.0D);
-    table.getColumns().addAll(new Object[] { id, name, dstart, dend, price, sum, remain, user });
+    table.getColumns().addAll(id, name, dstart, dend, price, sum, remain, user);
     
 
     table.setItems(contract);

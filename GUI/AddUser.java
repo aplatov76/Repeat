@@ -160,7 +160,7 @@ public final class AddUser
         
       }
     });
-    scene.getStylesheets().add(getClass().getResource("/fxuidemo/login.css").toExternalForm());
+    scene.getStylesheets().add(getClass().getResource("/css/login.css").toExternalForm());
     stage.setScene(scene);
     stage.setWidth(600.0D);
     stage.setHeight(260.0D);

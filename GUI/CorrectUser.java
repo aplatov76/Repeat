@@ -38,7 +38,7 @@ public class CorrectUser
   public void start(Stage stage) { BorderPane root = new BorderPane();
     
 
-    TableView tbu = createTable();
+    TableView<Users> tbu = createTable();
     TableView tbr = createTableRules();
     VBox box = createBut(stage, tbu, tbr);
     VBox tb = new VBox();
@@ -53,7 +53,7 @@ public class CorrectUser
     Scene scene = new Scene(root);
     box.setId("but");
     root.setPadding(new Insets(20.0D, 20.0D, 20.0D, 20.0D));
-    scene.getStylesheets().add(getClass().getResource("/fxuidemo/login.css").toExternalForm());
+    scene.getStylesheets().add(getClass().getResource("/css/login.css").toExternalForm());
     stage.setScene(scene);
     stage.setWidth(1095.0D);
     stage.setHeight(600.0D);
@@ -184,7 +184,7 @@ public class CorrectUser
   }
   
   private TableView createTable() {
-    TableView<Users> table = new TableView();
+    TableView<Users> table = new TableView<Users>();
     
     ConnectDB mysql = new ConnectDB();
     
@@ -209,13 +209,13 @@ public class CorrectUser
     table.setItems(prod);
     table.setMaxWidth(890.0D);
     table.setMaxHeight(180.0D);
-    table.getColumns().addAll(new TableColumn[] { name, rule });
+    table.getColumns().addAll(name, rule);
     mysql.loadUser(prod);
     return table;
   }
   
   private TableView createTableRules() {
-    TableView<Rules> table = new TableView();
+    TableView<Rules> table = new TableView<Rules>();
     
     ConnectDB mysql = new ConnectDB();
     
@@ -323,18 +323,14 @@ public class CorrectUser
     look_hist_metall.setMaxWidth(45.0D);
     look_hist_metall.setCellValueFactory(new PropertyValueFactory("look_hist_metall"));
     
-
     table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     table.setId("tablefont");
     
     table.setItems(rules);
     table.setMaxWidth(890.0D);
     table.setMaxHeight(180.0D);
-    table.getColumns().addAll(new TableColumn[] { name, reg, rule, add_product, clear_product, correct_product, look_history, look_journal, correct_user, use_group, full_otchet, full_registration, installment_paid, customer_order, order_product_add, order_product_cor, order_product_del, zacup_product_add, zacup_product_cor, zacup_product_del, zacup_product_ok, look_hist_metall });
+    table.getColumns().addAll(name, reg, rule, add_product, clear_product, correct_product, look_history, look_journal, correct_user, use_group, full_otchet, full_registration, installment_paid, customer_order, order_product_add, order_product_cor, order_product_del, zacup_product_add, zacup_product_cor, zacup_product_del, zacup_product_ok, look_hist_metall);
     
-
-
-
     mysql.loadRulesCorrect(rules);
     
     return table;

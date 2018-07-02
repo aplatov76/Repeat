@@ -81,7 +81,7 @@ public class CorrectCustProduct
     grid.add(button, 1, 3);
     Scene scene = new Scene(grid);
     grid.setId("add");
-    scene.getStylesheets().add(getClass().getResource("login.css").toExternalForm());
+    scene.getStylesheets().add(getClass().getResource("/css/login.css").toExternalForm());
     
     ok.setOnMouseClicked(new EventHandler<MouseEvent>() {
       public void handle(MouseEvent event) {

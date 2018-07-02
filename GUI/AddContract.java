@@ -65,7 +65,7 @@ public class AddContract extends javafx.application.Application
     
     root.setCenter(createGrid(data, db, stage, but));
     Scene scene = new Scene(root);
-    scene.getStylesheets().add(getClass().getResource("/fxuidemo/login.css").toExternalForm());
+    scene.getStylesheets().add(getClass().getResource("/css/login.css").toExternalForm());
     
     stage.setScene(scene);
     

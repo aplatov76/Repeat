@@ -61,7 +61,7 @@ public class AddRule
     
     Scene scene = new Scene(pane);
     
-    scene.getStylesheets().add(getClass().getResource("login.css").toExternalForm());
+    scene.getStylesheets().add(getClass().getResource("/css/login.css").toExternalForm());
     stage.setScene(scene);
     stage.setWidth(400.0D);
     stage.setHeight(230.0D);

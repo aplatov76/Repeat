@@ -33,19 +33,15 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
 
-
-
-
-
-
 public class HistoryMetall
 {
   public static final ObservableList<HistoryMetallOtchet> contract = FXCollections.observableArrayList();
   
   public HistoryMetall() {}
   
-  public void start(Stage stage) { BorderPane root = new BorderPane();
-    TableView table = createTable();
+  public void start(Stage stage) { 
+    BorderPane root = new BorderPane();
+    TableView<HistoryMetallOtchet> table = createTable();
     VBox pane = new VBox();
     
     HBox box = createBut(stage, table);
@@ -61,7 +57,7 @@ public class HistoryMetall
     Scene scene = new Scene(root);
     
     root.setPadding(new Insets(20.0D, 20.0D, 20.0D, 20.0D));
-    scene.getStylesheets().add(getClass().getResource("/fxuidemo/login.css").toExternalForm());
+    scene.getStylesheets().add(getClass().getResource("/css/login.css").toExternalForm());
     stage.setScene(scene);
     stage.setTitle("История регистрации металл");
     stage.setWidth(1200.0D);
@@ -198,8 +194,8 @@ public class HistoryMetall
     return node;
   }
   
-  private TableView createTable() {
-    TableView table = new TableView();
+  private TableView<HistoryMetallOtchet> createTable() {
+    TableView<HistoryMetallOtchet> table = new TableView<HistoryMetallOtchet>();
     table.setStyle("-fx-font: normal 11 Arial;");
     
 
@@ -250,7 +246,7 @@ public class HistoryMetall
     
     table.setMinWidth(700.0D);
     table.setMinHeight(500.0D);
-    table.getColumns().addAll(new Object[] { id, data, name, code, size, remain, sum, user });
+    table.getColumns().addAll(id, data, name, code, size, remain, sum, user);
     table.setItems(contract);
     return table;
   }

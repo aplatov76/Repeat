@@ -95,19 +95,6 @@ public final class ContractPaid
             ((contract)Contracts.contract.get(index)).setRemaining_sum(remain);
             Contracts.contract.set(index, new contract(idc, name.getText(), ((contract)Contracts.contract.get(index)).getSnum(), ((contract)Contracts.contract.get(index)).getAdress(), ((contract)Contracts.contract.get(index)).getYear(), ((contract)Contracts.contract.get(index)).getPascout(), ((contract)Contracts.contract.get(index)).getPhone(), ((contract)Contracts.contract.get(index)).getDstart(), ((contract)Contracts.contract.get(index)).getDend(), total, paidnow, remain, st, ((contract)Contracts.contract.get(index)).getUser()));
             
-
-
-
-
-
-
-
-
-
-
-
-
-
             Cassa.cassa += paidadd;
             Cassa.setCassa();
             db.setContractUpdatePaid(idc, paidnow, remain, st);
@@ -125,7 +112,7 @@ public final class ContractPaid
       
 
     });
-    scene.getStylesheets().add(getClass().getResource("/fxuidemo/login.css").toExternalForm());
+    scene.getStylesheets().add(getClass().getResource("/css/login.css").toExternalForm());
     stage.setScene(scene);
     stage.setWidth(400.0D);
     stage.setHeight(270.0D);

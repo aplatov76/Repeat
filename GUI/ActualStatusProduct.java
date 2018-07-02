@@ -54,7 +54,7 @@ public class ActualStatusProduct
     Scene scene = new Scene(root);
     box.setId("but");
     root.setPadding(new Insets(10.0, 10.0, 10.0, 10.0));
-    scene.getStylesheets().add(getClass().getResource("/fxuidemo/login.css").toExternalForm());
+    scene.getStylesheets().add(getClass().getResource("/css/login.css").toExternalForm());
     stage.setScene(scene);
     
     stage.setWidth(1150.0);

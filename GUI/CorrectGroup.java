@@ -140,7 +140,7 @@ public class CorrectGroup
     b.setId("bp");
     b.setPadding(new Insets(20.0D, 20.0D, 20.0D, 20.0D));
     Scene scene = new Scene(b);
-    scene.getStylesheets().add(getClass().getResource("/fxuidemo/login.css").toExternalForm());
+    scene.getStylesheets().add(getClass().getResource("/css/login.css").toExternalForm());
     stage.setScene(scene);
     stage.setWidth(600.0D);
     stage.setHeight(450.0D);
@@ -148,7 +148,7 @@ public class CorrectGroup
   }
   
   private TableView createTable() {
-    TableView<GroupProduct> table = new TableView();
+    TableView<GroupProduct> table = new TableView<GroupProduct>();
     
     ConnectDB db = new ConnectDB();
     
@@ -159,24 +159,20 @@ public class CorrectGroup
     n.setMaxWidth(60.0D);
     n.setCellValueFactory(new PropertyValueFactory("n"));
     
-
-
     TableColumn id = new TableColumn("Код");
     id.setMinWidth(60.0D);
     id.setMaxWidth(60.0D);
     id.setCellValueFactory(new PropertyValueFactory("id"));
     
-
     TableColumn name = new TableColumn("Наименование");
     name.setMinWidth(150.0D);
     name.setCellValueFactory(new PropertyValueFactory("name"));
     
-
     table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     table.setItems(groups);
     
 
-    table.getColumns().addAll(new TableColumn[] { n, id, name });
+    table.getColumns().addAll(n, id, name);
     db.loadGroupTable(groups);
     
     return table;

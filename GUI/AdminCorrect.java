@@ -99,7 +99,7 @@ public class AdminCorrect
     grid.add(warning, 1, 8, 2, 1);
     Scene scene = new Scene(grid);
     grid.setId("add");
-    scene.getStylesheets().add(getClass().getResource("login.css").toExternalForm());
+    scene.getStylesheets().add(getClass().getResource("/css/login.css").toExternalForm());
     
 
     helf.setOnKeyReleased(new EventHandler<KeyEvent>()
@@ -131,12 +131,6 @@ public class AdminCorrect
             db.updatePrice(p_prev.getId(), name.getText(), sname.getText(), gr, hl, pr, sp, as);
             AdminPane p_next = new AdminPane(select, p_prev.getId(), cor_name, cor_sname, gr, hl, sp, pr, as);
             db.setLog(p_next, p_prev, 1, Repeat.user.getName());
-            
-
-
-
-
-
 
             Repeat.admprod.set(select, new AdminPane(select, p_prev.getId(), cor_name, cor_sname, gr, hl, sp, pr, as));
             if (p_prev.getHelf() != hl) { db.getGroupProductAdmin(Repeat.admprod, gr, 0);

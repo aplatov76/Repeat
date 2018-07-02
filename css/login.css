@@ -6,15 +6,190 @@
         Purpose of the stylesheet follows.
 */
 
+
+
+
+/* Selected row */
+.table-view:focused .table-row-cell:filled:focused:selected {
+    -fx-background-color: linear-gradient(lightblue, blue);
+    -fx-background-insets: 0, 1, 2;
+    -fx-background: -fx-accent;
+    -fx-text-fill: -fx-selection-bar-text;
+}
+
+/* Selected row when table not focused */
+.table-row-cell:filled:focused:selected {
+    -fx-background-color: linear-gradient(lightgray, gray);
+    -fx-background-insets: 0, 1, 2;
+    -fx-background: -fx-accent;
+    -fx-text-fill: -fx-selection-bar-text;
+}
+
+/* Row hovered */
+.table-view:row-selection .table-row-cell:filled:hover {
+    -fx-background-color: linear-gradient(lightgray, orangered);
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-text-fill: -fx-text-inner-color;
+}
+
+/* Selected row hovered */
+.table-view:focused .table-row-cell:filled:focused:selected:hover {
+    -fx-background: -fx-accent;
+    -fx-background-color: lightgreen;
+    -fx-background-insets: 0, 1, 2;
+    -fx-text-fill: -fx-selection-bar-text;
+}
+
+/* Selected row hovered when table not focused */
+.table-view:row-selection .table-row-cell:filled:focused:hover {
+    -fx-background-color: linear-gradient(lightgrey, orangered);
+    -fx-background-insets: 0, 0 0 1 0, 1 1 2 1, 2 2 3 2, 3 3 4 3;
+    -fx-text-fill: -fx-text-inner-color;
+}
+
+.table-view .column-header .label {
+    -fx-disabled: true;
+}
+
+
+
 #btnLogin {
 	    -fx-background-radius: 30, 30, 29, 28;
 	    -fx-padding: 3px 10px 3px 10px;
 	    -fx-background-color: linear-gradient(orange, orangered );
+            -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.4) , 5, 0.0 , 0 , 1 );
 	}
+        
+#tablefont {
+            -fx-font-size:11;
+            -fx-font-header: normal 11 Arial;
+        }   
+ 
+ #record-sales:hover {
+    -fx-background-color:
+        linear-gradient(from 0% 93% to 0% 100%, lightcoral 0%, orangered 100%),
+        orangered,
+        gray,
+        radial-gradient(center 50% 50%, radius 100%, orangered, whitesmoke);
+ }
+ #record-sales:pressed {
+    -fx-padding: 10 15 13 15;
+    -fx-background-insets: 2 0 0 0,2 0 3 0, 2 0 4 0, 2 0 5 0;
+ }
+ 
+ 
+  #dark-blue:hover {
+    -fx-background-color:
+        linear-gradient(from 0% 93% to 0% 100%, lightcoral 0%, orangered 100%),
+        orangered,
+        gray,
+        radial-gradient(center 50% 50%, radius 100%, orangered, whitesmoke);
+ }
+ 
+ #dark-blue {
+    -fx-background-color:
+        #090a0c,
+        linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
+        linear-gradient(#20262b, #191d22),
+        radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));
+    -fx-background-radius: 5,4,3,5;
+    -fx-background-insets: 0,1,2,0;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );
+    -fx-font-family: "Arial";
+    -fx-text-fill: linear-gradient(white, #d0d0d0);
+    -fx-font-size: 12px;
+    -fx-padding: 10 10 10 10;
+}
+#dark-blue Text {
+    -fx-effect: dropshadow( one-pass-box , rgba(0,0,0,0.9) , 1, 0.0 , 0 , 1 );
+}
+
+ #dark-green {
+    -fx-background-color:
+        #090a0c,
+        linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
+        linear-gradient(#20262b, #191d22),
+        radial-gradient(center 50% 0%, radius 100%, rgba(0,255,0,0.9), rgba(255,255,255,0));
+    -fx-background-radius: 5,4,3,5;
+    -fx-background-insets: 0,1,2,0;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );
+    -fx-font-family: "Arial";
+    -fx-text-fill: linear-gradient(white, #d0d0d0);
+    -fx-font-size: 12px;
+    -fx-padding: 20 10 20 10;
+}
+
+  #dark-green:hover {
+    -fx-background-color:
+        linear-gradient(from 0% 93% to 0% 100%, lightcoral 0%, orangered 100%),
+        orangered,
+        gray,
+        radial-gradient(center 50% 50%, radius 100%, yellow, whitesmoke);
+ }
+
+.split-menu-button .label {
+     -fx-background-color:
+        #090a0c,
+        linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
+        linear-gradient(#20262b, #191d22),
+        radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));
+    -fx-background-radius: 5,4,3,5;
+    -fx-background-insets: 0,1,2,0;
+    -fx-text-fill: green;
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );
+    -fx-font-family: "Arial";
+    -fx-text-fill: linear-gradient(white, #d0d0d0);
+    -fx-font-size: 12px;
+    -fx-padding: 10 10 10 10;
+}
+
+.split-menu-button .arrow-button {
+     -fx-background-color:
+        #090a0c,
+        linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
+        linear-gradient(#20262b, #191d22),
+        radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));
+    -fx-background-radius: 5,4,3,5;
+    -fx-background-insets: 0,1,2,0;
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );
+    -fx-text-fill: linear-gradient(white, #d0d0d0);
+    -fx-padding: 5 5 5 5;
+}
+
+  .split-menu-button .label:hover {
+    -fx-background-color:
+        linear-gradient(from 0% 93% to 0% 100%, lightcoral 0%, orangered 100%),
+        orangered,
+        gray,
+        radial-gradient(center 50% 50%, radius 100%, orangered, whitesmoke);
+ }
+
+
+     
 #text {
 	    -fx-background-color: linear-gradient(orange, orangered );
 	    -fx-border-color: white;
 	}
+        
+#testidreg{
+            
+        }        
+        
+#labeladmin {
+            -fx-font-family: "serif";
+            -fx-font-style: italic;
+            -fx-text-fill: black;
+	    -fx-font-size: 14px;
+            -fx-underline:true;
+	    
+	}
+        
+#dark-popup {
+    -fx-background-color: linear-gradient(lightblue, whitesmoke );
+    -fx-background-radius: 5,4,3,5;
+ }
 #root {
 	 -fx-background-color:  linear-gradient(lightgray, gray);
 	 -fx-border-color: white;
@@ -29,8 +204,94 @@
 	 -fx-border-radius: 20;
 	 -fx-padding: 10 10 10 10;
 	 -fx-background-radius: 20;
-	}        
+	}      
+ #pfilter {
+	 -fx-background-color:  black;
+	 -fx-border-color: white;
+	 -fx-border-radius: 20;
+	 -fx-padding: 10 10 10 10;
+	 -fx-background-radius: 20;
+	} 
 #bp {
-	 -fx-background-color:  linear-gradient(gray,DimGrey );
-	  
+	 -fx-background-color:  linear-gradient(lightgray,DimGrey);
+       /*  -fx-background-image:  url("logo.png");*/
+	
 	}
+#box {
+        
+         -fx-skin: "autofilltextbox.AutoFillTextBoxSkin";
+}        
+
+#cassa{
+         -fx-background-color:  linear-gradient(lightgray, gray);
+	 -fx-border-color: white;
+	 -fx-border-radius: 20;
+	 -fx-padding: 10 10 10 10;
+	 -fx-background-radius: 20;
+}
+
+
+
+#DemoLabel {
+	-fx-font-size: 36px;
+	-fx-text-fill: salmon;
+}
+#DatepickerArrow {
+	-fx-fill: gray;
+	-fx-stroke: gray;
+}
+#DatepickerArrow:hover {
+	-fx-fill: black;
+	-fx-stroke: black;
+}
+#DatePicker {
+	-fx-background-color: linear-gradient(to bottom, white, wheat);
+    -fx-border-color: black;
+}
+#DatepickerDayCell {
+	-fx-background-color: transparent;
+	-fx-border-radius: 4;
+	-fx-spacing: 0;
+}
+#DatepickerDayCell:hover {
+	-fx-background-color: azure;
+	-fx-border-color: royalblue;
+	-fx-border-radius: 3;
+	-fx-text-fill: royalblue;
+}
+#DatepickerDayCell .datepicker-today-cell {
+    -fx-background-color: lightsteelblue;
+   	-fx-border-radius: 3;
+   	-fx-border-style: segments(2,2);
+   	-fx-border-color: royalblue;
+    -fx-text-fill: royalblue;
+	-fx-font-size: 12px;
+}
+.datepicker-weekday-row {
+    -fx-background-color: linear-gradient(to bottom, gray, lightgray, lightgray, lightgray, gray);
+    -fx-text-fill: black;
+	-fx-font-size: 12px;
+}
+.datepicker-monthyear-row {
+	-fx-background-color: linear-gradient(to bottom, beige, lightsalmon, beige); 
+	-fx-text-fill: black;
+	-fx-font-size: 12px;
+}
+.datepicker-othermonth-cell {
+   	-fx-border-radius: 4;
+    -fx-text-fill: gray;
+	-fx-font-size: 12px;
+}
+#DatepickerTodayButton {
+	-fx-font-size: 12px;
+}
+#DatepickerTodayButtonBox {
+	-fx-padding: 5;
+}
+#CalenderButton {
+    -fx-font-size: 14px;
+	-fx-background-image: url("calender_icon.png");
+	-fx-background-color: null;
+	-fx-background-repeat: no-repeat;
+	-fx-background-position: center;
+}

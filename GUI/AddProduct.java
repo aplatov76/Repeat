@@ -70,7 +70,7 @@ public class AddProduct extends Application
     
     root.setCenter(createGrid(data, cdata, db, stage, but));
     Scene scene = new Scene(root);
-    scene.getStylesheets().add(getClass().getResource("login.css").toExternalForm());
+    scene.getStylesheets().add(getClass().getResource("/css/login.css").toExternalForm());
     
     stage.setScene(scene);
     
@@ -159,7 +159,7 @@ public class AddProduct extends Application
     grid.add(new Label("Наличие: "), 0, 5);
     grid.add(control, 1, 5, gy, 1);
     
-    final TableView tl = createTableReg();
+    final TableView<GateReg> tl = createTableReg();
     
     prod.add(new GateReg());
     grid.add(tl, 0, 7, 2, 1);
@@ -382,8 +382,8 @@ public class AddProduct extends Application
     return grid;
   }
   
-  private TableView createTableReg() { 
-    TableView<GateReg> table = new TableView();
+  private TableView<GateReg> createTableReg() { 
+    TableView<GateReg> table = new TableView<GateReg>();
 
     TableColumn n = new TableColumn("№");
     n.setMinWidth(30.0D);
@@ -417,17 +417,14 @@ public class AddProduct extends Application
     sum.setMinWidth(90.0);
     
     sum.setCellValueFactory(new PropertyValueFactory("sum"));
-    
-
-
-
+ 
     table.setStyle("-fx-font: normal 11 Arial;");
     table.setMaxWidth(770.0);
     table.setMaxHeight(350.0);
     
     table.setItems(prod);
     
-    table.getColumns().addAll(new TableColumn[] { n, name, id, size, price, sum });
+    table.getColumns().addAll(n, name, id, size, price, sum );
     
 
     return table;
