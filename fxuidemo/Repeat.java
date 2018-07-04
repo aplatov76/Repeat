@@ -76,6 +76,8 @@ public class Repeat extends javafx.application.Application
   private Stage st;
   private VBox but;
   
+  public static Dimension sSize;
+  
   public Repeat() {}
   
   public static void main(String[] args) { javafx.application.Application.launch(args); }
@@ -96,7 +98,7 @@ public class Repeat extends javafx.application.Application
     
     root.setRight(but);
     
-    Dimension sSize = Toolkit.getDefaultToolkit().getScreenSize();
+    sSize = Toolkit.getDefaultToolkit().getScreenSize();
     root.setId("bp");
     but.setId("but");
     
@@ -498,7 +500,7 @@ public class Repeat extends javafx.application.Application
   
   private TableView<AdminPane> createTableAdmin()
   {
-    TableView<AdminPane> table = new TableView<AdminPane>();
+    TableView<AdminPane> table = new TableView<>();
     
 
     table.columnResizePolicyProperty();
@@ -522,13 +524,12 @@ public class Repeat extends javafx.application.Application
 
     TableColumn sname = new TableColumn("Наименование");
     sname.setMinWidth(380.0D);
-    sname.setCellValueFactory(new PropertyValueFactory("shortname"));
-    
+    sname.setCellValueFactory(new PropertyValueFactory("shortname"));    
 
     TableColumn group = new TableColumn("Группа");
-    group.setMinWidth(30.0D);
-    group.setCellValueFactory(new PropertyValueFactory("group"));
-    
+    group.setMinWidth(30.0);
+    //group.setMaxWidth(30.0);
+    group.setCellValueFactory(new PropertyValueFactory("group"));   
 
     TableColumn helf = new TableColumn("Вес");
     helf.setMinWidth(30.0D);
@@ -536,16 +537,26 @@ public class Repeat extends javafx.application.Application
     
     TableColumn status = new TableColumn("Статус");
     status.setMinWidth(20.0D);
-    status.setCellValueFactory(new PropertyValueFactory("actual_status"));
-    
+    status.setCellValueFactory(new PropertyValueFactory("actual_status"));    
 
     TableColumn col = new TableColumn("Остаток");
-    col.setMinWidth(60.0D);
+    col.setMinWidth(50.0D);
     col.setCellValueFactory(new PropertyValueFactory("size"));
     
+    TableColumn stock = new TableColumn("Склады");
+    stock.setMinWidth(20.0);
+    stock.setCellValueFactory(new PropertyValueFactory("stock"));
+    
+    TableColumn stock_size_0 = new TableColumn("Ск 0");
+    stock_size_0.setMinWidth(30.0);
+    stock_size_0.setCellValueFactory(new PropertyValueFactory("stock_size_0"));
+    
+    TableColumn stock_size_1 = new TableColumn("Ск 1");
+    stock_size_1.setMinWidth(30.0);
+    stock_size_1.setCellValueFactory(new PropertyValueFactory("stock_size_1"));
 
     TableColumn price = new TableColumn("Цена");
-    price.setMinWidth(60.0D);
+    price.setMinWidth(50.0);
     price.setCellValueFactory(new PropertyValueFactory("price"));
     
     connectordb.getPaneAdmin(admprod);
@@ -553,8 +564,9 @@ public class Repeat extends javafx.application.Application
     table.setItems(admprod);
     table.setId("tablefont");
     
-    table.getColumns().addAll(new TableColumn[] { code, id, sname, group, helf, status, col, price });
-    table.setMinWidth(1038.0D);
+    table.getColumns().addAll(code, id, sname, group,/* helf, status,*/ col,price,stock, stock_size_0, stock_size_1);
+    double width = sSize.width - sSize.width*0.235;
+    table.setMaxWidth(width);
     return table;
   }
   
@@ -870,15 +882,6 @@ public class Repeat extends javafx.application.Application
     
     Button contract = new Button("Заказы");
     Button zakazi = new Button("Рассрочка");
-    
-
-
-
-
-
-
-
-
 
     contract.setId("dark-blue");
     zakazi.setId("dark-blue");
@@ -886,9 +889,7 @@ public class Repeat extends javafx.application.Application
     cor.setId("dark-blue");
     del.setId("dark-blue");
     cgroup.setId("dark-blue");
-    print.setId("dark-blue");
-    
-
+    print.setId("dark-blue");    
 
     if (!user.getRules(2)) add.setDisable(true);
     if (!user.getRules(4)) cor.setDisable(true);

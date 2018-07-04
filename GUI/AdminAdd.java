@@ -45,24 +45,37 @@ public class AdminAdd
 
     final TextField name = new TextField();
     final TextField sname = new TextField();
+    
+    final TextField stock = new TextField();
+    final TextField stock_0 = new TextField();
+    final TextField stock_1 = new TextField();
+    
     final ChoiceBox<String> chois = new ChoiceBox(group);
     final ChoiceBox<Integer> helf = new ChoiceBox();
 
     final TextField size = new TextField();
     final TextField price = new TextField();
-    name.setMinWidth(500.0D);
-    grid.add(new Label("Полное наименование: "), 0, 0);
-    grid.add(name, 1, 0);
-    grid.add(new Label("Cокращенное наимен.: "), 0, 1);
+    sname.setMinWidth(500.0D);
+    /*grid.add(new Label("Полное наименование: "), 0, 0);
+    grid.add(name, 1, 0);*/
+    grid.add(new Label("Наименование: "), 0, 1);
     grid.add(sname, 1, 1);
     grid.add(new Label("Группа товара: "), 0, 2);
     grid.add(chois, 1, 2);
-    grid.add(new Label("Вес в списке: "), 0, 3);
-    grid.add(helf, 1, 3);
-    grid.add(new Label("Количество: "), 0, 4);
-    grid.add(size, 1, 4);
-    grid.add(new Label("Cтоимость: "), 0, 5);
-    grid.add(price, 1, 5);
+  /*grid.add(new Label("Вес в списке: "), 0, 3);
+    grid.add(helf, 1, 3);*/
+    grid.add(new Label("Склад: "), 0, 3);
+    grid.add(stock, 1, 3);
+    grid.add(new Label("Склад 0: "), 0, 4);
+    grid.add(stock_0, 1, 4);
+    grid.add(new Label("Склад 1: "), 0, 5);
+    grid.add(stock_1, 1, 5);
+    grid.add(new Label("Общее: "), 0, 6);
+    grid.add(size, 1, 6);
+    grid.add(new Label("Количество: "), 0, 7);
+    grid.add(size, 1, 7);
+    grid.add(new Label("Cтоимость: "), 0, 8);
+    grid.add(price, 1, 8);
     
     Button ok = new Button("Готово");
     Button close = new Button("Закрыть");
@@ -80,8 +93,9 @@ public class AdminAdd
     
     ok.setOnMouseClicked(new EventHandler<MouseEvent>() {
       public void handle(MouseEvent event) {
-        String new_name = name.getText();
+        //String new_name;// = name.getText();
         String snew_name = name.getText();
+        String new_name = snew_name;
         int choisindex = chois.getSelectionModel().getSelectedIndex();
         int helfindex = helf.getSelectionModel().getSelectedIndex();
         
@@ -92,12 +106,12 @@ public class AdminAdd
             p = p.substring(0, to);
             int group = Integer.parseInt(p);
             
-            db.setProductAdmin(name.getText(), sname.getText(), group, helfindex, Integer.parseInt(size.getText()), Double.parseDouble(price.getText()));
+            db.setProductAdmin(name.getText(), sname.getText(), group, helfindex, Integer.parseInt(size.getText()), Double.parseDouble(price.getText()),Integer.parseInt(stock.getText()),Integer.parseInt(stock_0.getText()),Integer.parseInt(stock_1.getText()));
             
             int newid = db.setID(sname.getText());
             int index_next = Repeat.admprod.size();
             
-            AdminPane new_product = new AdminPane(index_next, newid, name.getText(), sname.getText(), group, helfindex, Integer.parseInt(size.getText()), Double.parseDouble(price.getText()), 0);
+            AdminPane new_product = new AdminPane(index_next, newid, name.getText(), sname.getText(), group, helfindex, Integer.parseInt(size.getText()), Double.parseDouble(price.getText()), 0,0,Integer.parseInt(stock_0.getText()),Integer.parseInt(stock_1.getText()));
             db.setLog(new_product, new_product, 0, Repeat.user.getName());
             
             Repeat.admprod.add(new_product);

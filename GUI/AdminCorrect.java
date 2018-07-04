@@ -62,6 +62,11 @@ public class AdminCorrect
     
     final TextField name = new TextField(p_prev.getName());
     final TextField sname = new TextField(p_prev.getShortname());
+    final TextField stock = new TextField("" + p_prev.getStock());
+    
+    final TextField stock_0 = new TextField("" + p_prev.getStock_Size_0());
+    final TextField stock_1 = new TextField("" + p_prev.getStock_Size_1());
+    
     final ChoiceBox<String> chois = new ChoiceBox(group);
     chois.getSelectionModel().select(iget);
     final TextField helf = new TextField("" + p_prev.getHelf());
@@ -73,18 +78,22 @@ public class AdminCorrect
     name.setMinWidth(500.0D);
     
     final Label warning = new Label();
-    grid.add(new Label("Полное наименование: "), 0, 0);
+    grid.add(new Label("Наименование: "), 0, 0);
     grid.add(name, 1, 0);
-    grid.add(new Label("Cокращенное наимен: "), 0, 1);
-    grid.add(sname, 1, 1);
+    //grid.add(new Label("Cокращенное наимен: "), 0, 1);
+    //grid.add(sname, 1, 1);
     grid.add(new Label("Группа товара: "), 0, 2);
     grid.add(chois, 1, 2);
-    grid.add(new Label("Вес в списке: "), 0, 3);
-    grid.add(helf, 1, 3);
-    grid.add(new Label("Количество: "), 0, 4);
-    grid.add(size, 1, 4);
-    grid.add(new Label("Cтоимость: "), 0, 5);
-    grid.add(price, 1, 5);
+    //grid.add(new Label("Вес в списке: "), 0, 3);
+    //grid.add(helf, 1, 3);
+    grid.add(new Label("Склад 0: "), 0, 3);
+    grid.add(stock_0, 1, 3);
+    grid.add(new Label("Склад 1: "), 0, 4);
+    grid.add(stock_1, 1, 4);
+    grid.add(new Label("Общее: "), 0, 5);
+    grid.add(size, 1, 5);
+    grid.add(new Label("Cтоимость: "), 0, 6);
+    grid.add(price, 1, 6);
     grid.add(new Label("Cтатус: "), 0, 6);
     grid.add(actual_status, 1, 6);
     
@@ -116,23 +125,39 @@ public class AdminCorrect
     ok.setOnMouseClicked(new EventHandler<MouseEvent>() {
       public void handle(MouseEvent event) {
         String cor_name = name.getText();
-        String cor_sname = sname.getText();
+        String cor_sname = cor_name;//sname.getText();
         if ((chois.getSelectionModel().getSelectedIndex() != -1) && (!cor_name.equals("")) && (!cor_sname.equals(""))) {
           String p = (String)chois.getValue();
+          String stock_full = stock.getText();
+          String stock_0i = stock_0.getText();
+          String stock_1i = stock_1.getText();
+          
           try {
             int to = p.indexOf(" ");
             p = p.substring(0, to);
             int gr = Integer.parseInt(p);
-            int hl = Integer.parseInt(helf.getText());
+            int hl = 1;//Integer.parseInt(helf.getText());
             int sp = Integer.parseInt(size.getText());
             double pr = Double.parseDouble(price.getText());
             int as = Integer.parseInt(actual_status.getText());
+
+            int to_stock = stock_full.indexOf(" ");
+            stock_full = stock_full.substring(0, to_stock);
+            int stock_full_i = Integer.parseInt(stock_full);
             
-            db.updatePrice(p_prev.getId(), name.getText(), sname.getText(), gr, hl, pr, sp, as);
-            AdminPane p_next = new AdminPane(select, p_prev.getId(), cor_name, cor_sname, gr, hl, sp, pr, as);
+            int to_stock_0 = stock_0i.indexOf(" ");
+            stock_0i = stock_full.substring(0, to_stock_0);
+            int stock_0_full = Integer.parseInt(stock_0i);
+            
+            int to_stock_1 = stock_1i.indexOf(" ");
+            stock_1i = stock_full.substring(0, to_stock_1);
+            int stock_1_full = Integer.parseInt(stock_1i);
+                        
+            db.updatePrice(p_prev.getId(), name.getText(), sname.getText(), gr, hl, pr, sp, as,stock_full_i,stock_0_full,stock_1_full);
+            AdminPane p_next = new AdminPane(select, p_prev.getId(), cor_name, cor_sname, gr, hl, sp, pr, as,stock_full_i,stock_0_full,stock_1_full);
             db.setLog(p_next, p_prev, 1, Repeat.user.getName());
 
-            Repeat.admprod.set(select, new AdminPane(select, p_prev.getId(), cor_name, cor_sname, gr, hl, sp, pr, as));
+            Repeat.admprod.set(select, new AdminPane(select, p_prev.getId(), cor_name, cor_sname, gr, hl, sp, pr, as,stock_full_i,stock_0_full,stock_1_full));
             if (p_prev.getHelf() != hl) { db.getGroupProductAdmin(Repeat.admprod, gr, 0);
             }
             stage.close();
