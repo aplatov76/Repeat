@@ -16,11 +16,13 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Dialogs;
 import javafx.scene.control.Label;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -44,38 +46,44 @@ public class AdminAdd
     
 
     final TextField name = new TextField();
-    final TextField sname = new TextField();
+    //final TextField sname = new TextField();
+    
+    final CheckBox c_stock_0 = new CheckBox();
+    final CheckBox c_stock_1 = new CheckBox();
+    
+    HBox c_stock = new HBox();
+    c_stock.getChildren().addAll(new Label("Воронцово: "),c_stock_0,new Label("Ильинск: "),c_stock_1);
     
     final TextField stock = new TextField();
-    final TextField stock_0 = new TextField();
-    final TextField stock_1 = new TextField();
+    final TextField stock_0 = new TextField("0");
+    final TextField stock_1 = new TextField("0");
     
     final ChoiceBox<String> chois = new ChoiceBox(group);
     final ChoiceBox<Integer> helf = new ChoiceBox();
 
     final TextField size = new TextField();
     final TextField price = new TextField();
-    sname.setMinWidth(500.0D);
+    name.setMinWidth(500.0D);
     /*grid.add(new Label("Полное наименование: "), 0, 0);
     grid.add(name, 1, 0);*/
     grid.add(new Label("Наименование: "), 0, 1);
-    grid.add(sname, 1, 1);
+    grid.add(name, 1, 1);
     grid.add(new Label("Группа товара: "), 0, 2);
     grid.add(chois, 1, 2);
   /*grid.add(new Label("Вес в списке: "), 0, 3);
     grid.add(helf, 1, 3);*/
     grid.add(new Label("Склад: "), 0, 3);
-    grid.add(stock, 1, 3);
+    grid.add(c_stock, 1, 3);
     grid.add(new Label("Склад 0: "), 0, 4);
     grid.add(stock_0, 1, 4);
     grid.add(new Label("Склад 1: "), 0, 5);
     grid.add(stock_1, 1, 5);
-    grid.add(new Label("Общее: "), 0, 6);
+    grid.add(new Label("Количество: "), 0, 6);
     grid.add(size, 1, 6);
-    grid.add(new Label("Количество: "), 0, 7);
-    grid.add(size, 1, 7);
-    grid.add(new Label("Cтоимость: "), 0, 8);
-    grid.add(price, 1, 8);
+    grid.add(new Label("Cтоимость: "), 0, 7);
+    grid.add(price, 1, 7);
+    
+    size.setDisable(true);
     
     Button ok = new Button("Готово");
     Button close = new Button("Закрыть");
@@ -84,34 +92,174 @@ public class AdminAdd
     HBox button = new HBox();
     button.setSpacing(5.0D);
     button.getChildren().addAll(new Node[] { ok, close });
-    grid.add(button, 1, 6);
+    grid.add(button, 1, 8);
     Scene scene = new Scene(grid);
     grid.setId("add");
     scene.getStylesheets().add(getClass().getResource("/css/login.css").toExternalForm());
     
     stage.setScene(scene);
     
+    /*stock.setOnKeyReleased(new EventHandler<KeyEvent>()
+    {
+      public void handle(KeyEvent t)
+      {
+        String stock_text = stock.getText();
+        try {
+            int stock = Integer.parseInt(stock_text);
+                        
+            switch(stock){
+                case 0: {
+                    stock_1.setDisable(true);  
+                    stock_0.setDisable(false); 
+                    break;
+                }
+                case 1: {
+                    stock_0.setDisable(true); 
+                    stock_1.setDisable(false); 
+                    break;
+                }
+                case 10: {
+                    stock_1.setDisable(false);
+                    stock_0.setDisable(false);
+                    break;
+                }
+                default:{
+                    stock_1.setDisable(true);
+                    stock_0.setDisable(true);
+                    break;
+                }
+            }       
+        }
+        catch (NumberFormatException ex) {
+            
+                stock_1.setDisable(true);
+                stock_0.setDisable(true);
+        
+        }
+        
+      }
+    }); 
+    */
+    c_stock_0.setOnMouseClicked(new EventHandler<MouseEvent>() {
+      public void handle(MouseEvent event) {
+          
+          boolean stock_0i = c_stock_0.selectedProperty().get();
+          boolean stock_1i = c_stock_1.selectedProperty().get();
+          
+          if (!stock_0i) {
+              stock_0.setDisable(true);
+          } else {
+              stock_0.setDisable(false);
+          }
+          if (!stock_1i) {
+              stock_1.setDisable(true);
+          } else {
+              stock_1.setDisable(false);
+          }
+
+          //System.out.println(stock_0i +" "+stock_1i);
+          
+      }
+    });
+    
+    c_stock_1.setOnMouseClicked(new EventHandler<MouseEvent>() {
+      public void handle(MouseEvent event) {
+          
+          boolean stock_0i = c_stock_0.selectedProperty().get();
+          boolean stock_1i = c_stock_1.selectedProperty().get();
+          
+          if(!stock_0i)stock_0.setDisable(true);
+            else stock_0.setDisable(false);
+          if(!stock_1i)stock_1.setDisable(true);
+            else stock_1.setDisable(false);
+          
+          //System.out.println(stock_0i +" "+stock_1i);
+          
+      }
+    });
+    
+    c_stock_0.setOnKeyPressed(null);
+    stock_0.setOnKeyReleased(new EventHandler<KeyEvent>()
+    {
+      public void handle(KeyEvent t)
+      {
+        String stock_t_0 = stock_0.getText();
+        String stock_t_1 = stock_1.getText();
+        
+        try {
+            
+            int stock_0i = Integer.parseInt(stock_t_0);
+            int stock_1i = Integer.parseInt(stock_t_1);  
+            
+            int result = stock_0i + stock_1i;
+            
+            size.setText(String.valueOf(result));
+      
+        }
+        catch (NumberFormatException ex) {
+        
+        }
+        
+      }
+    });
+    stock_1.setOnKeyReleased(new EventHandler<KeyEvent>()
+    {
+      public void handle(KeyEvent t)
+      {
+        String stock_t_0 = stock_0.getText();
+        String stock_t_1 = stock_1.getText();
+        
+        try {
+            
+            int stock_0i = Integer.parseInt(stock_t_0);
+            int stock_1i = Integer.parseInt(stock_t_1);  
+            
+            int result = stock_0i + stock_1i;
+            
+            size.setText(String.valueOf(result));
+      
+        }
+        catch (NumberFormatException ex) {
+        
+        }
+        
+      }
+    }); 
+    
     ok.setOnMouseClicked(new EventHandler<MouseEvent>() {
       public void handle(MouseEvent event) {
         //String new_name;// = name.getText();
         String snew_name = name.getText();
-        String new_name = snew_name;
+        String new_name = name.getText();
         int choisindex = chois.getSelectionModel().getSelectedIndex();
-        int helfindex = helf.getSelectionModel().getSelectedIndex();
+        int helfindex = 1;//helf.getSelectionModel().getSelectedIndex();
+        //System.out.println(snew_name + " " + new_name+ " "+choisindex + " "+helfindex);
         
-        if ((!new_name.equals("")) && (!snew_name.equals("")) && (choisindex != -1) && (helfindex != -1)) {
+        String stock_t_0 = stock_0.getText();
+        String stock_t_1 = stock_1.getText();
+        
+        int stock_0i = Integer.parseInt(stock_t_0);
+        int stock_1i = Integer.parseInt(stock_t_1); 
+            
+        int c_stock_result = -1;
+        
+        if(c_stock_0.selectedProperty().get())c_stock_result = 0;
+        if(c_stock_1.selectedProperty().get())c_stock_result = 1;
+        if(c_stock_1.selectedProperty().get() && c_stock_0.selectedProperty().get())c_stock_result = 10;
+        
+        if ((!new_name.equals("")) && (!snew_name.equals("")) && (choisindex != -1) && (helfindex != -1) && (c_stock_result != -1)) {
           try {
             String p = (String)chois.getSelectionModel().getSelectedItem();
             int to = p.indexOf(" ");
             p = p.substring(0, to);
             int group = Integer.parseInt(p);
             
-            db.setProductAdmin(name.getText(), sname.getText(), group, helfindex, Integer.parseInt(size.getText()), Double.parseDouble(price.getText()),Integer.parseInt(stock.getText()),Integer.parseInt(stock_0.getText()),Integer.parseInt(stock_1.getText()));
+            db.setProductAdmin(snew_name, snew_name, group, helfindex, Integer.parseInt(size.getText()), Double.parseDouble(price.getText()),c_stock_result,stock_0i,stock_1i);
             
-            int newid = db.setID(sname.getText());
+            int newid = db.setID(snew_name);
             int index_next = Repeat.admprod.size();
             
-            AdminPane new_product = new AdminPane(index_next, newid, name.getText(), sname.getText(), group, helfindex, Integer.parseInt(size.getText()), Double.parseDouble(price.getText()), 0,0,Integer.parseInt(stock_0.getText()),Integer.parseInt(stock_1.getText()));
+            AdminPane new_product = new AdminPane(index_next, newid, snew_name, snew_name, group, helfindex, Integer.parseInt(size.getText()), Double.parseDouble(price.getText()), 0,c_stock_result,stock_0i,stock_1i);
             db.setLog(new_product, new_product, 0, Repeat.user.getName());
             
             Repeat.admprod.add(new_product);
@@ -136,6 +284,7 @@ public class AdminAdd
         
         helf.getItems().removeAll(new Integer[0]);
         helf.setItems(db.getHelf(group));
+        helf.setValue(1);    
       }
       
 

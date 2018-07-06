@@ -338,10 +338,6 @@ public class AddProduct extends Application
           for (int i = 0; i < lim; i++) {
             String name = ((GateReg)prod.get(i)).getName();
             int a = Integer.parseInt(((GateReg)prod.get(i)).getSize());
-            
-
-
-
 
             int pid = Integer.parseInt(((GateReg)prod.get(i)).getId());
             

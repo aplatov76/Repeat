@@ -41,8 +41,8 @@ public class AdminPane {
         price = Double.valueOf(p);
         actual_status = as;
         this.stock = stock;
-        this.stock_size_0 = 0;//stock_size_0;
-        this.stock_size_1 = 0;//stock_size_1;
+        this.stock_size_0 = stock_size_0;
+        this.stock_size_1 = stock_size_1;
     }
 
     public void setNumber(int num) {

@@ -464,7 +464,7 @@ public class ConnectDB {
 
             Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
-            stmt.executeUpdate("INSERT INTO `prais` (`id`,`name`,`short_name`,`group`,`helf`,`value`,`sell`,`actual_status`) VALUES ('0','" + name + "'," + "'" + sname + "'," + "'" + gr + "'," + "'" + h + "'," + "'" + p + "'," + "'" + size + "'," + "'0','"+stock+"','"+stock_0+"','"+stock_1+"');");
+            stmt.executeUpdate("INSERT INTO `prais` (`id`,`name`,`short_name`,`group`,`helf`,`value`,`sell`,`actual_status`, `stock`, `stock_0`, `stock_1`) VALUES ('0','" + name + "'," + "'" + sname + "'," + "'" + gr + "'," + "'" + h + "'," + "'" + p + "'," + "'" + size + "'," + "'0','"+stock+"','"+stock_0+"','"+stock_1+"');");
             // next запрос INSERT INTO `stock_price` (`id`, `id_price`, `stock_0`, `stock_1`) VALUES (NULL, '"++"', '10', '20');
             ResultSet rs = stmt.executeQuery("SELECT `id` FROM `prais` WHERE `name` = '" + name + "'");
             if (rs.next()) {
@@ -983,13 +983,14 @@ public class ConnectDB {
 
             Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
-            String query = "SELECT * FROM `prais`;";
+            //(`id`, `name`, `short_name`, `group`, `helf`, `value`, `sell`, `actual_status`, `stock`, `stock_0`, `stock_1`)
+            String query = "SELECT `id`,0,`short_name`,`group`,`helf`,`value`,`sell`,`actual_status`,`stock`,`stock_0`,`stock_1` FROM `prais`;";
             //String query = "select * from `prais`  right join `stock_price` on `prais`.`id` = `stock_price`.`id_price`";
             ResultSet rs = stmt.executeQuery(query);
 
             while (rs.next()) {
                 // int склада не реализован
-               prod.add(new AdminPane(index++, rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getInt(5), rs.getInt(7), rs.getDouble(6), rs.getInt(8),rs.getInt(9),rs.getInt(10),rs.getInt(11)));
+               prod.add(new AdminPane(index++, rs.getInt(1), rs.getString(3), rs.getString(3), rs.getInt(4), rs.getInt(5), rs.getInt(7), rs.getDouble(6), rs.getInt(8),rs.getInt(9),rs.getInt(10),rs.getInt(11)));
                //(int num, int idp, String n, String shortname, int gr, int h, int s, double p, int as, int stock, int stock_size_0,int stock_size_1)
             }
             rs.close();
@@ -1148,8 +1149,8 @@ public class ConnectDB {
 
             Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
-            //String query = "UPDATE `prais` SET `name` = '" + name + "',`short_name` = '" + sname + "',`group` = '" + group + "',`helf` = '" + helf + "',`value` = '" + price + "',`sell` = '" + size + "',`actual_status`= '" + actual_status + "' WHERE `id` = '" + id + "';";
-            String query = "UPDATE `prais` SET `name` = '" + name + "',`short_name` = '" + sname + "',`group` = '" + group + "',`helf` = '" + helf + "',`value` = '" + price + "',`sell` = '" + size + "',`actual_status`= '" + actual_status + "', `stock` = '"+stock+"',`stock_0` = '"+stock_0+"', `stock_1 = '"+stock_1+"' WHERE `id` = '" + id + "'";
+
+            String query = "UPDATE `prais` SET `name` = '" + name + "',`short_name` = '" + sname + "',`group` = '" + group + "',`helf` = '" + helf + "',`value` = '" + price + "',`sell` = '" + size + "',`actual_status`= '" + actual_status + "', `stock` = '"+stock+"',`stock_0` = '"+stock_0+"', `stock_1` = '"+stock_1+"' WHERE `id` = '" + id + "'";
             stmt.executeUpdate(query);
 
             stmt.close();
