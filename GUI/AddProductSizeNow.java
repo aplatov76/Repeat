@@ -106,11 +106,16 @@ public final class AddProductSizeNow
           int size_product = Integer.parseInt(size.getText());
           
           if ((size_product > 0) && (id_product != -1)) {
-            int sid = db.getSize(id_product);
-            
-            int indexend = db.setAddProductSizeIsnow(sn, id_product, size_product, Repeat.user.getName(), true);
+              /*
+              *
+              *
+              * ERROR
+              *
+              */
+            //int sid = db.getSize(id_product);            
+            //int indexend = db.setAddProductSizeIsnow(sn, id_product, size_product, Repeat.user.getName(), true);
 
-            int searchindex = AddProductSizeNow.this.searchIndexTable(indexend);
+            int searchindex = 0;//AddProductSizeNow.this.searchIndexTable(indexend);
             if (searchindex != -1) {
               Procurement_product_hist tmp = (Procurement_product_hist)AddProductGate.expected.get(searchindex);
               AddProductGate.expected.set(searchindex, new Procurement_product_hist(tmp.getIndex(), tmp.getDate(), tmp.getName_product(), id_product, tmp.getSize_first(), tmp.getSize_second() + size_product, tmp.getSize_total() + size_product, tmp.getUser(), true));
@@ -118,8 +123,15 @@ public final class AddProductSizeNow
             }
             else
             {
-
+              /*
+              *
+              *
+              * ERROR
+              *
+              */
+            /*
               AddProductGate.expected.add(new Procurement_product_hist(indexend, AddProductSizeNow.this.Datenow(), sn, id_product, sid, size_product, sid + size_product, Repeat.user.getName(), false));
+            */
             }
       
             lbl.setText("Добавленно.");

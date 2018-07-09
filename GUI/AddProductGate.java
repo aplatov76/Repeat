@@ -213,8 +213,13 @@ public class AddProductGate {
         for (int i = 0; i < ns; i++) {
             int index = ((Integer) map.get(Integer.valueOf(((Procurement_product_hist) expected.get(i)).getId_product()))).intValue();
             AdminPane isnow = (AdminPane) Repeat.admprod.get(index);
-            int size_total = mysql.getSize(isnow.getId());
-            Repeat.admprod.set(index, new AdminPane(index, isnow.getId(), isnow.getName(), isnow.getShortname(), isnow.getGroup(), isnow.getHelf(), size_total, isnow.getPrice(), 0,isnow.getStock(),isnow.getStock_size_0(),isnow.getStock_size_1()));
+            /*
+            *
+            * ERROR
+            *
+            */
+            //int size_total = mysql.getSize(isnow.getId());
+            //Repeat.admprod.set(index, new AdminPane(index, isnow.getId(), isnow.getName(), isnow.getShortname(), isnow.getGroup(), isnow.getHelf(), size_total, isnow.getPrice(), 0,isnow.getStock(),isnow.getStock_size_0(),isnow.getStock_size_1()));
         }
         expected.clear();
     }

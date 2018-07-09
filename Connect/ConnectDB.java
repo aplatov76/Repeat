@@ -328,7 +328,7 @@ public class ConnectDB {
         return c;
     }
 
-    public void reliz_day(int idto, String name, int balance, int col_t, double price, double stoimost, String user) {
+    public void reliz_day(int idto, String name, int balance, int col_t, int stock_event, double price, double stoimost, String user) {
         try {
             Class.forName("com.mysql.jdbc.Driver");
 
@@ -340,7 +340,7 @@ public class ConnectDB {
 
             java.sql.Date sysdate = new java.sql.Date(new java.util.Date().getTime());
 
-            stmt.executeUpdate("INSERT INTO `registration`(`idop`, `data`, `time`, `idto`, `name`,`balance`,`size`, `price`, `sum`, `user`) VALUES ('0','" + sysdate + "','" + time + "','" + idto + "','" + name + "','" + balance + "','" + col_t + "','" + price + "','" + stoimost + "','" + user + "')");
+            stmt.executeUpdate("INSERT INTO `registration`(`idop`, `data`, `time`, `idto`, `name`,`balance`,`size`,`stock`, `price`, `sum`, `user`) VALUES ('0','" + sysdate + "','" + time + "','" + idto + "','" + name + "','" + balance + "','" + col_t + "','"+stock_event+"','" + price + "','" + stoimost + "','" + user + "')");
 
             stmt.close();
             connection.close();
@@ -419,16 +419,18 @@ public class ConnectDB {
         }
     }
 
-    public int getSize(int id) {
-        int size = 0;
+    public int[] getSize(int id) {
+        int[] size = new int[3];// = 0;
         try {
             Class.forName("com.mysql.jdbc.Driver");
             Connection connection = DriverManager.getConnection(url, properties);
-            String query = "SELECT `sell` FROM `prais` WHERE `id` = '" + id + "'";
+            String query = "SELECT `sell`,`stock_0`,`stock_1` FROM `prais` WHERE `id` = '" + id + "'";
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
             if (rs.next()) {
-                size = rs.getInt(1);
+                size[0] = rs.getInt(1);
+                size[1] = rs.getInt(2);
+                size[2] = rs.getInt(3);
             }
             rs.close();
             connection.close();
@@ -438,16 +440,18 @@ public class ConnectDB {
         return size;
     }
 
-    public int getSize(String name) {
-        int size = 0;
+    public int[] getSize(String name) {
+        int[] size = new int[3];// = 0;
         try {
             Class.forName("com.mysql.jdbc.Driver");
             Connection connection = DriverManager.getConnection(url, properties);
-            String query = "SELECT `sell` FROM `prais` WHERE `short_name` = '" + name + "'";
+            String query = "SELECT `sell`,`stock_0`,`stock_1` FROM `prais` WHERE `short_name` = '" + name + "'";
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
             if (rs.next()) {
-                size = rs.getInt(1);
+                size[0] = rs.getInt(1);
+                size[1] = rs.getInt(2);
+                size[2] = rs.getInt(3);
             }
             rs.close();
             connection.close();
@@ -604,13 +608,15 @@ public class ConnectDB {
         }
     }
 
-    public void setSize(int id, int nowsize) {
+    public void setSize(int id, int full, int stock_event,int stock_size) {
         try {
             Class.forName("com.mysql.jdbc.Driver");
 
             Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
-            String query = "UPDATE `solnce`.`prais` SET `sell` = '" + nowsize + "' WHERE `prais`.`id` = '" + id + "'";
+            String query = "";
+            if(stock_event == 0)query = "UPDATE `solnce`.`prais` SET `sell` = '" + full + "', `stock_0` =  '"+stock_size+"' WHERE `prais`.`id` = '" + id + "'";
+                else query = "UPDATE `solnce`.`prais` SET `sell` = '" + full + "', `stock_1` =  '"+stock_size+"' WHERE `prais`.`id` = '" + id + "'";
             stmt.executeUpdate(query);
 
             stmt.close();
@@ -633,7 +639,7 @@ public class ConnectDB {
             ResultSet rs = stmt.executeQuery(query);
             double c = 0.0D;
             while (rs.next()) {
-                prod.add(new Registration(rs.getTime(3).toString().substring(0, 5), rs.getString(5), Integer.valueOf(rs.getInt(4)), Integer.valueOf(rs.getInt(7)), rs.getDouble(8), rs.getDouble(9), rs.getString(10)));
+                prod.add(new Registration(rs.getTime(3).toString().substring(0, 5), rs.getString(5), Integer.valueOf(rs.getInt(4)), Integer.valueOf(rs.getInt(7)),rs.getInt(8), rs.getDouble(9), rs.getDouble(10), rs.getString(11)));
                 c += rs.getDouble(9);
             }
 
@@ -675,7 +681,7 @@ public class ConnectDB {
             ResultSet rs = stmt.executeQuery(query);
             double c = 0.0D;
             while (rs.next()) {
-                prod.add(new Registration(rs.getTime(3).toString().substring(0, 5), rs.getString(5), Integer.valueOf(rs.getInt(4)), Integer.valueOf(rs.getInt(7)), rs.getDouble(8), rs.getDouble(9), rs.getString(10)));
+                prod.add(new Registration(rs.getTime(3).toString().substring(0, 5), rs.getString(5), Integer.valueOf(rs.getInt(4)), Integer.valueOf(rs.getInt(7)),rs.getInt(8), rs.getDouble(9), rs.getDouble(10), rs.getString(11)));
                 c += rs.getDouble(9);
             }
             query = "SELECT SUM(summa_paid) AS sum_with FROM `contract_paid` WHERE `data_paid` = '" + sysd + "' and `user` = '" + user_name + "'";

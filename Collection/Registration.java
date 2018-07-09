@@ -4,18 +4,13 @@ package Collection;
 public class Registration
 {
   private String data;
-  
   private String name;
-  
   private Integer id;
-  
   private Integer size;
-  
   private Double price;
-  
   private Double sum;
-  
-  private String user;
+  private String user;  
+  private int stock;
   
 
   public Registration()
@@ -28,16 +23,27 @@ public class Registration
     price = Double.valueOf(0.0D);
     sum = Double.valueOf(0.0D);
     user = "";
+    stock = 0;
   }
   
-  public Registration(String date, String name, Integer id, Integer size, double price, double sum, String user) { data = date;
+  public Registration(String date, String name, Integer id, Integer size, Integer stock, double price, double sum, String user) { 
+    data = date;
     this.id = id;
     this.name = name;
     this.size = size;
     this.price = Double.valueOf(price);
     this.sum = Double.valueOf(sum);
     this.user = user;
+    this.stock = stock;
   }
+
+    public void setStock(int stock) {
+        this.stock = stock;
+    }
+
+    public int getStock() {
+        return stock;
+    }
   
   public void setData(String d) {
     data = d;

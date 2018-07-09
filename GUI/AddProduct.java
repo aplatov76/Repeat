@@ -23,16 +23,19 @@ import javafx.scene.control.Dialogs.DialogResponse;
 import javafx.scene.control.FocusModel;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TableView.TableViewFocusModel;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -74,8 +77,8 @@ public class AddProduct extends Application
     
     stage.setScene(scene);
     
-    stage.setWidth(1050.0);
-    stage.setHeight(640.0);
+    stage.setWidth(1080.0);
+    stage.setHeight(680.0);
     stage.show();
   }
   
@@ -122,16 +125,32 @@ public class AddProduct extends Application
     
     final AutoFillTextBox box = new AutoFillTextBox(data1);
     final AutoFillTextBox codebox = new AutoFillTextBox(cdata);
+    
+    final RadioButton st0 = new RadioButton();
+          st0.setSelected(true);
+    final RadioButton st1 = new RadioButton();
+    
+    ToggleGroup tggroup = new ToggleGroup();
+    st0.setToggleGroup(tggroup);
+    st1.setToggleGroup(tggroup);
+    
+    HBox rb = new HBox();
+    
+    rb.getChildren().addAll(new Label("Воронцово: "),st0,new Label("Ильинск: "),st1);
+    
     box.setListLimit(100);
     codebox.setListLimit(100);
     box.getListview().setMinHeight(100.0);
-    box.setMinWidth(654.0);
-    codebox.setMinWidth(654.0);
+    box.setMinWidth(704.0);
+    codebox.setMinWidth(704.0);
     box.setId("box");
     codebox.setId("box");
     
     final TextField size = new TextField();
     size.setText("1");
+    
+    final TextField stock_event = new TextField();
+    stock_event.setDisable(true);
     
     int gy = 1;
     grid.add(new Label("Наименование: "), 0, 0);
@@ -143,34 +162,77 @@ public class AddProduct extends Application
     grid.add(new Label("Количество: "), 0, 2);
     grid.add(size, 1, 2, gy, 1);
     
+    grid.add(new Label("Склад: "), 0, 3);
+    grid.add(rb, 1, 3, gy, 1);
+    
     final TextField price = new TextField();
     price.setDisable(true);
     
-    grid.add(new Label("Цена: "), 0, 3);
-    grid.add(price, 1, 3, gy, 1);
+    grid.add(new Label("Цена: "), 0, 4);
+    grid.add(price, 1, 4, gy, 1);
     
     final TextField summa = new TextField();
     summa.setDisable(true);
-    grid.add(new Label("Cумма: "), 0, 4);
-    grid.add(summa, 1, 4, gy, 1);
+    grid.add(new Label("Cумма: "), 0, 5);
+    grid.add(summa, 1, 5, gy, 1);
+    
+    grid.add(new Label("Склад: "), 0, 6);
+    grid.add(stock_event, 1, 6, gy, 1);
     
     final TextField control = new TextField();
     control.setDisable(true);
-    grid.add(new Label("Наличие: "), 0, 5);
-    grid.add(control, 1, 5, gy, 1);
+    grid.add(new Label("Общее: "), 0, 7);
+    grid.add(control, 1, 7, gy, 1);
     
     final TableView<GateReg> tl = createTableReg();
     
     prod.add(new GateReg());
-    grid.add(tl, 0, 7, 2, 1);
+    grid.add(tl, 0, 9, 2, 1);
     
+    
+    st0.setOnMouseClicked(new EventHandler<MouseEvent>()
+    {
+      public void handle(MouseEvent event)
+      {
+          String sn = box.getText();
+          
+          if(!sn.isEmpty()){
+            int id_product = db.setID(sn);
+            //System.out.println(st1.isSelected());
+            int stock_full[] = db.getSize(id_product);            
+            stock_event.setText(""+stock_full[1]);
+          }
+          
+      }
+      
+
+    });
+    
+    st1.setOnMouseClicked(new EventHandler<MouseEvent>()
+    {
+
+      public void handle(MouseEvent event)
+      {
+          String sn = box.getText();
+          
+          if(!sn.isEmpty()){
+            int id_product = db.setID(sn);
+            //System.out.println(st1.isSelected());
+            int stock_full[] = db.getSize(id_product);            
+            stock_event.setText(""+stock_full[2]);
+          }
+          
+      }
+      
+
+    });
 
     box.setOnKeyReleased(new EventHandler<KeyEvent>()
     {
       public void handle(KeyEvent t)
       {
         if (t.getCode() == KeyCode.ENTER) {
-          String sn = box.getText();
+          /*String sn = box.getText();
           try {
             int ssize = Integer.parseInt(size.getText());
             price.setText(Double.toString(db.price(sn)));
@@ -180,7 +242,38 @@ public class AddProduct extends Application
             Dialogs.showErrorDialog(stage, "Ooops, there was an error!", "Error Dialog", "Категория не найденна");
             size.setText("1");
           }
+          */
+            
+        String sn = box.getText();
+        try {
+          int id_product = db.setID(sn);
+          int ssize = Integer.parseInt(size.getText());
+
+          price.setText(Double.toString(db.price(id_product)));
           
+          int[] stock_full = db.getSize(id_product);
+          System.out.println(stock_full[0] + " "+stock_full[1]+ " "+stock_full[2]);
+          
+          control.setText(String.valueOf(stock_full[0]));
+          
+          int bds = -1;
+          int stock_gate = -1;
+          if(st0.isSelected()){
+              bds = stock_full[1];
+              stock_gate = 0;
+          }
+            else if(st1.isSelected()){
+                bds = stock_full[2];
+                stock_gate = 1;
+            }
+                else bds = -1;
+          
+          stock_event.setText(String.valueOf(bds));
+          if (ssize > 0) summa.setText(Double.toString(ssize * Double.parseDouble(price.getText())));
+        } catch (NumberFormatException ex) {
+          Dialogs.showErrorDialog(stage, "Ooops, there was an error!", "Error Dialog", "Категория не найденна");
+          size.setText("1");
+        }    
         }
         
       }
@@ -197,7 +290,25 @@ public class AddProduct extends Application
           int ssize = Integer.parseInt(size.getText());
 
           price.setText(Double.toString(db.price(id_product)));
-          control.setText(String.valueOf(db.getSize(sn)));
+          
+          int[] stock_full = db.getSize(id_product);
+          System.out.println(stock_full[0] + " "+stock_full[1]+ " "+stock_full[2]);
+          
+          control.setText(String.valueOf(stock_full[0]));
+          
+          int bds = -1;
+          int stock_gate = -1;
+          if(st0.isSelected()){
+              bds = stock_full[1];
+              stock_gate = 0;
+          }
+            else if(st1.isSelected()){
+                bds = stock_full[2];
+                stock_gate = 1;
+            }
+                else bds = -1;
+          
+          stock_event.setText(String.valueOf(bds));
           if (ssize > 0) summa.setText(Double.toString(ssize * Double.parseDouble(price.getText())));
         } catch (NumberFormatException ex) {
           Dialogs.showErrorDialog(stage, "Ooops, there was an error!", "Error Dialog", "Категория не найденна");
@@ -223,7 +334,15 @@ public class AddProduct extends Application
             
 
             price.setText(Double.toString(db.price(id_product)));
-            control.setText(String.valueOf(db.getSize(id_product)));
+            
+            int[] stock_full = db.getSize(id_product);
+            System.out.println(stock_full[0] + " "+stock_full[1]+ " "+stock_full[2]);
+            
+            control.setText(String.valueOf(stock_full[0]));
+            
+            if(st0.isSelected())stock_event.setText(String.valueOf(stock_full[1]));// = stock_full[1];
+                else if(st1.isSelected())stock_event.setText(String.valueOf(stock_full[2]));
+            
             if (ssize > 0) summa.setText(Double.toString(ssize * Double.parseDouble(price.getText())));
           } catch (NumberFormatException ex) {
             Dialogs.showErrorDialog(stage, "Ooops, there was an error!", "Error Dialog", "Категория не найденна");
@@ -258,14 +377,23 @@ public class AddProduct extends Application
       {
         try
         {
-          int id_product = Integer.parseInt(codebox.getText());
-          int ssize = Integer.parseInt(size.getText());
-          String name_product = db.getName(id_product);
-          
-          box.getTextbox().setText(name_product);
-          price.setText(Double.toString(db.price(id_product)));
-          control.setText(String.valueOf(db.getSize(id_product)));
-          if (ssize > 0) summa.setText(Double.toString(ssize * Double.parseDouble(price.getText())));
+            int id_product = Integer.parseInt(codebox.getText());
+            String name_product = db.getName(id_product);
+            int ssize = Integer.parseInt(size.getText());
+            box.getTextbox().setText(name_product);
+            
+            box.getListview().getFocusModel().isFocused(1);
+            
+
+            price.setText(Double.toString(db.price(id_product)));
+            
+            int[] stock_full = db.getSize(id_product);
+            System.out.println(stock_full[0] + " "+stock_full[1]+ " "+stock_full[2]);
+            control.setText(String.valueOf(stock_full[0]));
+            if(st0.isSelected())stock_event.setText(String.valueOf(stock_full[1]));// = stock_full[1];
+            else if(st1.isSelected())stock_event.setText(String.valueOf(stock_full[2]));
+            
+            if (ssize > 0) summa.setText(Double.toString(ssize * Double.parseDouble(price.getText())));
         } catch (NumberFormatException ex) {
           Dialogs.showErrorDialog(stage, "Ooops, there was an error!", "Error Dialog", "Категория не найденна");
           size.setText("1");
@@ -281,14 +409,29 @@ public class AddProduct extends Application
         String sn = box.getText();
         try {
           int sc = Integer.parseInt(size.getText());
-          int bds = db.getSize(sn);
+          int bds_full[] = db.getSize(sn);
+          
+          int bds = -1;
+          int stock_gate = -1;
+          if(st0.isSelected()){
+              bds = bds_full[1];
+              stock_gate = 0;
+          }
+            else if(st1.isSelected()){
+                bds = bds_full[2];
+                stock_gate = 1;
+            }
+                else bds = -1;
+          
+          
+          
           double p = Double.parseDouble(price.getText());
           double sum = Double.parseDouble(summa.getText());
           
           if ((sc > 0) && (p > 0.0D) && (sum > 0.0D) && (bds >= sc))
           {
             // неизвестен первый аргумент  AddProduct.access$008(AddProduct.this)
-            prod.add(0, new GateReg(AddProduct.this.ni, sn, Integer.toString(db.setID(sn)), size.getText(), price.getText(), Double.parseDouble(summa.getText())));
+            prod.add(0, new GateReg(AddProduct.this.ni, sn, Integer.toString(db.setID(sn)), size.getText(), price.getText(), Double.parseDouble(summa.getText()), stock_gate));
             int index = prod.size() - 1;
             double sumbreak = ((GateReg)prod.get(index)).getSum();
             sumbreak += sum;
@@ -341,26 +484,42 @@ public class AddProduct extends Application
 
             int pid = Integer.parseInt(((GateReg)prod.get(i)).getId());
             
-            int sid = db.getSize(pid);
+            int bds_full[] = db.getSize(pid);
+            int sid = -1;
+            int stock_gate = prod.get(i).getStock();
+            
+            if(stock_gate == 0){
+                sid = bds_full[1];
+                //stock_gate = 0;
+            }
+            else if(stock_gate == 1){
+                sid = bds_full[2];
+                //stock_gate = 1;
+            }
+            
             if ((sid <= 0) || (sid < a))
             {
-              Dialogs.showErrorDialog(stage, "Фатальная ошибка , пожалуйста сообщите администратору.\nОшибка номер 400, возможные причины :\n1. Отказ db\n2. Асинхронизация регистрации товара.\nID ошибочного договора:" + pid + "\n" + "Снимок экрана, кнопка  prt sc.", "Error Dialog", "");
-
+              Dialogs.showErrorDialog(stage, "Фатальная ошибка , пожалуйста сообщите администратору.\nОшибка номер 400, \nID ошибочная строка:" + pid + "\n" + "Снимок экрана, кнопка  prt sc.", "Error Dialog", "");
 
             }
             else
             {
-
+            /*
+            *
+            * запись в БД
+            *
+            */
 
               double c = Double.parseDouble(((GateReg)prod.get(i)).getPrice());
               double d = ((GateReg)prod.get(i)).getSum();
               
               if ((a > 0) && (d > 0.0D) && (c > 0.0D)) {
-                int balance = sid - a;
-                db.reliz_day(pid, name, balance, a, c, d, USER_NAME);
-                Repeat.prod.add(new Registration(AddProduct.this.Time_m(), name, Integer.valueOf(pid), Integer.valueOf(a), c, d, USER_NAME));
+                int balance = bds_full[0] - a;
+                int balance_event_stock = sid - a;
+                db.reliz_day(pid, name, balance, a, stock_gate, c, d, Repeat.USER_NAME);
+                Repeat.prod.add(new Registration(AddProduct.this.Time_m(), name, Integer.valueOf(pid), Integer.valueOf(a),stock_gate, c, d, Repeat.USER_NAME));
                 
-                db.setSize(pid, sid - a);
+                db.setSize(pid, balance, stock_gate, balance_event_stock);
                 Cassa.cassa += d;
                 Cassa.setCassa();
               }
@@ -402,6 +561,10 @@ public class AddProduct extends Application
     size.setMinWidth(50.0);
     size.setCellValueFactory(new PropertyValueFactory("size"));
     
+    TableColumn stock = new TableColumn("Склад");
+    stock.setMinWidth(50.0);
+    stock.setCellValueFactory(new PropertyValueFactory("stock"));
+    
 
     TableColumn price = new TableColumn("Цена");
     price.setMinWidth(90.0);
@@ -415,12 +578,12 @@ public class AddProduct extends Application
     sum.setCellValueFactory(new PropertyValueFactory("sum"));
  
     table.setStyle("-fx-font: normal 11 Arial;");
-    table.setMaxWidth(770.0);
+    table.setMaxWidth(820.0);
     table.setMaxHeight(350.0);
     
     table.setItems(prod);
     
-    table.getColumns().addAll(n, name, id, size, price, sum );
+    table.getColumns().addAll(n, name, id, size,stock, price, sum );
     
 
     return table;
@@ -437,12 +600,20 @@ public class AddProduct extends Application
     
     int n = g.size() - 1;
     int errorrow = -1;
-    if (n == 0) { errorrow = 0;
+    if (n == 0) { 
+            errorrow = 0;
     }
+    
+    int stock_event = -1;
+    
     for (int i = 0; i < n; i++)
     {
+      stock_event  = ((GateReg)prod.get(i)).getStock();
       int a = Integer.parseInt(((GateReg)prod.get(i)).getSize());
-      int b = db.getSize(Integer.parseInt(((GateReg)g.get(i)).getId()));
+      int b_full[] = db.getSize(Integer.parseInt(((GateReg)g.get(i)).getId()));
+      int b = -1;
+      if(stock_event == 0)b = b_full[1];
+      else if(stock_event == 1)b = b_full[2];
       if (a > b) errorrow = i;
     }
     return errorrow;

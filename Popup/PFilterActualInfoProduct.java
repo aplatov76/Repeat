@@ -24,12 +24,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Popup;
 
-
-
-
-
-
-
 public class PFilterActualInfoProduct
 {
   private String data1;

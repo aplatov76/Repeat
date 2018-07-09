@@ -9,6 +9,7 @@ public class GateReg
   private final SimpleStringProperty name;
   private final SimpleStringProperty id;
   private final SimpleStringProperty size;
+  private int stock;
   private final SimpleStringProperty price;
   private double sum;
   
@@ -18,14 +19,17 @@ public class GateReg
     name = new SimpleStringProperty("");
     id = new SimpleStringProperty();
     size = new SimpleStringProperty();
+    stock = 0;
     price = new SimpleStringProperty("Итого: ");
     sum = 0.0;
   }
   
-  public GateReg(int pid, String name, String id, String size, String price, double sum) { n = new SimpleStringProperty("" + pid);
+  public GateReg(int pid, String name, String id, String size, String price, double sum, int stock) { 
+    n = new SimpleStringProperty("" + pid);
     this.name = new SimpleStringProperty(name);
     this.id = new SimpleStringProperty(id);
     this.size = new SimpleStringProperty(size);
+    this.stock = stock;
     this.price = new SimpleStringProperty(price);
     this.sum = sum;
   }
@@ -49,7 +53,13 @@ public class GateReg
     size.set(i);
   }
   
+  public void setStock(int i) {
+    stock = i;
+  }
+  
   public String getSize() { return size.get(); }
+  
+  public int getStock() { return stock; }
   
   public void setPrice(String i) {
     price.set(i);

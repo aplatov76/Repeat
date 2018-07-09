@@ -368,7 +368,7 @@ public class AddOrder extends javafx.application.Application
           {
             int id = db.getIdProductOrder(sn);
             // не известен первый аргумент AddOrder.this.index
-            gatereg.add(0, new GateReg(AddOrder.this.index, sn, Integer.toString(id), size.getText(), price.getText(), Double.parseDouble(summa.getText())));
+            gatereg.add(0, new GateReg(AddOrder.this.index, sn, Integer.toString(id), size.getText(), price.getText(), Double.parseDouble(summa.getText()),0));
             int index = gatereg.size() - 1;
             double sumbreak = ((GateReg)gatereg.get(index)).getSum();
             sumbreak += sum;
