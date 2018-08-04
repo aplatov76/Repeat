@@ -470,6 +470,7 @@ public class AddOrder extends javafx.application.Application
                 double c = Double.parseDouble(((GateReg)gatereg.get(i)).getPrice());
                 double d = ((GateReg)gatereg.get(i)).getSum();
                 int id = db.getIdProductOrder(name);
+                int stock_event = gatereg.get(i).getStock();
                 if (id == -1)
                 {
                   id = db.addCustomerProduct(name, 1, c);
@@ -477,7 +478,7 @@ public class AddOrder extends javafx.application.Application
                 
                 if ((a > 0) && (d > 0.0D) && (c > 0.0D))
                 {
-                  db.setListContract(idc, id, name, a, c, d);
+                  db.setListContract(idc, id, name, a, c, d,stock_event);
                 } else {
                   Dialogs.showErrorDialog(stage, "Ошибка номер 401, возможные причины:\n1. Нет необходимого количества товара\n2. Отрицательные числа\n3. Ошибка в строке #: " + i + "" + "4. Снимок экрана, кнопка  prt sc.", "Error Dialog", "");
                 }

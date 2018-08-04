@@ -383,7 +383,7 @@ public class Repeat extends javafx.application.Application
       
 
     });
-    node.getChildren().addAll(new Node[] { addproduct, otchet, print, contract, metall, prev, cassa, prixod, rasxod });
+    node.getChildren().addAll(new Node[] { addproduct, otchet, print, contract,/* metall,*/ prev, cassa, prixod, rasxod });
     return node;
   }
   

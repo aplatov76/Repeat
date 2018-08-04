@@ -1530,7 +1530,7 @@ public class ConnectDB {
         return index;
     }
 
-    public void setListContract(int id, int idproduct, String nameproduct, int size, double price, double sum) {
+    public void setListContract(int id, int idproduct, String nameproduct, int size, double price, double sum,int stock_ship) {
         try {
             Class.forName("com.mysql.jdbc.Driver");
 
@@ -1538,7 +1538,7 @@ public class ConnectDB {
             Statement stmt = connection.createStatement();
             java.sql.Date sysdate = new java.sql.Date(new java.util.Date().getTime());
             java.sql.Date sys = new java.sql.Date(new java.util.Date().getTime());
-            stmt.executeUpdate("INSERT INTO `solnce`.`contract_artical` (`id_contract`,`id_product`,`name_object`,`price`,`size` ,`summa` ,`cindex`)VALUES ('" + id + "','" + idproduct + "', '" + nameproduct + "', '" + price + "', '" + size + "', '" + sum + "','0');");
+            stmt.executeUpdate("INSERT INTO `solnce`.`contract_artical` (`id_contract`,`id_product`,`name_object`,`price`,`size` ,`summa` ,`cindex`,`stock_ship`)VALUES ('" + id + "','" + idproduct + "', '" + nameproduct + "', '" + price + "', '" + size + "', '" + sum + "','0','"+stock_ship+"');");
 
             stmt.close();
             connection.close();

@@ -71,8 +71,8 @@ public class AddContract extends javafx.application.Application
     
     stage.setScene(scene);
     
-    stage.setWidth(1050.0D);
-    stage.setHeight(730.0D);
+    stage.setWidth(1100.0D);
+    stage.setHeight(750.0D);
     stage.show();
   }
   
@@ -113,13 +113,13 @@ public class AddContract extends javafx.application.Application
     grid.setHgap(5.0D);
     grid.setVgap(5.0D);
     
-    ObservableList<String> years = FXCollections.observableArrayList();
-    for (int i = 1940; i < 1999; i++) { years.add(Integer.toString(i));
-    }
+    //ObservableList<String> years = FXCollections.observableArrayList();
+    //for (int i = 1940; i < 1999; i++)years.add(Integer.toString(i));
+    
     final AutoFillTextBox box = new AutoFillTextBox(data1);
     final TextField year = new TextField();
     box.setListLimit(100);
-    box.setMinWidth(654.0D);
+    box.setMinWidth(704.0D);
     box.setId("box");
     
     final TextField size = new TextField();
@@ -204,7 +204,7 @@ public class AddContract extends javafx.application.Application
     grid.add(size, 1, 9, gy, 1);
     
     grid.add(new Label("Склад: "), 0, 10);
-    grid.add(stock_event, 1, 10, gy, 1);
+    grid.add(rb, 1, 10, gy, 1);
     
     final TextField price = new TextField();
     price.setDisable(true);
@@ -222,13 +222,52 @@ public class AddContract extends javafx.application.Application
     
     final TextField control = new TextField();
     control.setDisable(true);    
-    grid.add(new Label("Наличие: "), 0, 14);
+    grid.add(new Label("Общее: "), 0, 14);
     grid.add(control, 1, 14, gy, 1);
     
     final TableView<GateReg> tl = createTableReg();
     
 
-    grid.add(tl, 0, 13, 2, 1);
+    grid.add(tl, 0, 15, 2, 1);
+    
+    
+ st0.setOnMouseClicked(new EventHandler<MouseEvent>()
+    {
+      public void handle(MouseEvent event)
+      {
+          String sn = box.getText();
+          
+          if(!sn.isEmpty()){
+            int id_product = db.setID(sn);
+            //System.out.println(st1.isSelected());
+            int stock_full[] = db.getSize(id_product);            
+            stock_event.setText(""+stock_full[1]);
+          }
+          
+      }
+      
+
+    });
+    
+    st1.setOnMouseClicked(new EventHandler<MouseEvent>()
+    {
+
+      public void handle(MouseEvent event)
+      {
+          String sn = box.getText();
+          
+          if(!sn.isEmpty()){
+            int id_product = db.setID(sn);
+            //System.out.println(st1.isSelected());
+            int stock_full[] = db.getSize(id_product);            
+            stock_event.setText(""+stock_full[2]);
+          }
+          
+      }
+      
+
+    });
+    
     
 
     box.setOnKeyReleased(new EventHandler<KeyEvent>()
@@ -247,7 +286,7 @@ public class AddContract extends javafx.application.Application
             Dialogs.showErrorDialog(stage, "Ooops, there was an error!", "Error Dialog", "Категория не найденна");
             size.setText("1");
           }*/
-                  String sn = box.getText();
+        String sn = box.getText();
         try {
           int id_product = db.setID(sn);
           int ssize = Integer.parseInt(size.getText());
@@ -313,7 +352,7 @@ public class AddContract extends javafx.application.Application
           Dialogs.showErrorDialog(stage, "Ooops, there was an error!", "Error Dialog", "Категория не найденна");
           size.setText("1");
         }*/
-                String sn = box.getText();
+        String sn = box.getText();
         try {
           int id_product = db.setID(sn);
           int ssize = Integer.parseInt(size.getText());
@@ -342,7 +381,7 @@ public class AddContract extends javafx.application.Application
         } catch (NumberFormatException ex) {
           Dialogs.showErrorDialog(stage, "Ooops, there was an error!", "Error Dialog", "Категория не найденна");
           size.setText("1");
-        }   
+        }    
         
       }
       
@@ -376,7 +415,7 @@ public class AddContract extends javafx.application.Application
           if ((sc > 0) && (p > 0.0) && (sum > 0.0) && (bds >= sc))
           {
               // первый аргумент неизвестен - AddContract.this.index
-            gatereg.add(0, new GateReg(AddContract.this.index, sn, Integer.toString(db.setID(sn)), size.getText(), price.getText(), Double.parseDouble(summa.getText()),stock_gate));
+            gatereg.add(0, new GateReg(AddContract.this.index++, sn, Integer.toString(db.setID(sn)), size.getText(), price.getText(), Double.parseDouble(summa.getText()),stock_gate));
             int index = gatereg.size() - 1;
             double sumbreak = ((GateReg)gatereg.get(index)).getSum();
             sumbreak += sum;
@@ -456,18 +495,19 @@ public class AddContract extends javafx.application.Application
                 int a = Integer.parseInt(((GateReg)gatereg.get(i)).getSize());
                 int bds_full[] = db.getSize(pid);
                 int sid = -1;
-                int stock_gate = -1;
+                int stock_gate = gatereg.get(i).getStock();
 
-                if (st0.isSelected()) {
+                if (stock_gate == 0) {
                     sid = bds_full[1];
-                    stock_gate = 0;
-                } else if (st1.isSelected()) {
+                    //stock_gate = 0;
+                } else if (stock_gate == 1) {
                     sid = bds_full[2];
-                    stock_gate = 1;
-                  }
+                    //stock_gate = 1;
+                  }                
+                
                 
                 if ((sid <= 0) || (sid < a)) {
-                  Dialogs.showErrorDialog(stage, "Фатальная ошибка , пожалуйста сообщите администратору.\nОшибка номер 400, возможные причины :\n1. Отказ db\n2. Асинхронизация регистрации товара.\nID ошибочного договора:" + idc + "\n" + "Снимок экрана, кнопка  prt sc.", "Error Dialog", "");
+                  Dialogs.showErrorDialog(stage, "Фатальная ошибка , пожалуйста сообщите администратору.\nОшибка номер 400\nID ошибочного договора:" + idc + "\n" + "Снимок экрана, кнопка  prt sc.", "Error Dialog", "");
                   
                   break;
                 }
@@ -478,11 +518,14 @@ public class AddContract extends javafx.application.Application
                 
                 if ((a > 0) && (d > 0.0D) && (c > 0.0D))
                 {
-                  db.setListContract(idc, id, name, a, c, d);
+                  int balance = bds_full[0] - a;
+                  int balance_event_stock = sid - a;
+//int id, int idproduct, String nameproduct, int size, double price, double sum,int stock_ship                    
+                  db.setListContract(idc, id, name, a, c, d,stock_gate);
                   //db.setSize(id, b - a);
-                  db.setSize(pid, sid-a, stock_gate,a);
+                  db.setSize(pid, balance, stock_gate, balance_event_stock);
                 } else {
-                  Dialogs.showErrorDialog(stage, "Ошибка номер 401, возможные причины:\n1. Нет необходимого количества товара\n2. Отрицательные числа\n3. Ошибка в строке #: " + i + "" + "4. Снимок экрана, кнопка  prt sc.", "Error Dialog", "");
+                  Dialogs.showErrorDialog(stage, "Ошибка номер 401.\n1. Ошибка в строке #: " + i + "" + "4. Снимок экрана, кнопка  prt sc.", "Error Dialog", "");
                 }
               }
               
@@ -548,6 +591,10 @@ public class AddContract extends javafx.application.Application
     size.setMinWidth(50.0D);
     size.setCellValueFactory(new PropertyValueFactory("size"));
     
+    TableColumn stock = new TableColumn("Склад");
+    stock.setMinWidth(50.0);
+    stock.setCellValueFactory(new PropertyValueFactory("stock"));
+    
 
     TableColumn price = new TableColumn("Цена");
     price.setMinWidth(90.0D);
@@ -560,12 +607,12 @@ public class AddContract extends javafx.application.Application
     sum.setCellValueFactory(new PropertyValueFactory("sum"));
 
     table.setStyle("-fx-font: normal 11 Arial;");
-    table.setMaxWidth(770.0D);
+    table.setMaxWidth(820.0D);
     table.setMaxHeight(320.0D);
     gatereg.add(new GateReg());
     table.setItems(gatereg);
     
-    table.getColumns().addAll(n, name, id, size, price, sum);
+    table.getColumns().addAll(n, name, id, size, stock, price, sum);
     
 
     return table;
@@ -607,7 +654,7 @@ public class AddContract extends javafx.application.Application
       int b_full[] = db.getSize(Integer.parseInt(((GateReg)g.get(i)).getId()));
       int b = -1;
       if(stock_event == 0)b = b_full[1];
-      else if(stock_event == 1)b = b_full[2];
+        else if(stock_event == 1)b = b_full[2];
       if (a > b) errorrow = i;
     }
     return errorrow;
