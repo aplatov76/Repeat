@@ -15,6 +15,7 @@ import GUI.HistoryMetall;
 import GUI.HistoryProcurement;
 import GUI.ListCustomerProduct;
 import GUI.Otchet;
+import GUI.Return_product;
 import Popup.PFilterPriceView;
 import autofilltextbox.AutoFillTextBox;
 import calendar.SimpleCalendar;
@@ -242,6 +243,8 @@ public class Repeat extends javafx.application.Application
     
     otchet.getItems().addAll(new MenuItem[] { menuItemcut, menuItempop });
     
+    Button return_prod = new Button("Возврат");
+    
 
     Button print = new Button("Печать");
     
@@ -274,6 +277,7 @@ public class Repeat extends javafx.application.Application
     prev.setMinSize(200.0D, 60.0D);
     print.setMinSize(200.0D, 60.0D);
     metall.setMinSize(200.0D, 60.0D);
+    return_prod.setMinSize(200.0D, 60.0D);
     
     prev.setOnMouseClicked(new EventHandler<MouseEvent>()
     {
@@ -293,9 +297,23 @@ public class Repeat extends javafx.application.Application
         abc.getContract(1, 1);
         abc.start(new Stage());
       }
+    
       
 
     });
+    
+    return_prod.setOnMouseClicked(new EventHandler<MouseEvent>()
+    {
+
+      public void handle(MouseEvent event)
+      {
+        System.out.println("Возврат");
+        Return_product ret = new  Return_product();
+        ret.start(new Stage());
+      }
+
+    });
+    
     addproduct.setOnMouseClicked(new EventHandler<MouseEvent>()
     {
       public void handle(MouseEvent event)
@@ -383,7 +401,7 @@ public class Repeat extends javafx.application.Application
       
 
     });
-    node.getChildren().addAll(new Node[] { addproduct, otchet, print, contract,/* metall,*/ prev, cassa, prixod, rasxod });
+    node.getChildren().addAll(new Node[] { addproduct, otchet, print, contract,return_prod,/* metall,*/ prev, cassa, prixod, rasxod });
     return node;
   }
   
@@ -714,7 +732,8 @@ public class Repeat extends javafx.application.Application
 
       public void handle(MouseEvent event)
       {
-        if (Repeat.user == null) { stage.close();
+        if (Repeat.user == null) {
+            stage.close();
         } else {
           Cassa.cassa = 0.0D;
           Cassa.start = 0.0D;
@@ -806,6 +825,8 @@ public class Repeat extends javafx.application.Application
       
 
     });
+    
+    
     ((Button)but.getChildren().get(5)).setOnMouseClicked(new EventHandler<MouseEvent>()
     {
       public void handle(MouseEvent event)

@@ -1,6 +1,7 @@
 package Connect;
 
 import Collection.AdminPane;
+import Collection.History;
 import Collection.HistoryMetallOtchet;
 import Collection.ListCustProduct;
 import Collection.Log_view;
@@ -9,7 +10,9 @@ import Collection.Person;
 import Collection.Prices;
 import Collection.Procurement_product_hist;
 import Collection.Registration;
+import Collection.Registration_return;
 import Collection.Repot;
+import fxuidemo.Repeat;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -33,6 +36,25 @@ public class ConnectDB {
         properties.setProperty("characterEncoding", "cp1251");
 
         url = "jdbc:mysql://localhost/solnce";
+    }
+    
+    public int getIdUser(String name){
+        int r = 0;
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            Connection connection = DriverManager.getConnection(url, properties);
+            String query = "SELECT `id_user` FROM `passworld` WHERE `name` = '" + name + "';";
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            
+            if (rs.next())r = rs.getInt(1);            
+            rs.close();
+
+            connection.close();
+        } catch (ClassNotFoundException | SQLException e) {
+        }
+        
+        return  r;
     }
 
     public Person autorizeuser(String name, String pass) {
@@ -1177,7 +1199,7 @@ public class ConnectDB {
             ResultSet rs = stmt.executeQuery(query);
 
             while (rs.next()) {
-                prod.add(new Collection.History(rs.getInt(1), rs.getDate(2).toString(), rs.getString(5), rs.getInt(6), rs.getInt(4), rs.getInt(7), rs.getDouble(8), rs.getDouble(9), rs.getString(10)));
+                prod.add(new Collection.History(rs.getInt(1), rs.getDate(2).toString(), rs.getString(5), rs.getInt(6), rs.getInt(4), rs.getInt(7), rs.getDouble(9), rs.getDouble(10), rs.getString(11),rs.getInt(8)));
             }
             rs.close();
             stmt.close();
@@ -2413,4 +2435,90 @@ public class ConnectDB {
         }
         return key;
     }
+    
+public void getReturnProduct(ObservableList<Registration_return> return_prod, int d,String a1) {
+        //ObservableList<Registration> data = javafx.collections.FXCollections.observableArrayList();
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            String query = "SELECT return_product.*, passworld.name, registration.data AS reg_data, registration.time AS reg_time FROM `return_product` LEFT JOIN `passworld` ON `return_product`.`id_user` = passworld.id_user LEFT JOIN `registration` ON `return_product`.`id_reliz` = `registration`.`idop` WHERE `return_product`.`status` = 0 ORDER BY return_product.id DESC;";
+            if(d == 1){
+                   query = "SELECT return_product.*, passworld.name, registration.data AS reg_data, registration.time AS reg_time FROM `return_product` LEFT JOIN `passworld` ON `return_product`.`id_user` = passworld.id_user LEFT JOIN `registration` ON `return_product`.`id_reliz` = `registration`.`idop` where FROM_UNIXTIME(`date_return`) >= '" + a1 + "' and `return_product`.`status` = 0 ORDER BY return_product.id DESC;";
+            }
+
+            Connection connection = DriverManager.getConnection(url, properties);
+            Statement stmt = connection.createStatement();
+
+            ResultSet rs = stmt.executeQuery(query);
+
+            int index = 0;
+            while (rs.next()) {
+                //System.out.println(rs.getString(4));
+                long e = rs.getLong(9);
+                java.util.Date date = new java.util.Date(e * 1000L);
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                String time = sdf.format(date);
+                //String date, String name, Integer id, Integer size, Integer stock, double price, double sum, String user
+                return_prod.add(new Registration_return(time,rs.getDate(13).toString() +' '+ rs.getTime(14).toString(), rs.getString(4), rs.getInt(3), rs.getInt(5), rs.getInt(8), rs.getDouble(6), rs.getDouble(7), rs.getString(12)));
+            }
+            //System.out.println(return_prod.size());
+
+            rs.close();
+            stmt.close();
+            connection.close();
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+        }
+        //return data;
+    }
+
+public int getReturnProductIdOperation(int idop) {
+        //ObservableList<Registration> data = javafx.collections.FXCollections.observableArrayList();
+        int size_g = 0;
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            String query = "SELECT SUM(size) AS size_g FROM `return_product` WHERE id_reliz = '"+idop+"';";
+
+            Connection connection = DriverManager.getConnection(url, properties);
+            Statement stmt = connection.createStatement();
+
+            ResultSet rs = stmt.executeQuery(query);
+            if (rs.next()) 
+                size_g = rs.getInt(1);
+
+            rs.close();
+            stmt.close();
+            connection.close();
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+        }
+        return size_g;
+    }
+
+    public void setReturnProduct(Collection.History p, int size_return,int stock_event,int balance,int balance_event_stock, String user) {
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+
+            Connection connection = DriverManager.getConnection(url, properties);
+            Statement stmt = connection.createStatement();
+            SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd");
+
+            java.sql.Date sysdate = new java.sql.Date(new java.util.Date().getTime());
+            //INSERT INTO `return_product` (`id`, `id_reliz`, `id_product`, `name_product`, `size`, `price`, `summa`, `stock`, `date_return`, `id_user`) VALUES ('0', '0', '0', '0', '0', '0', '00', '0', '0', '0');//UNIX_TIMESTAMP()
+            int iduser = this.getIdUser(user);
+            stmt.executeUpdate("INSERT INTO `return_product` (`id`, `id_reliz`,`id_product`,`name_product`,`size`,`price`,`summa`,`stock`,`date_return`,`id_user`, `status`) VALUES ('0','" + p.getIdop() + "'," + "'" + p.getIdpr() + "'," + "'" + p.getName() + "'," + "'" + size_return + "'," + "'" + p.getPrice() + "'," + "'" + p.getPrice() * size_return + "'," + "'" + p.getStock() + "', UNIX_TIMESTAMP(), '"+ iduser +"','0');");
+            
+            String query = "";
+            if(stock_event == 0)query = "UPDATE `solnce`.`prais` SET `sell` = '" + balance + "', `stock_0` =  '"+ balance_event_stock +"' WHERE `prais`.`id` = '" + p.getIdpr()  + "'";
+                else query = "UPDATE `solnce`.`prais` SET `sell` = '" + balance + "', `stock_1` =  '"+ balance_event_stock +"' WHERE `prais`.`id` = '" + p.getIdpr() + "'";
+            
+            stmt.executeUpdate(query);
+            
+            
+            stmt.close();
+            connection.close();
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

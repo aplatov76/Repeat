@@ -227,7 +227,9 @@ public class AddOrder extends javafx.application.Application
           try {
             int ssize = Integer.parseInt(size.getText());
             price.setText(Double.toString(db.priceCustomerOrder(sn)));
-            control.setText(String.valueOf(db.getSize(sn)));
+            int size_all[] = db.getSize(sn);
+            
+            control.setText(String.valueOf(size_all[0]));
             if (ssize > 0) summa.setText(Double.toString(ssize * Double.parseDouble(price.getText())));
           } catch (Exception ex) {
             Dialogs.showErrorDialog(stage, "Ooops, there was an error!", "Error Dialog", "Категория не найденна");
@@ -251,11 +253,13 @@ public class AddOrder extends javafx.application.Application
             int ssize = Integer.parseInt(size.getText());
             box.getTextbox().setText(name_product);
             
-            box.getListview().getFocusModel().isFocused(1);
-            
+            box.getListview().getFocusModel().isFocused(1);            
 
             price.setText(Double.toString(db.priceCustomerOrder(name_product)));
-            control.setText(String.valueOf(db.getSize(id_product)));
+            int size_all[] = db.getSize(id_product);
+            
+            control.setText(String.valueOf(size_all[0]));
+            
             if (ssize > 0) summa.setText(Double.toString(ssize * Double.parseDouble(price.getText())));
           } catch (NumberFormatException ex) {
             Dialogs.showErrorDialog(stage, "Ooops, there was an error!", "Error Dialog", "Категория не найденна");
@@ -280,7 +284,10 @@ public class AddOrder extends javafx.application.Application
           
           box.getTextbox().setText(name_product);
           price.setText(Double.toString(db.priceCustomerOrder(name_product)));
-          control.setText(String.valueOf(db.getSize(id_product)));
+          int size_all[] = db.getSize(id_product);
+            
+          control.setText(String.valueOf(size_all[0]));
+          
           if (ssize > 0) summa.setText(Double.toString(ssize * Double.parseDouble(price.getText())));
         } catch (NumberFormatException ex) {
           Dialogs.showErrorDialog(stage, "Ooops, there was an error!", "Error Dialog", "Категория не найденна");
@@ -356,10 +363,6 @@ public class AddOrder extends javafx.application.Application
           double dbp = db.priceCustomerOrder(sn);
           if ((dbp != 0.0D) && (dbp != p))
           {
-
-
-
-
             Dialogs.showWarningDialog(stage, "Внимание:\nДобавляемый продукт иммется в базе, но указанная вами цена не совпадает с установленной.\nКатегория добавленна с ценой, отличной от установленной в базе.");
           }
           
@@ -428,27 +431,17 @@ public class AddOrder extends javafx.application.Application
             String pok_dend = dateField.getText();
             double pok_total = ((GateReg)gatereg.get(lim)).getSum();
             String pok_phone = customer_phone.getText();
-            String pok_customer_doc_cout = customer_doc_cout.getText();
-            
+            String pok_customer_doc_cout = customer_doc_cout.getText();           
 
             int validateinfo = AddOrder.this.validateInfo(pok_firstpaid, pok_fio, pok_adress, pok_num, year.getText(), pok_customer_doc_cout, pok_phone, pok_dend, pok_total);
             
-
             if (validateinfo == -1)
             {
-
 
               boolean dbstatus = pok_firstpaid != pok_total;
               int idc = db.setNewContract(pok_fio, pok_num, pok_adress, year.getText(), pok_customer_doc_cout, pok_phone, pok_dend, pok_total, pok_firstpaid, pok_total - pok_firstpaid, dbstatus, Repeat.user.getName(), 1);
               
-
-
               Contracts.contract.add(new contract(idc, pok_fio, pok_num, pok_adress, year.getText(), pok_customer_doc_cout, pok_phone, AddOrder.this.Time(), pok_dend, pok_total, pok_firstpaid, pok_total - pok_firstpaid, true, Repeat.user.getName()));
-              
-
-
-
-
 
               for (int i = 0; i < lim; i++)
               {
@@ -458,12 +451,7 @@ public class AddOrder extends javafx.application.Application
                 
 
                 if (a < 1) {
-                  Dialogs.showErrorDialog(stage, "Фатальная ошибка , пожалуйста сообщите администратору.\nОшибка номер 400, возможные причины :\n1. Отказ db\n2. Асинхронизация регистрации товара.\nID ошибочного договора: " + idc + "\n" + "Снимок экрана, кнопка  prt sc.", "Error Dialog", "");
-                  
-
-
-
-
+                  Dialogs.showErrorDialog(stage, "Фатальная ошибка , пожалуйста сообщите администратору.\nОшибка номер 400.\nID ошибочного договора: " + idc + "\n" + "Снимок экрана, кнопка  prt sc.", "Error Dialog", "");
                   break;
                 }
                 
