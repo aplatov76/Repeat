@@ -452,8 +452,9 @@ public class Repeat extends javafx.application.Application
     table.setItems(prod);
     
     if (!user.getRules(10))
-      connectordb.getSessionBecap(prod, user.getName()); else {
-      connectordb.getSessionBecap(prod);
+      connectordb.getSessionBecap(prod, user.getName()); 
+    else {
+      connectordb.getSessionBecap(prod,user.getGroup_user());
     }
     table.getColumns().addAll(time, name, id, size, price, sum, user_name);
     
@@ -523,14 +524,15 @@ public class Repeat extends javafx.application.Application
 
     table.columnResizePolicyProperty();
     
-    TableColumn code = new TableColumn("№");
+    TableColumn code = new TableColumn("Артикул");
     code.setMinWidth(35.0D);
-    code.setMaxWidth(45.0D);
-    code.setCellValueFactory(new PropertyValueFactory("number"));
+    //code.setMaxWidth(75.0D);
+    code.setCellValueFactory(new PropertyValueFactory("articul"));
     
 
     TableColumn id = new TableColumn("Код");
-    id.setMinWidth(30.0D);
+    id.setMinWidth(15.0);
+    //id.setMaxWidth(25.0);
     id.setCellValueFactory(new PropertyValueFactory("id"));
     
 
@@ -558,31 +560,35 @@ public class Repeat extends javafx.application.Application
     status.setCellValueFactory(new PropertyValueFactory("actual_status"));    
 
     TableColumn col = new TableColumn("Остаток");
-    col.setMinWidth(50.0D);
+    col.setMinWidth(40.0D);
     col.setCellValueFactory(new PropertyValueFactory("size"));
     
     TableColumn stock = new TableColumn("Склады");
     stock.setMinWidth(20.0);
     stock.setCellValueFactory(new PropertyValueFactory("stock"));
     
-    TableColumn stock_size_0 = new TableColumn("Ск 0");
-    stock_size_0.setMinWidth(30.0);
+    TableColumn stock_size_0 = new TableColumn("В");
+    stock_size_0.setMinWidth(25.0);
     stock_size_0.setCellValueFactory(new PropertyValueFactory("stock_size_0"));
     
-    TableColumn stock_size_1 = new TableColumn("Ск 1");
-    stock_size_1.setMinWidth(30.0);
+    TableColumn stock_size_1 = new TableColumn("И");
+    stock_size_1.setMinWidth(25.0);
     stock_size_1.setCellValueFactory(new PropertyValueFactory("stock_size_1"));
 
     TableColumn price = new TableColumn("Цена");
     price.setMinWidth(50.0);
     price.setCellValueFactory(new PropertyValueFactory("price"));
     
+    TableColumn min_remainder = new TableColumn("МО");
+    min_remainder.setMinWidth(20.0);
+    min_remainder.setCellValueFactory(new PropertyValueFactory("min_remainder"));
+    
     connectordb.getPaneAdmin(admprod);
     table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     table.setItems(admprod);
     table.setId("tablefont");
     
-    table.getColumns().addAll(code, id, sname, group,/* helf, status,*/ col,price,stock, stock_size_0, stock_size_1);
+    table.getColumns().addAll(id,code, sname, group,/* helf, status,*/ col,price,/*stock,*/ stock_size_0, stock_size_1,min_remainder);
     double width = sSize.width - sSize.width*0.235;
     table.setMaxWidth(width);
     return table;
@@ -767,9 +773,9 @@ public class Repeat extends javafx.application.Application
         root.setLeft(tb);
         
 
-
-        double p = Repeat.connectordb.getStartSum(Repeat.user.getName(), Repeat.user.getRules(10));
-        if (p == 0.0)
+        double p = Repeat.connectordb.getStartSum(Repeat.user.getName(),Repeat.user.getGroup_user(), Repeat.user.getRules(10));
+        System.out.println("group_user: "+Repeat.user.getGroup_user());
+        if (p == 0.0 && user.getId_rules() == 3)
         {
           try
           {
@@ -787,7 +793,7 @@ public class Repeat extends javafx.application.Application
             if (Cassa.start > 0.0D) {
               System.out.println("B");
               Cassa.cassa += Cassa.start;
-              Repeat.connectordb.setStartSum(Cassa.start, "", Repeat.user.getName());
+              Repeat.connectordb.setStartSum(Cassa.start, "", Repeat.user.getName(),Repeat.user.getGroup_user());
               Cassa.setCassa();
             }
           }
@@ -857,19 +863,19 @@ public class Repeat extends javafx.application.Application
     
     ObservableList<String> group = FXCollections.observableArrayList();
     
-    node.setPadding(new Insets(20.0D, 10.0D, 20.0D, 10.0D));
-    node.setSpacing(8.0D);
+    node.setPadding(new Insets(20.0D, 2.0D, 20.0D, 2.0D));
+    node.setSpacing(4.0D);
     node.setId("but");
     connectordb.loadProduct(data);
     connectordb.loadGroupList(group);
     connectordb.loadProductId(datacode);
     
     Label texoper = new Label("Работа с номенклатурой");
-    Label texcontract = new Label("Договоры и заказы покупателей");
-    Label searcsort = new Label("Поиск и сортировка продукции");
+    Label texcontract = new Label("Договоры и заказы");
+    Label searcsort = new Label("Поиск и сортировка");
     Label order_product = new Label("Тех.операции \"Под заказ\"");
     Label product_add_now = new Label("Управление закупками");
-    Label use_status_product = new Label("Управление статусами продуктов");
+    Label use_status_product = new Label("Управление статусами");
     
     product_add_now.setId("labeladmin");
     texoper.setId("labeladmin");
@@ -1167,16 +1173,9 @@ public class Repeat extends javafx.application.Application
     button3.getChildren().addAll(new Node[] { search, pop_group_go, status });
     button6.getChildren().addAll(new Node[] { status, show_status });
     
-
     final ChoiceBox<String> chois = new ChoiceBox(group);
     
-
     chois.setMinWidth(290.0D);
-    
-
-
-
-
 
     VBox popupsearch = new VBox();
     HBox popupbut1 = new HBox();
@@ -1246,8 +1245,7 @@ public class Repeat extends javafx.application.Application
         if (popupgroup.isShowing()) popupgroup.hide();
         root.setRight(but);
 
-      }
-      
+      }      
 
     });
     status.setOnMouseClicked(new EventHandler<MouseEvent>()
@@ -1259,8 +1257,6 @@ public class Repeat extends javafx.application.Application
         abc.start(new Stage());
 
       }
-      
-
 
     });
     search.setOnMouseClicked(new EventHandler<MouseEvent>()

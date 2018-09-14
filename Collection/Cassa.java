@@ -41,10 +41,11 @@ public class Cassa
     return rasxwind;
   }
   
-  public static void setCassa() { if ((cassawind != null) && (prixwind != null) && (rasxwind != null)) {
-      cassawind.setText("Касса : " + cassa);
-      prixwind.setText("Приход : " + (cassa - start + rasxod));
-      rasxwind.setText("Расход: " + rasxod);
+  public static void setCassa() { 
+      if ((cassawind != null) && (prixwind != null) && (rasxwind != null)) {
+            cassawind.setText("Касса : " + cassa);
+            prixwind.setText("Приход : " + (cassa - start + rasxod));
+            rasxwind.setText("Расход: " + rasxod);
     }
   }
 }

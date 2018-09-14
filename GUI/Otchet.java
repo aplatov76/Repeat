@@ -122,16 +122,19 @@ public class Otchet
   
   public void setProdHistory(String a, String b) { collect_otchet.clear();
     ConnectDB mysql = new ConnectDB();
-    mysql.getOtchet(collect_otchet, a, b);
+    mysql.getOtchet(collect_otchet, a, b, Repeat.user.getGroup_user());
+    System.out.println("function comment");
   }
   
   public void setFullOtchet() { collect_otchet.clear();
     ConnectDB mysql = new ConnectDB();
-    mysql.getOtchet(collect_otchet);
+    //mysql.getOtchet(collect_otchet, Repeat.user.getGroup_user());
+    System.out.println("function comment");
   }
   
   public void setShortOtchet() { collect_otchet.clear();
     ConnectDB mysql = new ConnectDB();
-    mysql.getOtchet(collect_otchet, Repeat.user.getName());
+    mysql.getOtchet(collect_otchet, Repeat.user.getGroup_user());
+    System.out.println("function comment");
   }
 }

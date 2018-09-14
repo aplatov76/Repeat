@@ -63,25 +63,33 @@ public class AdminAdd
 
     final TextField size = new TextField();
     final TextField price = new TextField();
+    
+    final TextField min_remainder = new TextField();
+    final TextField articul = new TextField();
+    
     name.setMinWidth(500.0D);
     /*grid.add(new Label("Полное наименование: "), 0, 0);
     grid.add(name, 1, 0);*/
-    grid.add(new Label("Наименование: "), 0, 1);
-    grid.add(name, 1, 1);
-    grid.add(new Label("Группа товара: "), 0, 2);
-    grid.add(chois, 1, 2);
+    grid.add(new Label("Артикул: "), 0, 1);
+    grid.add(articul, 1, 1);
+    grid.add(new Label("Наименование: "), 0, 2);
+    grid.add(name, 1, 2);
+    grid.add(new Label("Группа товара: "), 0, 3);
+    grid.add(chois, 1, 3);
   /*grid.add(new Label("Вес в списке: "), 0, 3);
     grid.add(helf, 1, 3);*/
-    grid.add(new Label("Склад: "), 0, 3);
-    grid.add(c_stock, 1, 3);
-    grid.add(new Label("Склад 0: "), 0, 4);
-    grid.add(stock_0, 1, 4);
-    grid.add(new Label("Склад 1: "), 0, 5);
-    grid.add(stock_1, 1, 5);
-    grid.add(new Label("Количество: "), 0, 6);
-    grid.add(size, 1, 6);
-    grid.add(new Label("Cтоимость: "), 0, 7);
-    grid.add(price, 1, 7);
+    grid.add(new Label("Склад: "), 0, 4);
+    grid.add(c_stock, 1, 4);
+    grid.add(new Label("Склад В: "), 0, 5);
+    grid.add(stock_0, 1, 5);
+    grid.add(new Label("Склад И: "), 0, 6);
+    grid.add(stock_1, 1, 6);
+    grid.add(new Label("Количество: "), 0, 7);
+    grid.add(size, 1, 7);
+    grid.add(new Label("Cтоимость: "), 0, 8);
+    grid.add(price, 1, 8);
+    grid.add(new Label("Мин. остаток: "), 0, 9);
+    grid.add(min_remainder, 1, 9);
     
     size.setDisable(true);
     
@@ -92,7 +100,7 @@ public class AdminAdd
     HBox button = new HBox();
     button.setSpacing(5.0D);
     button.getChildren().addAll(new Node[] { ok, close });
-    grid.add(button, 1, 8);
+    grid.add(button, 1, 10);
     Scene scene = new Scene(grid);
     grid.setId("add");
     scene.getStylesheets().add(getClass().getResource("/css/login.css").toExternalForm());
@@ -240,6 +248,9 @@ public class AdminAdd
         
         int stock_0i = Integer.parseInt(stock_t_0);
         int stock_1i = Integer.parseInt(stock_t_1); 
+        
+        int min_remainder_i = Integer.parseInt(min_remainder.getText());
+        int articul_i = Integer.parseInt(articul.getText());
             
         int c_stock_result = -1;
         
@@ -247,19 +258,19 @@ public class AdminAdd
         if(c_stock_1.selectedProperty().get())c_stock_result = 1;
         if(c_stock_1.selectedProperty().get() && c_stock_0.selectedProperty().get())c_stock_result = 10;
         
-        if ((!new_name.equals("")) && (!snew_name.equals("")) && (choisindex != -1) && (helfindex != -1) && (c_stock_result != -1)) {
+        if ((!new_name.equals("")) && (!snew_name.equals("")) && (choisindex != -1) && (helfindex != -1) && (c_stock_result != -1) && min_remainder_i > 0) {
           try {
             String p = (String)chois.getSelectionModel().getSelectedItem();
             int to = p.indexOf(" ");
             p = p.substring(0, to);
             int group = Integer.parseInt(p);
             
-            db.setProductAdmin(snew_name, snew_name, group, helfindex, Integer.parseInt(size.getText()), Double.parseDouble(price.getText()),c_stock_result,stock_0i,stock_1i);
+            db.setProductAdmin(snew_name, snew_name, group, helfindex, Integer.parseInt(size.getText()), Double.parseDouble(price.getText()),c_stock_result,stock_0i,stock_1i,min_remainder_i, articul_i);
             
             int newid = db.setID(snew_name);
             int index_next = Repeat.admprod.size();
             
-            AdminPane new_product = new AdminPane(index_next, newid, snew_name, snew_name, group, helfindex, Integer.parseInt(size.getText()), Double.parseDouble(price.getText()), 0,c_stock_result,stock_0i,stock_1i);
+            AdminPane new_product = new AdminPane(index_next, newid, snew_name, snew_name, group, helfindex, Integer.parseInt(size.getText()), Double.parseDouble(price.getText()), 0,c_stock_result,stock_0i,stock_1i,min_remainder_i,articul_i);
             db.setLog(new_product, new_product, 0, Repeat.user.getName());
             
             Repeat.admprod.add(new_product);
@@ -296,7 +307,7 @@ public class AdminAdd
       
     });
     stage.setWidth(750.0D);
-    stage.setHeight(300.0D);
+    stage.setHeight(360.0D);
     stage.show();
   }
   

@@ -1,5 +1,6 @@
 package Popup;
 
+import Collection.Cassa;
 import Collection.History;
 import Collection.Person;
 import Collection.Prices;
@@ -213,8 +214,12 @@ public class ReturnGateway
                 //stock_gate = 1;
             }
      int balance = bds_full[0] + size;
-     int balance_event_stock = sid + size;      
+     int balance_event_stock = sid + size;
      db.setReturnProduct(prod, size, event_stock, balance, balance_event_stock, Repeat.USER_NAME);
+     Cassa.rasxod = Cassa.rasxod + prod.getSum();
+     Cassa.cassa = Cassa.cassa - prod.getSum();
+     Cassa.setCassa();
+     
       
   }
   

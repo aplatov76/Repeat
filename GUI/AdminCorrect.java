@@ -72,13 +72,19 @@ public class AdminCorrect
     final TextField size = new TextField("" + p_prev.getSize());
     final TextField price = new TextField("" + p_prev.getPrice());
     final TextField actual_status = new TextField("" + p_prev.getActual_status());
+    
+    final TextField min_remainder = new TextField("" + p_prev.getMin_remainder());
+    final TextField articul = new TextField("" + p_prev.getArticul());
+    
     name.setMinWidth(500.0D);
     
     size.setDisable(true);
     
     final Label warning = new Label();
-    grid.add(new Label("Наименование: "), 0, 0);
-    grid.add(name, 1, 0);
+    grid.add(new Label("Артикул: "), 0, 0);
+    grid.add(articul, 1, 0);
+    grid.add(new Label("Наименование: "), 0, 1);
+    grid.add(name, 1, 1);
     //grid.add(new Label("Cокращенное наимен: "), 0, 1);
     //grid.add(sname, 1, 1);
     grid.add(new Label("Группа товара: "), 0, 2);
@@ -97,6 +103,9 @@ public class AdminCorrect
     grid.add(price, 1, 7);
     grid.add(new Label("Cтатус: "), 0, 8);
     grid.add(actual_status, 1, 8);
+    grid.add(new Label("Мин. остат.: "), 0, 9);
+    grid.add(min_remainder, 1, 9);
+    
     
     Button ok = new Button("Готово");
     Button close = new Button("Закрыть");
@@ -105,8 +114,8 @@ public class AdminCorrect
     HBox button = new HBox();
     button.setSpacing(5.0D);
     button.getChildren().addAll(new Node[] { ok, close });
-    grid.add(button, 1, 9);
-    grid.add(warning, 1, 10, 2, 1);
+    grid.add(button, 1, 10);
+    grid.add(warning, 1, 11, 2, 1);
     Scene scene = new Scene(grid);
     grid.setId("add");
     scene.getStylesheets().add(getClass().getResource("/css/login.css").toExternalForm());
@@ -214,7 +223,8 @@ public class AdminCorrect
       public void handle(MouseEvent event) {
         String cor_name = name.getText();
         String cor_sname = name.getText();//sname.getText();
-        if ((chois.getSelectionModel().getSelectedIndex() != -1) && (!cor_name.equals("")) && (!cor_sname.equals(""))) {
+        int min_remainder_i = Integer.parseInt(min_remainder.getText());
+        if ((chois.getSelectionModel().getSelectedIndex() != -1) && (!cor_name.equals("")) && (!cor_sname.equals("")) && min_remainder_i > 0) {
           String p = (String)chois.getValue();
           String stock_full = stock.getText();
           String stock_0i = stock_0.getText();
@@ -229,15 +239,15 @@ public class AdminCorrect
             double pr = Double.parseDouble(price.getText());
             int as = Integer.parseInt(actual_status.getText());
             
-            
-                        
-            db.updatePrice(p_prev.getId(), name.getText(), name.getText(), gr, hl, pr, sp, as,Integer.parseInt(stock_full),Integer.parseInt(stock_0i),Integer.parseInt(stock_1i));
-            AdminPane p_next = new AdminPane(select, p_prev.getId(), cor_name, cor_sname, gr, hl, sp, pr, as,Integer.parseInt(stock_full),Integer.parseInt(stock_0i),Integer.parseInt(stock_1i));
+            int articul_i = Integer.parseInt(articul.getText());
+                                    
+            db.updatePrice(p_prev.getId(), name.getText(), name.getText(), gr, hl, pr, sp, as,Integer.parseInt(stock_full),Integer.parseInt(stock_0i),Integer.parseInt(stock_1i),min_remainder_i,articul_i);
+            AdminPane p_next = new AdminPane(select, p_prev.getId(), cor_name, cor_sname, gr, hl, sp, pr, as,Integer.parseInt(stock_full),Integer.parseInt(stock_0i),Integer.parseInt(stock_1i),min_remainder_i,articul_i);
             db.setLog(p_next, p_prev, 1, Repeat.user.getName());
 
-            Repeat.admprod.set(select, new AdminPane(select, p_prev.getId(), cor_name, cor_sname, gr, hl, sp, pr, as,Integer.parseInt(stock_full),Integer.parseInt(stock_0i),Integer.parseInt(stock_1i)));
-            if (p_prev.getHelf() != hl)
-                db.getGroupProductAdmin(Repeat.admprod, gr, 0);
+            Repeat.admprod.set(select, new AdminPane(select, p_prev.getId(), cor_name, cor_sname, gr, hl, sp, pr, as,Integer.parseInt(stock_full),Integer.parseInt(stock_0i),Integer.parseInt(stock_1i),min_remainder_i,articul_i));
+           // if (p_prev.getHelf() != hl)
+             //   db.getGroupProductAdmin(Repeat.admprod, gr, 0);
             
             stage.close();
           } catch (NumberFormatException ex) {
@@ -258,7 +268,7 @@ public class AdminCorrect
     stage.setScene(scene);
     
     stage.setWidth(750.0D);
-    stage.setHeight(330.0D);
+    stage.setHeight(370.0D);
     stage.show();
   }
 }
