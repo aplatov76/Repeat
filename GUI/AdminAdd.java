@@ -250,7 +250,7 @@ public class AdminAdd
         int stock_1i = Integer.parseInt(stock_t_1); 
         
         int min_remainder_i = Integer.parseInt(min_remainder.getText());
-        int articul_i = Integer.parseInt(articul.getText());
+        String articul_i = articul.getText();
             
         int c_stock_result = -1;
         

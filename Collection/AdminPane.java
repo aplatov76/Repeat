@@ -15,7 +15,7 @@ public class AdminPane {
     private int stock_size_0;
     private int stock_size_1;
     private int min_remainder;
-    private int articul;
+    private String articul;
 
     public AdminPane() {
         number = Integer.valueOf(0);
@@ -31,10 +31,10 @@ public class AdminPane {
         stock_size_0 = 0;
         stock_size_1 = 0;
         min_remainder = 0;
-        articul = 0;
+        articul = "";
     }
 
-    public AdminPane(int num, int idp, String n, String shortname, int gr, int h, int s, double p, int as, int stock, int stock_size_0,int stock_size_1,int min_remainder,int articul) {
+    public AdminPane(int num, int idp, String n, String shortname, int gr, int h, int s, double p, int as, int stock, int stock_size_0,int stock_size_1,int min_remainder,String articul) {
         number = Integer.valueOf(num);
         id = Integer.valueOf(idp);
         name = n;
@@ -51,11 +51,11 @@ public class AdminPane {
         this.articul = articul;
     }
 
-    public void setArticul(int articul) {
+    public void setArticul(String articul) {
         this.articul = articul;
     }
 
-    public int getArticul() {
+    public String getArticul() {
         return articul;
     }
 

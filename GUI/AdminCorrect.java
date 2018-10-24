@@ -239,7 +239,7 @@ public class AdminCorrect
             double pr = Double.parseDouble(price.getText());
             int as = Integer.parseInt(actual_status.getText());
             
-            int articul_i = Integer.parseInt(articul.getText());
+            String articul_i = articul.getText();
                                     
             db.updatePrice(p_prev.getId(), name.getText(), name.getText(), gr, hl, pr, sp, as,Integer.parseInt(stock_full),Integer.parseInt(stock_0i),Integer.parseInt(stock_1i),min_remainder_i,articul_i);
             AdminPane p_next = new AdminPane(select, p_prev.getId(), cor_name, cor_sname, gr, hl, sp, pr, as,Integer.parseInt(stock_full),Integer.parseInt(stock_0i),Integer.parseInt(stock_1i),min_remainder_i,articul_i);

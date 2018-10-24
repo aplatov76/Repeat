@@ -1,14 +1,14 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package GUI;
 
-import Collection.Cassa;
-import Collection.GateReg;
-import Collection.Registration;
+import Collection.MoveToStock;
 import Connect.ConnectDB;
 import autofilltextbox.AutoFillTextBox;
 import fxuidemo.Repeat;
-import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -18,15 +18,11 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Dialogs;
-import javafx.scene.control.Dialogs.DialogOptions;
-import javafx.scene.control.Dialogs.DialogResponse;
-import javafx.scene.control.FocusModel;
+
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TableView.TableViewFocusModel;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -39,15 +35,15 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-public class AddProduct extends Application
+public class MoveProduct extends Application
 {
-  ObservableList<GateReg> prod = FXCollections.observableArrayList();
+  ObservableList<MoveToStock> prod = FXCollections.observableArrayList();
   
   public String USER_NAME;
   private int ni = 1;
   
 
-  public AddProduct(ObservableList<Registration> p){
+  public MoveProduct(){
       
   }
   
@@ -65,7 +61,7 @@ public class AddProduct extends Application
     root.setPadding(new Insets(20.0D, 20.0, 20.0, 20.0));
     VBox but = createBut(stage);
     
-    stage.setTitle("Регистрация продаж");
+    stage.setTitle("Перемещение товаров");
     root.setId("bp");
     but.setId("but");
     
@@ -78,7 +74,7 @@ public class AddProduct extends Application
     stage.setScene(scene);
     
     stage.setWidth(1080.0);
-    stage.setHeight(680.0);
+    stage.setHeight(630.0);
     stage.show();
   }
   
@@ -105,7 +101,7 @@ public class AddProduct extends Application
       public void handle(MouseEvent event)
       {
         if (prod.size() > 1) {
-          Dialogs.DialogResponse response = Dialogs.showConfirmDialog(stage, "Список товаров не пуст, закрыть окно?", "Confirm Dialog With Options", "Предупреждение", Dialogs.DialogOptions.OK_CANCEL);
+          Dialogs.DialogResponse response = Dialogs.showConfirmDialog(stage, "Список не пуст, закрыть окно?", "Confirm Dialog With Options", "Предупреждение", Dialogs.DialogOptions.OK_CANCEL);
           if (response == Dialogs.DialogResponse.OK) stage.close();
         } else {
           stage.close();
@@ -136,19 +132,7 @@ public class AddProduct extends Application
     
     HBox rb = new HBox();
     
-    rb.getChildren().addAll(new Label("Воронцово: "),st0,new Label("Ильинск: "),st1,new Label("(0 - Воронцово, 1 - Ильинск)"));        
-   
-    final RadioButton pay0 = new RadioButton();
-          pay0.setSelected(true);
-    final RadioButton pay1 = new RadioButton();
-    
-    ToggleGroup paygroup = new ToggleGroup();
-    pay0.setToggleGroup(paygroup);
-    pay1.setToggleGroup(paygroup);
-    
-    HBox pay_h = new HBox();
-    
-    pay_h.getChildren().addAll(new Label("Наличные: "), pay0, new Label("Терминал: "), pay1);
+    rb.getChildren().addAll(new Label("Воронцово: "),st0,new Label("/ Ильинск: "),st1,new Label("(0 - Воронцово, 1 - Ильинск)"));        
     
     
     box.setListLimit(100);
@@ -175,35 +159,21 @@ public class AddProduct extends Application
     grid.add(new Label("Количество: "), 0, 2);
     grid.add(size, 1, 2, gy, 1);
     
-    grid.add(new Label("Склад: "), 0, 3);
+    grid.add(new Label("Откуда: "), 0, 3);
     grid.add(rb, 1, 3, gy, 1);
     
-    final TextField price = new TextField();
-    price.setDisable(true);
-    
-    grid.add(new Label("Цена: "), 0, 4);
-    grid.add(price, 1, 4, gy, 1);
-    
-    final TextField summa = new TextField();
-    summa.setDisable(true);
-    grid.add(new Label("Cумма: "), 0, 5);
-    grid.add(summa, 1, 5, gy, 1);
-    
-    grid.add(new Label("Склад: "), 0, 6);
-    grid.add(stock_event, 1, 6, gy, 1);
+    grid.add(new Label("Наличие: "), 0, 4);
+    grid.add(stock_event, 1, 4, gy, 1);
     
     final TextField control = new TextField();
     control.setDisable(true);
-    grid.add(new Label("Общее: "), 0, 7);
-    grid.add(control, 1, 7, gy, 1);
+    grid.add(new Label("Общее: "), 0, 5);
+    grid.add(control, 1, 5, gy, 1);  
     
-    grid.add(new Label("Оплата: "), 0, 8);
-    grid.add(pay_h, 1, 8, gy, 1);    
+    final TableView<MoveToStock> tl = createTableReg();
     
-    final TableView<GateReg> tl = createTableReg();
-    
-    prod.add(new GateReg());
-    grid.add(tl, 0, 10, 2, 1);
+    //prod.add(new MoveToStock());
+    grid.add(tl, 0, 6, 2, 1);
     
     
     st0.setOnMouseClicked(new EventHandler<MouseEvent>()
@@ -264,11 +234,9 @@ public class AddProduct extends Application
         try {
           int id_product = db.setID(sn);
           int ssize = Integer.parseInt(size.getText());
-
-          price.setText(Double.toString(db.price(id_product)));
           
           int[] stock_full = db.getSize(id_product);
-          System.out.println(stock_full[0] + " "+stock_full[1]+ " "+stock_full[2]);
+          //System.out.println(stock_full[0] + " "+stock_full[1]+ " "+stock_full[2]);
           
           control.setText(String.valueOf(stock_full[0]));
           
@@ -285,7 +253,6 @@ public class AddProduct extends Application
                 else bds = -1;
           
           stock_event.setText(String.valueOf(bds));
-          if (ssize > 0) summa.setText(Double.toString(ssize * Double.parseDouble(price.getText())));
         } catch (NumberFormatException ex) {
           Dialogs.showErrorDialog(stage, "Ooops, there was an error!", "Error Dialog", "Категория не найденна");
           size.setText("1");
@@ -304,8 +271,6 @@ public class AddProduct extends Application
         try {
           int id_product = db.setID(sn);
           int ssize = Integer.parseInt(size.getText());
-
-          price.setText(Double.toString(db.price(id_product)));
           
           int[] stock_full = db.getSize(id_product);
           System.out.println(stock_full[0] + " "+stock_full[1]+ " "+stock_full[2]);
@@ -325,7 +290,6 @@ public class AddProduct extends Application
                 else bds = -1;
           
           stock_event.setText(String.valueOf(bds));
-          if (ssize > 0) summa.setText(Double.toString(ssize * Double.parseDouble(price.getText())));
         } catch (NumberFormatException ex) {
           Dialogs.showErrorDialog(stage, "Ooops, there was an error!", "Error Dialog", "Категория не найденна");
           size.setText("1");
@@ -348,9 +312,6 @@ public class AddProduct extends Application
             
             box.getListview().getFocusModel().isFocused(1);
             
-
-            price.setText(Double.toString(db.price(id_product)));
-            
             int[] stock_full = db.getSize(id_product);
             System.out.println(stock_full[0] + " "+stock_full[1]+ " "+stock_full[2]);
             
@@ -359,7 +320,6 @@ public class AddProduct extends Application
             if(st0.isSelected())stock_event.setText(String.valueOf(stock_full[1]));// = stock_full[1];
                 else if(st1.isSelected())stock_event.setText(String.valueOf(stock_full[2]));
             
-            if (ssize > 0) summa.setText(Double.toString(ssize * Double.parseDouble(price.getText())));
           } catch (NumberFormatException ex) {
             Dialogs.showErrorDialog(stage, "Ooops, there was an error!", "Error Dialog", "Категория не найденна");
             size.setText("1");
@@ -369,22 +329,6 @@ public class AddProduct extends Application
         
       }
       
-    });
-    size.setOnKeyReleased(new EventHandler<KeyEvent>()
-    {
-      public void handle(KeyEvent t)
-      {
-        String sn = box.getText();
-        try {
-          int sc = Integer.parseInt(size.getText());
-          summa.setText(Double.toString(sc * Double.parseDouble(price.getText())));
-        }
-        catch (NumberFormatException ex) {
-          size.setText("");
-          summa.setText("0.0");
-        }
-        
-      }
     });
     codebox.getListview().setOnMouseClicked(new EventHandler<MouseEvent>()
     {
@@ -400,15 +344,12 @@ public class AddProduct extends Application
             
             box.getListview().getFocusModel().isFocused(1);
             
-            price.setText(Double.toString(db.price(id_product)));
-            
             int[] stock_full = db.getSize(id_product);
             System.out.println(stock_full[0] + " "+stock_full[1]+ " "+stock_full[2]);
             control.setText(String.valueOf(stock_full[0]));
             if(st0.isSelected())stock_event.setText(String.valueOf(stock_full[1]));// = stock_full[1];
             else if(st1.isSelected())stock_event.setText(String.valueOf(stock_full[2]));
             
-            if (ssize > 0) summa.setText(Double.toString(ssize * Double.parseDouble(price.getText())));
         } catch (NumberFormatException ex) {
           Dialogs.showErrorDialog(stage, "Ooops, there was an error!", "Error Dialog", "Категория не найденна");
           size.setText("1");
@@ -425,6 +366,7 @@ public class AddProduct extends Application
         try {
           int sc = Integer.parseInt(size.getText());
           int bds_full[] = db.getSize(sn);
+          int index = prod.size();
           
           int bds = -1;
           int stock_gate = -1;
@@ -437,26 +379,17 @@ public class AddProduct extends Application
                 stock_gate = 1;
             }
                 else bds = -1;
-          
-          
-          
-          double p = Double.parseDouble(price.getText());
-          double sum = Double.parseDouble(summa.getText());
-          
-          if ((sc > 0) && (p > 0.0D) && (sum > 0.0D) && (bds >= sc))
+                    
+          if ((sc > 0) && (bds >= sc))
           {
             // неизвестен первый аргумент  AddProduct.access$008(AddProduct.this)
-            prod.add(0, new GateReg(AddProduct.this.ni, sn, Integer.toString(db.setID(sn)), size.getText(), price.getText(), Double.parseDouble(summa.getText()), stock_gate));
-            int index = prod.size() - 1;
-            double sumbreak = ((GateReg)prod.get(index)).getSum();
-            sumbreak += sum;
-            ((GateReg)prod.get(index)).setSum(sumbreak);
+            // String name, Integer id, Integer size, Integer stock, String user
+            prod.add(0, new MoveToStock(index++,sn,db.setID(sn), sc, stock_gate, Repeat.USER_NAME));
+            
             
             box.getTextbox().setText("");
             codebox.getTextbox().setText("");
             size.setText("1");
-            price.setText("0.0");
-            summa.setText("0.0");
             control.setText("0");
           }
           else {
@@ -475,10 +408,6 @@ public class AddProduct extends Application
         int n = tl.getFocusModel().getFocusedIndex();
         int lim = prod.size() - 1;
         if ((n != lim) && (n != -1)) {
-          double sum = ((GateReg)prod.get(n)).getSum();
-          double sumbreak = ((GateReg)prod.get(lim)).getSum();
-          sumbreak -= sum;
-          ((GateReg)prod.get(lim)).setSum(sumbreak);
           prod.remove(n);
         } else {
           Dialogs.showErrorDialog(stage, "Ничего не выбрано.");
@@ -489,153 +418,85 @@ public class AddProduct extends Application
     {
       public void handle(MouseEvent event)
       {
-        int lim = prod.size() - 1;
-        int validatesize = AddProduct.this.validateSizeProduct(prod);
-        
-        if (validatesize == -1) {
-           
-          int id_check = db.getMaxCheck() +1;
+        int lim = prod.size();
+      //  int validatesize = validateSizeProduct(prod);
+      //  if (validatesize == -1) {
+           System.out.println("lim"+lim);
+          //int id_check = db.getMaxCheck() +1;
             
           for (int i = 0; i < lim; i++) {
-            String name = ((GateReg)prod.get(i)).getName();
-            int a = Integer.parseInt(((GateReg)prod.get(i)).getSize());
-
-            int pid = Integer.parseInt(((GateReg)prod.get(i)).getId());
+            int a = ((MoveToStock)prod.get(i)).getSize();
+            int pid = ((MoveToStock)prod.get(i)).getId();
             
-            int bds_full[] = db.getSize(pid);
-            int sid = -1;
-            int stock_gate = prod.get(i).getStock();
-            
-            if(stock_gate == 0){
-                sid = bds_full[1];
-                //stock_gate = 0;
-            }
-            else if(stock_gate == 1){
-                sid = bds_full[2];
-                //stock_gate = 1;
-            }
-            
-            if ((sid <= 0) || (sid < a))
-            {
-              Dialogs.showErrorDialog(stage, "Фатальная ошибка , пожалуйста сообщите администратору.\nОшибка номер 400, \nID ошибочная строка:" + pid + "\n" + "Снимок экрана, кнопка  prt sc.", "Error Dialog", "");
-
-            }
-            else
-            {
+            int stock = prod.get(i).getStock();
+            int stock_gate = -1;
             /*
             *
             * запись в БД
             *
-            */
-
-              double c = Double.parseDouble(((GateReg)prod.get(i)).getPrice());
-              double d = ((GateReg)prod.get(i)).getSum();
-              
-              if ((a > 0) && (d > 0.0D) && (c > 0.0D)) {
-                int balance = bds_full[0] - a;
-                int balance_event_stock = sid - a;
-                
-                
-                db.reliz_day(pid, name, balance, a, stock_gate, c, d, Repeat.USER_NAME,id_check);
-                Repeat.prod.add(new Registration(AddProduct.this.Time_m(), name, Integer.valueOf(pid), Integer.valueOf(a),stock_gate, c, d, Repeat.USER_NAME));
-                
-                db.setSize(pid, balance, stock_gate, balance_event_stock);
-                Cassa.cassa += d;
-                Cassa.setCassa();
-              }
+            */              
+              if (a > 0) {               
+                //db.reliz_day(pid, name, balance, a, stock_gate, c, d, Repeat.USER_NAME,id_check);
+                //Repeat.prod.add(new Registration(AddProduct.this.Time_m(), name, Integer.valueOf(pid), Integer.valueOf(a),stock_gate, c, d, Repeat.USER_NAME));
+                // stock_gate id склада из которого перемещают.
+                db.setMove(pid, stock, a,Repeat.user.getName());
+                //Cassa.cassa += d;
+                //Cassa.setCassa();
             }
           }
           
           prod.remove(0, prod.size());
-          prod.add(new GateReg());
-        } else {
-          Dialogs.showErrorDialog(stage, "Ошибка номер 402.\nНет необходимого количества товара, номер строки: " + validatesize, "Error Dialog", "");
-        }
+          System.out.println("completed");
+    //    } else {
+     //     Dialogs.showErrorDialog(stage, "Ошибка номер 402.\nНет необходимого количества товара, номер строки: " + validatesize, "Error Dialog", "");
+     //   }
         
       }
     });
     return grid;
   }
   
-  private TableView<GateReg> createTableReg() { 
-    TableView<GateReg> table = new TableView<GateReg>();
-
-    TableColumn n = new TableColumn("№");
-    n.setMinWidth(30.0D);
-    n.setMaxWidth(40.0D);
-    n.setCellValueFactory(new PropertyValueFactory("n"));
+  private TableView<MoveToStock> createTableReg() { 
+    TableView<MoveToStock> table = new TableView<MoveToStock>();
     
+    table.columnResizePolicyProperty();
+    
+    TableColumn index = new TableColumn("№");
+    index.setMinWidth(30.0D);
+    //n.setMaxWidth(40.0D);
+    index.setCellValueFactory(new PropertyValueFactory("index"));  
+
+    TableColumn n = new TableColumn("id");
+    n.setMinWidth(30.0D);
+    //n.setMaxWidth(40.0D);
+    n.setCellValueFactory(new PropertyValueFactory("id"));    
 
     TableColumn name = new TableColumn("Наименование");
     name.setMinWidth(450.0);
-    name.setMaxWidth(480.0);
-    name.setCellValueFactory(new PropertyValueFactory("name"));
-    
+    //name.setMaxWidth(480.0);
+    name.setCellValueFactory(new PropertyValueFactory("name"));    
 
     TableColumn id = new TableColumn("Код");
     id.setMinWidth(58.0);
-    id.setCellValueFactory(new PropertyValueFactory("id"));
-    
+    id.setCellValueFactory(new PropertyValueFactory("id"));    
 
     TableColumn size = new TableColumn("Кол.eд.");
     size.setMinWidth(50.0);
     size.setCellValueFactory(new PropertyValueFactory("size"));
     
-    TableColumn stock = new TableColumn("Склад");
+    TableColumn stock = new TableColumn("Склад отгр");
     stock.setMinWidth(50.0);
-    stock.setCellValueFactory(new PropertyValueFactory("stock"));
-    
-
-    TableColumn price = new TableColumn("Цена");
-    price.setMinWidth(90.0);
-    
-    price.setCellValueFactory(new PropertyValueFactory("price"));
-    
-
-    TableColumn sum = new TableColumn("Сумма");
-    sum.setMinWidth(90.0);
-    
-    sum.setCellValueFactory(new PropertyValueFactory("sum"));
+    stock.setCellValueFactory(new PropertyValueFactory("stock"));    
  
     table.setStyle("-fx-font: normal 11 Arial;");
-    table.setMaxWidth(820.0);
+    table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+    //table.setMaxWidth(820.0);
     table.setMaxHeight(350.0);
-    
+    System.out.println(prod);
     table.setItems(prod);
     
-    table.getColumns().addAll(n, name, id, size,stock, price, sum );
-    
+    table.getColumns().addAll(index,n, name, size,stock);   
 
     return table;
-  }
-  
-  private String Time_m() { SimpleDateFormat s = new SimpleDateFormat("HH:mm");
-    return s.format(new Date());
-  }
-  
-
-  private int validateSizeProduct(ObservableList<GateReg> g)
-  {
-    ConnectDB db = new ConnectDB();
-    
-    int n = g.size() - 1;
-    int errorrow = -1;
-    if (n == 0) { 
-            errorrow = 0;
-    }
-    
-    int stock_event = -1;
-    
-    for (int i = 0; i < n; i++)
-    {
-      stock_event  = ((GateReg)prod.get(i)).getStock();
-      int a = Integer.parseInt(((GateReg)prod.get(i)).getSize());
-      int b_full[] = db.getSize(Integer.parseInt(((GateReg)g.get(i)).getId()));
-      int b = -1;
-      if(stock_event == 0)b = b_full[1];
-      else if(stock_event == 1)b = b_full[2];
-      if (a > b) errorrow = i;
-    }
-    return errorrow;
   }
 }

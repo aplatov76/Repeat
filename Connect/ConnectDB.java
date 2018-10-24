@@ -6,6 +6,7 @@ import Collection.HistoryMetallOtchet;
 import Collection.ListCustProduct;
 import Collection.Log_view;
 import Collection.MetallList;
+import Collection.MoveProduct;
 import Collection.Person;
 import Collection.Prices;
 import Collection.Procurement_product_hist;
@@ -355,7 +356,7 @@ public class ConnectDB {
         return c;
     }
 
-    public void reliz_day(int idto, String name, int balance, int col_t, int stock_event, double price, double stoimost, String user) {
+    public void reliz_day(int idto, String name, int balance, int col_t, int stock_event, double price, double stoimost, String user,int id_check) {
         try {
             Class.forName("com.mysql.jdbc.Driver");
 
@@ -367,7 +368,7 @@ public class ConnectDB {
 
             java.sql.Date sysdate = new java.sql.Date(new java.util.Date().getTime());
 
-            stmt.executeUpdate("INSERT INTO `registration`(`idop`, `data`, `time`, `idto`, `name`,`balance`,`size`,`stock`, `price`, `sum`, `user`) VALUES ('0','" + sysdate + "','" + time + "','" + idto + "','" + name + "','" + balance + "','" + col_t + "','"+stock_event+"','" + price + "','" + stoimost + "','" + user + "')");
+            stmt.executeUpdate("INSERT INTO `registration`(`idop`, `data`, `time`, `idto`, `name`,`balance`,`size`,`stock`, `price`, `sum`, `user`,`id_check`) VALUES ('0','" + sysdate + "','" + time + "','" + idto + "','" + name + "','" + balance + "','" + col_t + "','"+stock_event+"','" + price + "','" + stoimost + "','" + user + "','"+id_check+"')");
 
             stmt.close();
             connection.close();
@@ -488,7 +489,7 @@ public class ConnectDB {
         return size;
     }
 
-    public int setProductAdmin(String name, String sname, int gr, int h, int size, double p,int stock,int stock_0,int stock_1,int min_remainder_i,int articul) {
+    public int setProductAdmin(String name, String sname, int gr, int h, int size, double p,int stock,int stock_0,int stock_1,int min_remainder_i,String articul) {
         int b = 0;
         try {
             Class.forName("com.mysql.jdbc.Driver");
@@ -646,6 +647,30 @@ public class ConnectDB {
             if(stock_event == 0)query = "UPDATE `solnce`.`prais` SET `sell` = '" + full + "', `stock_0` =  '"+stock_size+"' WHERE `prais`.`id` = '" + id + "'";
                 else query = "UPDATE `solnce`.`prais` SET `sell` = '" + full + "', `stock_1` =  '"+stock_size+"' WHERE `prais`.`id` = '" + id + "'";
             stmt.executeUpdate(query);
+
+            stmt.close();
+            connection.close();
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    
+        public void setMove(int id, int stock_event,int size, String name) {
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+
+            Connection connection = DriverManager.getConnection(url, properties);
+            Statement stmt = connection.createStatement();
+            String query = "";
+            // 1. перемещаем из 0го в 1ый.
+            // 2. перемещаем из 1го в 0ой.
+            if(stock_event == 0)query = "UPDATE `solnce`.`prais` SET `stock_0` =  `stock_0` - '"+size+"', `stock_1` = `stock_1` + '"+size+"' WHERE `prais`.`id` = '" + id + "'";
+                else query = "UPDATE `solnce`.`prais` SET `stock_0` =  `stock_0` + '"+size+"', `stock_1` = `stock_1` - '"+size+"' WHERE `prais`.`id` = '" + id + "'";
+            stmt.executeUpdate(query);
+            
+            int iduser = this.getIdUser(name);
+            
+            stmt.executeUpdate("INSERT INTO `move_stock_product` (`id`, `data`, `id_product`, `size`, `id_stock_get`, `id_user`) VALUES ('0', UNIX_TIMESTAMP(), '"+id+"', '"+size+"', '"+stock_event+"', '"+iduser+"');");
 
             stmt.close();
             connection.close();
@@ -1000,7 +1025,7 @@ public class ConnectDB {
 
             while (rs.next()) {
                 // не отработанно
-                prod.add(new AdminPane(index++, rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getInt(5), rs.getInt(7), rs.getDouble(6), rs.getInt(8),0,0,0,0,0));
+                prod.add(new AdminPane(index++, rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getInt(5), rs.getInt(7), rs.getDouble(6), rs.getInt(8),0,0,0,0,""));
             }
             rs.close();
             stmt.close();
@@ -1026,7 +1051,7 @@ public class ConnectDB {
 
             while (rs.next()) {
                 // int склада не реализован
-               prod.add(new AdminPane(index++, rs.getInt(1), rs.getString(3), rs.getString(3), rs.getInt(4), rs.getInt(5), rs.getInt(7), rs.getDouble(6), rs.getInt(8),rs.getInt(9),rs.getInt(10),rs.getInt(11),rs.getInt(12),rs.getInt(13)));
+               prod.add(new AdminPane(index++, rs.getInt(1), rs.getString(3), rs.getString(3), rs.getInt(4), rs.getInt(5), rs.getInt(7), rs.getDouble(6), rs.getInt(8),rs.getInt(9),rs.getInt(10),rs.getInt(11),rs.getInt(12),rs.getString(13)));
                //(int num, int idp, String n, String shortname, int gr, int h, int s, double p, int as, int stock, int stock_size_0,int stock_size_1)
             }
             rs.close();
@@ -1179,7 +1204,7 @@ public class ConnectDB {
         }
     }
 
-    public void updatePrice(int id, String name, String sname, int group, int helf, double price, int size, int actual_status,int stock, int stock_0, int stock_1,int min_remainder,int articul) {
+    public void updatePrice(int id, String name, String sname, int group, int helf, double price, int size, int actual_status,int stock, int stock_0, int stock_1,int min_remainder,String articul) {
         try {
             Class.forName("com.mysql.jdbc.Driver");
 
@@ -1790,7 +1815,7 @@ public class ConnectDB {
         try {
             Class.forName("com.mysql.jdbc.Driver");
 
-            String query = "SELECT COUNT( * )FROM `procurement_product_hist` WHERE `status` =1;";
+            String query = "SELECT COUNT( * ) FROM `procurement_product_hist` WHERE `status` =1;";
             Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
@@ -2479,6 +2504,39 @@ public void getReturnProduct(ObservableList<Registration_return> return_prod, in
         //return data;
     }
 
+public void getMoveProduct(ObservableList<MoveProduct> return_prod) {
+        //ObservableList<Registration> data = javafx.collections.FXCollections.observableArrayList();
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            String query = "SELECT move_stock_product.*, passworld.name, prais.short_name FROM `move_stock_product` LEFT JOIN `passworld` ON `move_stock_product`.`id_user` = passworld.id_user LEFT JOIN `prais` ON `move_stock_product`.`id_product` = `prais`.`id` ORDER BY move_stock_product.id DESC;";
+
+            Connection connection = DriverManager.getConnection(url, properties);
+            Statement stmt = connection.createStatement();
+
+            ResultSet rs = stmt.executeQuery(query);
+
+            int index = 0;
+            while (rs.next()) {
+                //System.out.println(rs.getString(4));
+                long e = rs.getLong(2);
+                java.util.Date date = new java.util.Date(e * 1000L);
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                String time = sdf.format(date);
+                //String date_return, String name, Integer id, Integer size, String user
+                return_prod.add(new MoveProduct(time, rs.getString(8), rs.getInt(3), rs.getInt(4),rs.getInt(5), rs.getString(7)));
+            }
+            //System.out.println(return_prod.size());
+
+            rs.close();
+            stmt.close();
+            connection.close();
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+        }
+        //return data;
+    }
+
+
 public int getReturnProductIdOperation(int idop) {
         //ObservableList<Registration> data = javafx.collections.FXCollections.observableArrayList();
         int size_g = 0;
@@ -2528,6 +2586,27 @@ public int getReturnProductIdOperation(int idop) {
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
+    }
+    
+public int getMaxCheck(){
+        int r = 0;
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            Connection connection = DriverManager.getConnection(url, properties);
+            String query = "SELECT MAX(`id_check`) FROM `registration`;";
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            
+            if (rs.next())
+                r = rs.getInt(1);
+            rs.close();
+
+            connection.close();
+        } catch (ClassNotFoundException | SQLException e) {
+            System.out.println("err: getMaxCheck");
+        }
+        
+        return r;
     }
 
 }

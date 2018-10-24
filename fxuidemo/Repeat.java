@@ -123,13 +123,11 @@ public class Repeat extends javafx.application.Application
     
     final ScaleTransition animationGrow = new ScaleTransition(javafx.util.Duration.millis(DURATION), node);
     animationGrow.setToX(SCALE);
-    animationGrow.setToY(SCALE);
-    
+    animationGrow.setToY(SCALE);    
 
     final ScaleTransition animationShrink = new ScaleTransition(javafx.util.Duration.millis(DURATION), node);
     animationShrink.setToX(1.0D);
-    animationShrink.setToY(1.0D);
-    
+    animationShrink.setToY(1.0D);    
 
     javafx.scene.effect.Reflection effect = new javafx.scene.effect.Reflection();
     node.setEffect(effect);
@@ -887,6 +885,7 @@ public class Repeat extends javafx.application.Application
     Button add = new Button("Добавить");
     Button cor = new Button("Изменить");
     Button del = new Button("Удалить");
+    Button move = new Button("Перемещение");
     
     Button cgroup = new Button(" Группы ");
     Button print = new Button("Печать ");
@@ -913,6 +912,7 @@ public class Repeat extends javafx.application.Application
     contract.setId("dark-blue");
     zakazi.setId("dark-blue");
     add.setId("dark-blue");
+    move.setId("dark-blue");
     cor.setId("dark-blue");
     del.setId("dark-blue");
     cgroup.setId("dark-blue");
@@ -920,6 +920,7 @@ public class Repeat extends javafx.application.Application
 
     if (!user.getRules(2)) add.setDisable(true);
     if (!user.getRules(4)) cor.setDisable(true);
+    if (!user.getRules(4)) move.setDisable(true);
     if (!user.getRules(3)) del.setDisable(true);
     if (!user.getRules(8)) { cgroup.setDisable(true);
     }
@@ -937,6 +938,22 @@ public class Repeat extends javafx.application.Application
       }
       
     });
+    
+    move.setOnMouseClicked(new EventHandler<MouseEvent>()
+    {
+      public void handle(MouseEvent event)
+      {
+        GUI.Move_product_history add = new GUI.Move_product_history();
+        try {
+          add.start(new Stage());
+        } catch (Exception ex) {
+          java.util.logging.Logger.getLogger(Repeat.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        
+      }
+      
+    });
+    
     otchetzakup.setOnMouseClicked(new EventHandler<MouseEvent>()
     {
       public void handle(MouseEvent event)
@@ -1086,6 +1103,7 @@ public class Repeat extends javafx.application.Application
     boxcode.setId("box");
     
     HBox button = new HBox();
+    HBox button0 = new HBox();
     HBox button1 = new HBox();
     HBox button2 = new HBox();
     HBox button3 = new HBox();
@@ -1096,6 +1114,7 @@ public class Repeat extends javafx.application.Application
 
     button.setMinWidth(250.0D);
     button.setSpacing(5.0D);
+    button0.setSpacing(5.0D);
     button1.setSpacing(5.0D);
     button2.setSpacing(5.0D);
     button3.setSpacing(8.0D);
@@ -1103,13 +1122,12 @@ public class Repeat extends javafx.application.Application
     button5.setSpacing(8.0D);
     button6.setSpacing(8.0D);
     
-    button.getChildren().addAll(new Node[] { add, cor, del });
+    button.getChildren().addAll(new Node[] { add, cor });
+    button0.getChildren().addAll(new Node[] { move, del });
     button1.getChildren().addAll(new Node[] { contract, zakazi });
     button2.getChildren().addAll(new Node[] { cgroup, print });
     button4.getChildren().addAll(new Node[] { cproduct, cproductadd });
     button5.getChildren().addAll(new Node[] { productaddnow, productaddlist });
-    
-
 
     Button search = new Button("Поиск");
     final Popup popup = new Popup();
@@ -1305,7 +1323,7 @@ public class Repeat extends javafx.application.Application
       
 
     });
-    node.getChildren().addAll(new Node[] { texoper, button, button2, texcontract, button1, searcsort, button3, order_product, button4, product_add_now, button5, otchetzakup, use_status_product, button6, close });
+    node.getChildren().addAll(new Node[] { texoper, button,button0, button2, texcontract, button1, searcsort, button3, order_product, button4, product_add_now, button5, otchetzakup, use_status_product, button6, close });
     return node;
   }
   
