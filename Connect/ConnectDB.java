@@ -31,13 +31,7 @@ public class ConnectDB {
 
     public ConnectDB() {
         properties = new Properties();
-        //properties.setProperty("user", "root");
-        //properties.setProperty(url, url)
 
-
-        //url = "jdbc:mysql://localhost/solnce";//VH228.spaceweb.ru
-        url = "jdbc:mysql://VH228.spaceweb.ru/aplatov762_stock";
-        //url = "jdbc:mysql://192.168.1.151/solnce";
     }
     
     public int getIdUser(String name){
