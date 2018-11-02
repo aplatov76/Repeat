@@ -239,7 +239,7 @@ private TableView createTableHistory() {
   public void getReturn(String dateField,String dataField) { 
       ConnectDB mysql = new ConnectDB();
       System.out.println(dateField + " "+ dataField);
-      mysql.getHistory(dateField, dataField, hist);
+      mysql.getHistory(dateField, dataField, hist,Repeat.user.getGroup_user());
   }
     
 }

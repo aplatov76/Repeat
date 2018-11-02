@@ -410,8 +410,9 @@ public class Repeat extends javafx.application.Application
   private TableView<Collection.Registration> createTableReg()
   {
     TableView<Collection.Registration> table = new TableView<Collection.Registration>();
-    
-    table.columnResizePolicyProperty();
+    table.setMinWidth(sSize.width - sSize.width*0.2);    
+    table.setColumnResizePolicy( TableView.CONSTRAINED_RESIZE_POLICY);
+    //table.autosize();
     
     TableColumn time = new TableColumn("Время");
     time.setMinWidth(80.0D);
@@ -420,7 +421,7 @@ public class Repeat extends javafx.application.Application
 
     TableColumn name = new TableColumn("Наименование");
     name.setMinWidth(500.0D);
-    name.setMaxWidth(501.0D);
+    //name.setMaxWidth(501.0D);
     name.setCellValueFactory(new PropertyValueFactory("name"));
     
     TableColumn id = new TableColumn("Код");
@@ -449,6 +450,7 @@ public class Repeat extends javafx.application.Application
     table.setId("tablefont");
     table.setItems(prod);
     
+    
     if (!user.getRules(10))
       connectordb.getSessionBecap(prod, user.getName()); 
     else {
@@ -462,18 +464,16 @@ public class Repeat extends javafx.application.Application
   private TableView createTableHistory() {
     TableView<Collection.History> table = new TableView();
     
-
-    table.columnResizePolicyProperty();
+    table.setMinWidth(sSize.width - sSize.width*0.2);    
+    table.setColumnResizePolicy( TableView.CONSTRAINED_RESIZE_POLICY);
     
     TableColumn idop = new TableColumn("id опер.");
     idop.setMinWidth(50.0D);
-    idop.setCellValueFactory(new PropertyValueFactory("idop"));
-    
+    idop.setCellValueFactory(new PropertyValueFactory("idop"));    
 
     TableColumn time = new TableColumn("Дата");
     time.setMinWidth(80.0D);
-    time.setCellValueFactory(new PropertyValueFactory("data"));
-    
+    time.setCellValueFactory(new PropertyValueFactory("data"));    
 
     TableColumn name = new TableColumn("Наименование");
     name.setMinWidth(430.0D);
@@ -481,23 +481,19 @@ public class Repeat extends javafx.application.Application
     
     TableColumn id = new TableColumn("Код");
     id.setMinWidth(60.0D);
-    id.setCellValueFactory(new PropertyValueFactory("idpr"));
-    
+    id.setCellValueFactory(new PropertyValueFactory("idpr"));   
 
     TableColumn balance = new TableColumn("Остаток");
     balance.setMinWidth(60.0D);
-    balance.setCellValueFactory(new PropertyValueFactory("balance"));
-    
+    balance.setCellValueFactory(new PropertyValueFactory("balance"));    
 
     TableColumn size = new TableColumn("Продано");
     size.setMinWidth(60.0D);
-    size.setCellValueFactory(new PropertyValueFactory("size"));
-    
+    size.setCellValueFactory(new PropertyValueFactory("size"));  
 
     TableColumn price = new TableColumn("Цена");
     price.setMinWidth(80.0D);
-    price.setCellValueFactory(new PropertyValueFactory("price"));
-    
+    price.setCellValueFactory(new PropertyValueFactory("price"));   
 
     TableColumn sum = new TableColumn("Сумма");
     sum.setMinWidth(100.0D);
@@ -510,17 +506,17 @@ public class Repeat extends javafx.application.Application
     table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     table.setId("tablefont");
     table.setItems(historyprod);
-    table.setMaxWidth(1076.0D);
-    table.getColumns().addAll(new TableColumn[] { idop, time, name, id, balance, size, price, sum, user });
+    //table.setMaxWidth(1076.0D);
+    //table.setMinWidth(sSize.width - sSize.width*0.2);
+    table.getColumns().addAll(idop, time, name, id, balance, size, price, sum, user );
     return table;
   }
   
   private TableView<AdminPane> createTableAdmin()
   {
     TableView<AdminPane> table = new TableView<>();
-    
-
-    table.columnResizePolicyProperty();
+    table.setMinWidth(sSize.width - sSize.width*0.2);    
+    table.setColumnResizePolicy( TableView.CONSTRAINED_RESIZE_POLICY);
     
     TableColumn code = new TableColumn("Артикул");
     code.setMinWidth(35.0D);
@@ -534,10 +530,10 @@ public class Repeat extends javafx.application.Application
     id.setCellValueFactory(new PropertyValueFactory("id"));
     
 
-    TableColumn name = new TableColumn("Наименование");
+    /*TableColumn name = new TableColumn("Наименование");
     name.setMinWidth(405.0D);
     name.setMaxWidth(416.0D);
-    name.setCellValueFactory(new PropertyValueFactory("name"));
+    name.setCellValueFactory(new PropertyValueFactory("name"));*/
     
 
     TableColumn sname = new TableColumn("Наименование");
@@ -549,9 +545,9 @@ public class Repeat extends javafx.application.Application
     //group.setMaxWidth(30.0);
     group.setCellValueFactory(new PropertyValueFactory("group"));   
 
-    TableColumn helf = new TableColumn("Вес");
+    /*TableColumn helf = new TableColumn("Вес");
     helf.setMinWidth(30.0D);
-    helf.setCellValueFactory(new PropertyValueFactory("helf"));
+    helf.setCellValueFactory(new PropertyValueFactory("helf"));*/
     
     TableColumn status = new TableColumn("Статус");
     status.setMinWidth(20.0D);
@@ -561,9 +557,9 @@ public class Repeat extends javafx.application.Application
     col.setMinWidth(40.0D);
     col.setCellValueFactory(new PropertyValueFactory("size"));
     
-    TableColumn stock = new TableColumn("Склады");
+    /*TableColumn stock = new TableColumn("Склады");
     stock.setMinWidth(20.0);
-    stock.setCellValueFactory(new PropertyValueFactory("stock"));
+    stock.setCellValueFactory(new PropertyValueFactory("stock"));*/
     
     TableColumn stock_size_0 = new TableColumn("В");
     stock_size_0.setMinWidth(25.0);
@@ -582,78 +578,64 @@ public class Repeat extends javafx.application.Application
     min_remainder.setCellValueFactory(new PropertyValueFactory("min_remainder"));
     
     connectordb.getPaneAdmin(admprod);
-    table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+    //table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     table.setItems(admprod);
     table.setId("tablefont");
     
     table.getColumns().addAll(id,code, sname, group,/* helf, status,*/ col,price,/*stock,*/ stock_size_0, stock_size_1,min_remainder);
-    double width = sSize.width - sSize.width*0.235;
-    table.setMaxWidth(width);
+    //double width = sSize.width - sSize.width*0.235;
+    //table.setMaxWidth(width);
     return table;
   }
   
   private TableView createTableLog() {
     TableView<Log_view> table = new TableView();
     
-
-    table.columnResizePolicyProperty();
+    table.setMinWidth(sSize.width - sSize.width*0.2);    
+    table.setColumnResizePolicy( TableView.CONSTRAINED_RESIZE_POLICY);
     
     TableColumn code = new TableColumn("№");
     code.setMinWidth(35.0D);
     
     code.setCellValueFactory(new PropertyValueFactory("index"));
     
-
     TableColumn data = new TableColumn("Дата");
     data.setMinWidth(140.0D);
     data.setCellValueFactory(new PropertyValueFactory("data"));
     
-
     TableColumn id = new TableColumn("Код oпер.");
     id.setMinWidth(60.0D);
     id.setCellValueFactory(new PropertyValueFactory("idop"));
     
-
     TableColumn id_product = new TableColumn("Код прод.");
     id_product.setMinWidth(40.0D);
     
     id_product.setCellValueFactory(new PropertyValueFactory("idproduct"));
     
-
     TableColumn sname = new TableColumn("Наименование");
     sname.setMinWidth(450.0D);
     sname.setCellValueFactory(new PropertyValueFactory("name_product"));
     
-
     TableColumn group = new TableColumn("Группа");
     group.setMinWidth(30.0D);
     group.setCellValueFactory(new PropertyValueFactory("group_product"));
     
-
     TableColumn helf = new TableColumn("Тип");
     helf.setMinWidth(30.0D);
     helf.setCellValueFactory(new PropertyValueFactory("type"));
     
-
     TableColumn col = new TableColumn("Остаток");
     col.setMinWidth(40.0D);
     
     col.setCellValueFactory(new PropertyValueFactory("ostatok"));
-    
-
 
     TableColumn price = new TableColumn("Цена");
     price.setMinWidth(60.0D);
     price.setCellValueFactory(new PropertyValueFactory("price"));
     
-
     TableColumn user = new TableColumn("User");
     user.setMinWidth(60.0D);
     user.setCellValueFactory(new PropertyValueFactory("user"));
-    
-
-
-    table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     
     table.setId("tablefont");
     
@@ -661,9 +643,6 @@ public class Repeat extends javafx.application.Application
     table.setMaxWidth(1470.0D);
     return table;
   }
-  
-
-
 
   private GridPane createGridPaneAutorize(final BorderPane root, final VBox but, final Stage stage)
   {
@@ -1433,7 +1412,7 @@ public class Repeat extends javafx.application.Application
         Matcher m = p.matcher(dateField.getText());
         Matcher n = p.matcher(dataField.getText());
         if ((m.matches()) && (n.matches())) {
-          Repeat.connectordb.getHistory(dateField.getText(), dataField.getText(), Repeat.historyprod);
+          Repeat.connectordb.getHistory(dateField.getText(), dataField.getText(), Repeat.historyprod,Repeat.user.getGroup_user());
         } else {
           Dialogs.showErrorDialog(st, "Неверный формат даты");
         }
@@ -1578,20 +1557,20 @@ public class Repeat extends javafx.application.Application
   private TableView<Prices> createTablePrice() {
     TableView<Prices> table = new TableView();
     
-    table.columnResizePolicyProperty();
+    table.setMinWidth(sSize.width - sSize.width*0.2);    
+    table.setColumnResizePolicy( TableView.CONSTRAINED_RESIZE_POLICY);
+    
     TableColumn code = new TableColumn("№");
     code.setMinWidth(60.0D);
     code.setCellValueFactory(new PropertyValueFactory("code"));
     
     TableColumn id = new TableColumn("Код");
     id.setMinWidth(70.0D);
-    id.setCellValueFactory(new PropertyValueFactory("id"));
-    
+    id.setCellValueFactory(new PropertyValueFactory("id"));    
 
     TableColumn name = new TableColumn("Наименование продукта");
     name.setMinWidth(610.0D);
-    name.setCellValueFactory(new PropertyValueFactory("name"));
-    
+    name.setCellValueFactory(new PropertyValueFactory("name"));   
 
     TableColumn helf = new TableColumn("Группа");
     helf.setMinWidth(60.0D);
@@ -1613,10 +1592,7 @@ public class Repeat extends javafx.application.Application
     
 
     table.setStyle("-fx-font: normal 11 Arial;-fx-font-header: normal 11 Arial;");
-    
-    table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-    
-    table.setMaxWidth(1186.0D);
+  
     table.getColumns().addAll(new TableColumn[] { code, id, name, helf, actual_status, col, price });
     table.setItems(prices);
     

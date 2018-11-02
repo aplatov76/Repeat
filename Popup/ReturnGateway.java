@@ -215,9 +215,9 @@ public class ReturnGateway
             }
      int balance = bds_full[0] + size;
      int balance_event_stock = sid + size;
-     db.setReturnProduct(prod, size, event_stock, balance, balance_event_stock, Repeat.USER_NAME);
-     Cassa.rasxod = Cassa.rasxod + prod.getSum();
-     Cassa.cassa = Cassa.cassa - prod.getSum();
+     db.setReturnProduct(prod, size, event_stock, balance, balance_event_stock, Repeat.user.getId_user());
+     Cassa.rasxod = Cassa.rasxod + size*prod.getPrice();
+     Cassa.cassa = Cassa.cassa - size*prod.getPrice();
      Cassa.setCassa();
      
       

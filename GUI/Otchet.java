@@ -128,7 +128,7 @@ public class Otchet
   
   public void setFullOtchet() { collect_otchet.clear();
     ConnectDB mysql = new ConnectDB();
-    //mysql.getOtchet(collect_otchet, Repeat.user.getGroup_user());
+    mysql.getOtchet(collect_otchet, Repeat.user.getGroup_user());
     System.out.println("function comment");
   }
   
