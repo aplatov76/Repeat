@@ -33,11 +33,7 @@ public class ConnectDB {
         properties = new Properties();
         //properties.setProperty("user", "root");
         //properties.setProperty(url, url)
-        properties.setProperty("user", "aplatov762_stock");
-        //properties.setProperty("password", "767690");
-        properties.setProperty("password", "oxorKH9oB");
-        properties.setProperty("useUnicode", "true");
-        properties.setProperty("characterEncoding", "cp1251");
+
 
         //url = "jdbc:mysql://localhost/solnce";//VH228.spaceweb.ru
         url = "jdbc:mysql://VH228.spaceweb.ru/aplatov762_stock";
