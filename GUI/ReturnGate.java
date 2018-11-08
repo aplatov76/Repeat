@@ -5,7 +5,6 @@
  */
 package GUI;
 
-import Collection.contract;
 import Connect.ConnectDB;
 import Popup.ReturnGateway;
 import calendar.SimpleCalendar;
@@ -44,6 +43,7 @@ public class ReturnGate {
     
 private static ObservableList<Collection.History> hist = FXCollections.observableArrayList();
 public static int gateEvent = 0;
+private final ConnectDB db = new ConnectDB();
     
   public void start(Stage stage) {
     BorderPane root = new BorderPane();
@@ -114,6 +114,7 @@ public static int gateEvent = 0;
       {
        // root.getChildren().clear();
       //  root.getChildren().add(but);
+          db.closeConnect();
           stage.close();
       }
       
@@ -180,19 +181,16 @@ public static int gateEvent = 0;
 
 private TableView createTableHistory() {
     final TableView<Collection.History> table = new TableView();
-    
 
     table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     
     TableColumn idop = new TableColumn("id опер.");
     idop.setMinWidth(50.0D);
-    idop.setCellValueFactory(new PropertyValueFactory("idop"));
-    
+    idop.setCellValueFactory(new PropertyValueFactory("idop"));   
 
     TableColumn time = new TableColumn("Дата");
     time.setMinWidth(80.0D);
     time.setCellValueFactory(new PropertyValueFactory("data"));
-    
 
     TableColumn name = new TableColumn("Наименование");
     name.setMinWidth(430.0D);
@@ -200,8 +198,7 @@ private TableView createTableHistory() {
     
     TableColumn id = new TableColumn("Код");
     id.setMinWidth(60.0D);
-    id.setCellValueFactory(new PropertyValueFactory("idpr"));
-    
+    id.setCellValueFactory(new PropertyValueFactory("idpr"));   
 
     TableColumn balance = new TableColumn("Остаток");
     balance.setMinWidth(60.0D);
@@ -237,9 +234,8 @@ private TableView createTableHistory() {
   }    
 
   public void getReturn(String dateField,String dataField) { 
-      ConnectDB mysql = new ConnectDB();
-      System.out.println(dateField + " "+ dataField);
-      mysql.getHistory(dateField, dataField, hist,Repeat.user.getGroup_user());
+      //System.out.println(dateField + " "+ dataField);
+      db.getHistory(dateField, dataField, hist,Repeat.user.getGroup_user());
   }
     
 }

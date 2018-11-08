@@ -1,12 +1,9 @@
 package GUI;
 
 import Collection.AdminPane;
-import Collection.Person;
 import Connect.ConnectDB;
 import fxuidemo.Repeat;
-import java.net.URL;
 import javafx.application.Application;
-import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -20,7 +17,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Dialogs;
 import javafx.scene.control.Label;
-import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -43,7 +39,6 @@ public class AdminAdd
     ObservableList group = FXCollections.observableArrayList();
     
     db.loadGroupList(group);
-    
 
     final TextField name = new TextField();
     //final TextField sname = new TextField();
@@ -264,17 +259,19 @@ public class AdminAdd
             int to = p.indexOf(" ");
             p = p.substring(0, to);
             int group = Integer.parseInt(p);
+            if(db.connectCheck()){
+                db.setProductAdmin(snew_name, snew_name, group, helfindex, Integer.parseInt(size.getText()), Double.parseDouble(price.getText()),c_stock_result,stock_0i,stock_1i,min_remainder_i, articul_i);
             
-            db.setProductAdmin(snew_name, snew_name, group, helfindex, Integer.parseInt(size.getText()), Double.parseDouble(price.getText()),c_stock_result,stock_0i,stock_1i,min_remainder_i, articul_i);
+                int newid = db.setID(snew_name);
+                int index_next = Repeat.admprod.size();
             
-            int newid = db.setID(snew_name);
-            int index_next = Repeat.admprod.size();
+                AdminPane new_product = new AdminPane(index_next, newid, snew_name, snew_name, group, helfindex, Integer.parseInt(size.getText()), Double.parseDouble(price.getText()), 0,c_stock_result,stock_0i,stock_1i,min_remainder_i,articul_i);
+                db.setLog(new_product, new_product, 0, Repeat.user.getName());
             
-            AdminPane new_product = new AdminPane(index_next, newid, snew_name, snew_name, group, helfindex, Integer.parseInt(size.getText()), Double.parseDouble(price.getText()), 0,c_stock_result,stock_0i,stock_1i,min_remainder_i,articul_i);
-            db.setLog(new_product, new_product, 0, Repeat.user.getName());
-            
-            Repeat.admprod.add(new_product);
-            stage.close();
+                Repeat.admprod.add(new_product);
+                stage.close();
+            }
+            else Dialogs.showErrorDialog(stage, "Ошибка номер 403. Нет соединения", "Error Dialog", "");
           } catch (NumberFormatException ex) {
             Dialogs.showErrorDialog(stage, "Ошибка , проверьте правильность данных.");
           }
@@ -302,7 +299,9 @@ public class AdminAdd
     });
     close.setOnMouseClicked(new EventHandler<MouseEvent>() {
       public void handle(MouseEvent event) {
+        db.closeConnect();
         stage.close();
+
       }
       
     });

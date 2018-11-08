@@ -176,11 +176,18 @@ public class ReturnGateway
               info.setTextFill(Color.RED);
           }
           else {
-              ok.setDisable(false);
-              info.setText("");
-              setReturnProduct(prod,event_size,stock_gate);
+              ConnectDB db = new ConnectDB();
+              if(db.connectCheck()){
+                    ok.setDisable(false);
+                    info.setText("");
+                    setReturnProduct(prod,event_size,stock_gate,db);
               
-              main.hide();
+                    main.hide();
+              } else {
+                  info.setText("* Ошибка соединеия");
+                  info.setTextFill(Color.RED);
+                  
+              }
               
           }
       }
@@ -197,9 +204,9 @@ public class ReturnGateway
     return r;
   }
   
-  public void setReturnProduct(History prod, int size, int event_stock){
+  public void setReturnProduct(History prod, int size, int event_stock,ConnectDB db){
       
-      ConnectDB db = new ConnectDB();
+      //ConnectDB db = new ConnectDB();
       
       int bds_full[] = db.getSize(prod.getIdpr());
       //int stock_gate = prod.getStock();

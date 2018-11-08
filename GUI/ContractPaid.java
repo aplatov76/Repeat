@@ -1,14 +1,10 @@
 package GUI;
 
 import Collection.Cassa;
-import Collection.Person;
 import Collection.contract;
 import Connect.ConnectDB;
 import fxuidemo.Repeat;
-import java.io.PrintStream;
-import java.net.URL;
 import javafx.application.Application;
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -21,10 +17,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-
-
-
-
 
 public final class ContractPaid
   extends Application
@@ -70,6 +62,7 @@ public final class ContractPaid
     close.setOnMouseClicked(new EventHandler<MouseEvent>()
     {
       public void handle(MouseEvent event) {
+        db.closeConnect();
         stage.close();
       }
       
@@ -94,12 +87,13 @@ public final class ContractPaid
             ((contract)Contracts.contract.get(index)).setAmount_paid(paidnow);
             ((contract)Contracts.contract.get(index)).setRemaining_sum(remain);
             Contracts.contract.set(index, new contract(idc, name.getText(), ((contract)Contracts.contract.get(index)).getSnum(), ((contract)Contracts.contract.get(index)).getAdress(), ((contract)Contracts.contract.get(index)).getYear(), ((contract)Contracts.contract.get(index)).getPascout(), ((contract)Contracts.contract.get(index)).getPhone(), ((contract)Contracts.contract.get(index)).getDstart(), ((contract)Contracts.contract.get(index)).getDend(), total, paidnow, remain, st, ((contract)Contracts.contract.get(index)).getUser()));
-            
-            Cassa.cassa += paidadd;
-            Cassa.setCassa();
-            db.setContractUpdatePaid(idc, paidnow, remain, st);
-            db.setContractPaid(idc, paidadd, remain, Repeat.user.getName());
-            stage.close();
+            if(db.connectCheck()){
+                Cassa.cassa += paidadd;
+                Cassa.setCassa();
+                db.setContractUpdatePaid(idc, paidnow, remain, st);
+                db.setContractPaid(idc, paidadd, remain, Repeat.user.getName());
+                stage.close();
+            } else Dialogs.showErrorDialog(stage, "Ошибка номер 403. Нет соединения", "Error Dialog", "");
           }
           else {
             Dialogs.showErrorDialog(stage, "Ошибка 408, сумма отрицательна или превышает остаток.", "Error Dialog", "Что то не верно");

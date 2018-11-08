@@ -2,8 +2,6 @@ package GUI;
 
 import Collection.GroupProduct;
 import Connect.ConnectDB;
-import java.io.PrintStream;
-import java.net.URL;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -13,19 +11,13 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Dialogs;
-import javafx.scene.control.Dialogs.DialogResponse;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TableView.TableViewSelectionModel;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-
-
-
-
 
 public class CorrectGroup
   extends Application
@@ -34,14 +26,14 @@ public class CorrectGroup
   
   public CorrectGroup() {}
   
-  public void start(final Stage stage) { final ConnectDB db = new ConnectDB();
-    
+  public void start(final Stage stage) { 
+    final ConnectDB db = new ConnectDB();
     VBox root = new VBox();
     
     VBox button = new VBox();
     stage.setTitle("Управление группами");
     button.setSpacing(5.0D);
-    final TableView tb = createTable();
+    final TableView tb = createTable(db);
     button.setId("but");
     Button add = new Button("Добавить");
     Button correct = new Button("Изменить");
@@ -65,9 +57,6 @@ public class CorrectGroup
         System.out.print("Номер : " + n);
         if (n != -1)
         {
-
-
-
           String name = Dialogs.showInputDialog(stage, "Введите новое имя");
           
           if (name != null) {
@@ -110,10 +99,6 @@ public class CorrectGroup
           
           if (t.equals(Dialogs.DialogResponse.YES))
           {
-
-
-
-
             int id = ((GroupProduct)CorrectGroup.groups.get(n)).getId();
             if (db.validateDeletGroup(id)) {
               db.deletGroup(id);
@@ -131,6 +116,7 @@ public class CorrectGroup
     {
       public void handle(MouseEvent event)
       {
+        db.closeConnect();
         stage.close();
       }
     });
@@ -147,10 +133,10 @@ public class CorrectGroup
     stage.show();
   }
   
-  private TableView createTable() {
+  private TableView createTable(ConnectDB db) {
     TableView<GroupProduct> table = new TableView<GroupProduct>();
     
-    ConnectDB db = new ConnectDB();
+    //ConnectDB db = new ConnectDB(ConnectDB db);
     
     table.columnResizePolicyProperty();
     table.setId("tablefont");

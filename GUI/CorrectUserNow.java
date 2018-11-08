@@ -2,7 +2,6 @@ package GUI;
 
 import Connect.ConnectDB;
 import fxuidemo.MD5;
-import java.net.URL;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -15,7 +14,6 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Dialogs;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
-import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
@@ -79,6 +77,7 @@ public final class CorrectUserNow
     close.setOnMouseClicked(new EventHandler<MouseEvent>()
     {
       public void handle(MouseEvent event) {
+        db.closeConnect();
         stage.close();
       }
       

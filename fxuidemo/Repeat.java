@@ -44,13 +44,11 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Dialogs;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.SplitMenuButton;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TableView.TableViewSelectionModel;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
@@ -61,11 +59,10 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 public class Repeat extends javafx.application.Application
 {
-  private static final ConnectDB connectordb = new ConnectDB();
+  //private static final ConnectDB connectordb = new ConnectDB();
   private static final MD5 md5 = new MD5();
   
   public static Person user;
@@ -112,8 +109,6 @@ public class Repeat extends javafx.application.Application
     
     stage.show();
   }
-  
-
   private Button createButton(Runnable action, String name)
   {
     final Button node = new Button(name);
@@ -186,8 +181,10 @@ public class Repeat extends javafx.application.Application
       public void handle(MouseEvent event)
       {
         Repeat.this.clearPane(root);
-        TableView tb = Repeat.this.createTableAdmin();
-        root.setRight(Repeat.this.createVBoxAdmin(root, tb));
+        ConnectDB db = new ConnectDB();
+        TableView tb = Repeat.this.createTableAdmin(db);
+        root.setRight(Repeat.this.createVBoxAdmin(root, tb,db));
+        db.closeConnect();
         root.setLeft(tb);
       }
       
@@ -226,14 +223,12 @@ public class Repeat extends javafx.application.Application
     node.setSpacing(5.0D);
     node.setPadding(new Insets(0.0D, 20.0D, 0.0D, 20.0D));
     Button addproduct = new Button("Добавить запись");
-    Button metall = new Button("Учет металл");
-    
+    Button metall = new Button("Учет металл");    
 
     SplitMenuButton otchet = new SplitMenuButton();
     otchet.setText("Отчет");
     otchet.setPopupSide(javafx.geometry.Side.LEFT);
-    otchet.setAlignment(Pos.CENTER);
-    
+    otchet.setAlignment(Pos.CENTER);    
 
     MenuItem menuItemcut = new MenuItem("Текущего пользователя");
     MenuItem menuItempop = new MenuItem("Полный отчет ");
@@ -241,8 +236,7 @@ public class Repeat extends javafx.application.Application
     
     otchet.getItems().addAll(new MenuItem[] { menuItemcut, menuItempop });
     
-    Button return_prod = new Button("Возврат");
-    
+    Button return_prod = new Button("Возврат");   
 
     Button print = new Button("Печать");
     
@@ -258,7 +252,7 @@ public class Repeat extends javafx.application.Application
     customer1.setDisable(!user.getRules(11));
     MenuItem customer2 = new MenuItem(" Сustomer order ");
     
-    contract.getItems().addAll(new MenuItem[] { customer1, customer2 });
+    contract.getItems().addAll(customer1, customer2);
     Cassa cas = new Cassa();
     
     TextField cassa = cas.getCassa(0);
@@ -266,8 +260,7 @@ public class Repeat extends javafx.application.Application
     TextField rasxod = cas.getRasxod();
     cassa.setId("cassa");
     prixod.setId("cassa");
-    rasxod.setId("cassa");
-    
+    rasxod.setId("cassa");   
 
     contract.setMinSize(200.0D, 60.0D);
     addproduct.setMinSize(200.0D, 60.0D);
@@ -316,7 +309,7 @@ public class Repeat extends javafx.application.Application
     {
       public void handle(MouseEvent event)
       {
-        AddProduct add = new AddProduct(Repeat.prod);
+        AddProduct add = new AddProduct();
         add.start(new Stage());
         USER_NAME = Repeat.user.getName();
       }
@@ -407,17 +400,17 @@ public class Repeat extends javafx.application.Application
     root.getChildren().remove(0, root.getChildren().size());
   }
   
-  private TableView<Collection.Registration> createTableReg()
+  private TableView<Collection.Registration> createTableReg(final ConnectDB db)
   {
-    TableView<Collection.Registration> table = new TableView<Collection.Registration>();
-    table.setMinWidth(sSize.width - sSize.width*0.2);    
+    TableView<Collection.Registration> table = new TableView<>();
+    //ConnectDB db = new ConnectDB();
+    table.setMinWidth(sSize.width - sSize.width*0.27);    
     table.setColumnResizePolicy( TableView.CONSTRAINED_RESIZE_POLICY);
     //table.autosize();
     
     TableColumn time = new TableColumn("Время");
     time.setMinWidth(80.0D);
-    time.setCellValueFactory(new PropertyValueFactory("data"));
-    
+    time.setCellValueFactory(new PropertyValueFactory("data"));    
 
     TableColumn name = new TableColumn("Наименование");
     name.setMinWidth(500.0D);
@@ -426,37 +419,36 @@ public class Repeat extends javafx.application.Application
     
     TableColumn id = new TableColumn("Код");
     id.setMinWidth(80.0D);
-    id.setCellValueFactory(new PropertyValueFactory("id"));
-    
+    id.setCellValueFactory(new PropertyValueFactory("id"));   
 
     TableColumn size = new TableColumn("Кол.eд.");
     size.setMinWidth(80.0D);
-    size.setCellValueFactory(new PropertyValueFactory("size"));
-    
+    size.setCellValueFactory(new PropertyValueFactory("size"));   
 
     TableColumn price = new TableColumn("Цена");
     price.setMinWidth(80.0D);
-    price.setCellValueFactory(new PropertyValueFactory("price"));
-    
+    price.setCellValueFactory(new PropertyValueFactory("price"));   
 
     TableColumn sum = new TableColumn("Сумма");
-    sum.setMinWidth(120.0D);
+    sum.setMinWidth(85.0);
     sum.setCellValueFactory(new PropertyValueFactory("sum"));
     
     TableColumn user_name = new TableColumn("User");
-    user_name.setMinWidth(100.0D);
+    user_name.setMinWidth(70.0D);
     user_name.setCellValueFactory(new PropertyValueFactory("user"));
+    
+    TableColumn cash = new TableColumn("Оплата");
+    cash.setMinWidth(45.0);
+    cash.setCellValueFactory(new PropertyValueFactory("cash"));
     
     table.setId("tablefont");
     table.setItems(prod);
     
     
-    if (!user.getRules(10))
-      connectordb.getSessionBecap(prod, user.getName()); 
-    else {
-      connectordb.getSessionBecap(prod,user.getGroup_user());
-    }
-    table.getColumns().addAll(time, name, id, size, price, sum, user_name);
+    if (!user.getRules(10))db.getSessionBecap(prod, user.getName()); 
+        else db.getSessionBecap(prod,user.getGroup_user());
+    //db.closeConnect();
+    table.getColumns().addAll(time, name, id, size, price, sum, user_name, cash);
     
     return table;
   }
@@ -512,7 +504,7 @@ public class Repeat extends javafx.application.Application
     return table;
   }
   
-  private TableView<AdminPane> createTableAdmin()
+  private TableView<AdminPane> createTableAdmin(ConnectDB db)
   {
     TableView<AdminPane> table = new TableView<>();
     table.setMinWidth(sSize.width - sSize.width*0.2);    
@@ -577,7 +569,7 @@ public class Repeat extends javafx.application.Application
     min_remainder.setMinWidth(20.0);
     min_remainder.setCellValueFactory(new PropertyValueFactory("min_remainder"));
     
-    connectordb.getPaneAdmin(admprod);
+    db.getPaneAdmin(admprod);
     //table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     table.setItems(admprod);
     table.setId("tablefont");
@@ -646,6 +638,7 @@ public class Repeat extends javafx.application.Application
 
   private GridPane createGridPaneAutorize(final BorderPane root, final VBox but, final Stage stage)
   {
+    final ConnectDB db = new ConnectDB();
     final GridPane gridPane = new GridPane();
     gridPane.setPadding(new Insets(20.0D, 20.0D, 20.0D, 20.0D));
     gridPane.setHgap(5.0D);
@@ -662,19 +655,18 @@ public class Repeat extends javafx.application.Application
     
     Button log = createButton(new Runnable() { public void run() {} }, "Войти");
     
-
     log.setOnMouseClicked(new EventHandler<MouseEvent>()
     {
       public void handle(MouseEvent event)
       {
-        Repeat.user = Repeat.connectordb.autorizeuser(login.getText(), Repeat.md5.getHash(pass.getText()));
+        Repeat.user = db.autorizeuser(login.getText(), Repeat.md5.getHash(pass.getText()));
         boolean keyread = true;
         if ((Repeat.user != null) && 
           (Repeat.user.getUse_key() == 1)) {
           security.ReadKey key = new security.ReadKey();
           String keys = key.read("/media/key/key");
           
-          String dbkey = Repeat.connectordb.getKeyUser(Repeat.user.getId_user());
+          String dbkey = db.getKeyUser(Repeat.user.getId_user());
           
           if (keys == null) { keyread = false;
           } else if (!dbkey.equals(keys)) { keyread = false;
@@ -695,6 +687,7 @@ public class Repeat extends javafx.application.Application
           if (Repeat.user.getRules(6)) ((Node)but.getChildren().get(5)).setDisable(false);
           if (Repeat.user.getRules(7)) ((Node)but.getChildren().get(6)).setDisable(false);
           root.getChildren().remove(0);
+          db.closeConnect();
 
         }
         else if (!keyread) {
@@ -716,7 +709,8 @@ public class Repeat extends javafx.application.Application
       public void handle(MouseEvent event)
       {
         if (Repeat.user == null) {
-            stage.close();
+            db.closeConnect();
+            stage.close();           
         } else {
           Cassa.cassa = 0.0D;
           Cassa.start = 0.0D;
@@ -725,6 +719,7 @@ public class Repeat extends javafx.application.Application
           pass.setText("");
           Repeat.this.controlEnable(but);
           root.getChildren().add(0, gridPane);
+          //db.closeConnect();
         }
         
       }
@@ -744,15 +739,17 @@ public class Repeat extends javafx.application.Application
 
       public void handle(MouseEvent event)
       {
+         // -0        
         Repeat.this.clearPane(root);
-        TableView<Collection.Registration> tb = Repeat.this.createTableReg();
+        ConnectDB db = new ConnectDB();
+        double p = db.getStartSum(Repeat.user.getName(),Repeat.user.getGroup_user(), Repeat.user.getRules(10));
+        TableView<Collection.Registration> tb = Repeat.this.createTableReg(db);
+        if(p != 0)db.closeConnect();
         root.setRight(Repeat.this.createVBoxRegistration(root, but, tb));
-        root.setLeft(tb);
-        
-
-        double p = Repeat.connectordb.getStartSum(Repeat.user.getName(),Repeat.user.getGroup_user(), Repeat.user.getRules(10));
-        System.out.println("group_user: "+Repeat.user.getGroup_user());
-        if (p == 0.0 && user.getId_rules() == 3)
+        root.setLeft(tb);      
+        //if(!Repeat.connectordb.connectCheck())Dialogs.showErrorDialog(stage, "Ошибка номер 403. Нет соединения", "Error Dialog", "");              
+        //System.out.println("group_user: "+Repeat.user.getGroup_user());
+        if (p == 0.0)
         {
           try
           {
@@ -763,26 +760,28 @@ public class Repeat extends javafx.application.Application
           }
           catch (NumberFormatException|NullPointerException ed)
           {
-            System.out.println("A");
             Cassa.start = 0.0;
           }
           finally {
             if (Cassa.start > 0.0D) {
-              System.out.println("B");
-              Cassa.cassa += Cassa.start;
-              Repeat.connectordb.setStartSum(Cassa.start, "", Repeat.user.getName(),Repeat.user.getGroup_user());
-              Cassa.setCassa();
+                
+              if(db.connectCheck()){
+                Cassa.cassa += Cassa.start;
+                 db.setStartSum(Cassa.start, "", Repeat.user.getName(),Repeat.user.getGroup_user());
+                Cassa.setCassa();
+                 db.closeConnect();
+              } else Dialogs.showErrorDialog(stage, "Ошибка номер 403. Нет соединения", "Error Dialog", "");
             }
           }
         }
         else if (Cassa.start == 0.0D) {
-          System.out.println("C");
+          //System.out.println("C");
           Cassa.start = p;
           Cassa.cassa += p;
           Cassa.setCassa();
         }
         else {
-          System.out.print("\nD\n");
+          //System.out.print("\nD\n");
           Cassa.cassa += p;
           Cassa.setCassa();
 
@@ -800,10 +799,10 @@ public class Repeat extends javafx.application.Application
         Repeat.this.clearPane(root);
         TableView<Prices> tb = Repeat.this.createTablePrice();
         root.setLeft(tb);
-        root.setRight(Repeat.this.createVBoxSeePrice(root, but, tb));
-        
-
-        Repeat.connectordb.getProductForStatus(Repeat.prices, -1);
+        root.setRight(Repeat.this.createVBoxSeePrice(root, but, tb));       
+        ConnectDB db = new ConnectDB();
+        db.getProductForStatus(prices, -1);
+        db.closeConnect();
       }
       
 
@@ -833,7 +832,8 @@ public class Repeat extends javafx.application.Application
     return gridPane;
   }
   
-  private VBox createVBoxAdmin(final BorderPane root, final TableView tb) {
+  private VBox createVBoxAdmin(final BorderPane root, final TableView tb,final ConnectDB db) {
+    //final ConnectDB db = new ConnectDB();  
     VBox node = new VBox();
     ObservableList<String> data = FXCollections.observableArrayList();
     ObservableList<Integer> datacode = FXCollections.observableArrayList();
@@ -843,9 +843,9 @@ public class Repeat extends javafx.application.Application
     node.setPadding(new Insets(20.0D, 2.0D, 20.0D, 2.0D));
     node.setSpacing(4.0D);
     node.setId("but");
-    connectordb.loadProduct(data);
-    connectordb.loadGroupList(group);
-    connectordb.loadProductId(datacode);
+    db.loadProduct(data,datacode);
+    db.loadGroupList(group);
+    //db.loadProductId(datacode);
     
     Label texoper = new Label("Работа с номенклатурой");
     Label texcontract = new Label("Договоры и заказы");
@@ -877,7 +877,7 @@ public class Repeat extends javafx.application.Application
     Button productaddnow = new Button(" Добавить ");
     productaddnow.setDisable(!user.getRules(16));
     Button productaddlist = new Button();
-    productaddlist.setText("Ожидают(" + connectordb.getProcurementActivCount() + ")");
+    productaddlist.setText("Ожидают");
     
     otchetzakup.setId("dark-blue");
     cproduct.setId("dark-blue");
@@ -970,7 +970,7 @@ public class Repeat extends javafx.application.Application
     contract.setOnMouseClicked(new EventHandler<MouseEvent>()
     {
       public void handle(MouseEvent event) {
-        Contracts gdb = new Contracts();
+       Contracts gdb = new Contracts();
         Contracts.typecontract = 1;
         gdb.start(new Stage());
         gdb.getContract(1, 1);
@@ -987,10 +987,6 @@ public class Repeat extends javafx.application.Application
 
 
       }
-      
-
-
-
 
     });
     cproduct.setOnMouseClicked(new EventHandler<MouseEvent>()
@@ -998,8 +994,7 @@ public class Repeat extends javafx.application.Application
       public void handle(MouseEvent event) {
         ListCustomerProduct list = new ListCustomerProduct();
         list.start(new Stage());
-      }
-      
+      }      
 
     });
     cproductadd.setOnMouseClicked(new EventHandler<MouseEvent>()
@@ -1007,8 +1002,7 @@ public class Repeat extends javafx.application.Application
       public void handle(MouseEvent event) {
         GUI.AddCustProduct adb = new GUI.AddCustProduct();
         adb.start(new Stage());
-      }
-      
+      }      
 
     });
     print.setOnMouseClicked(new EventHandler<MouseEvent>()
@@ -1017,7 +1011,7 @@ public class Repeat extends javafx.application.Application
       {
         try
         {
-          java.net.URI line = new java.net.URI("http://localhost/java/modlistprint.php");
+          java.net.URI line = new java.net.URI("http://10.8.0.1/java/repeat/modlistprint.php");
           Desktop desktop = Desktop.getDesktop();
           if (Desktop.isDesktopSupported()) {
             desktop.browse(line);
@@ -1038,9 +1032,9 @@ public class Repeat extends javafx.application.Application
       public void handle(MouseEvent event) {
         int b = tb.getSelectionModel().getSelectedIndex();
         if (b != -1) {
-          AdminPane cor = (AdminPane)Repeat.admprod.get(b);
+          //AdminPane cor = (AdminPane)Repeat.admprod.get(b);
           GUI.AdminCorrect next = new GUI.AdminCorrect(b);
-          System.out.print(cor.getId() + "<<\n");
+          //System.out.print(cor.getId() + "<<\n");
           next.start(new Stage());
         } else {
           Dialogs.showErrorDialog(st, "Ничего не выбрано");
@@ -1054,17 +1048,16 @@ public class Repeat extends javafx.application.Application
         
         if (b != -1) {
           if (Dialogs.showConfirmDialog(st, "Удалить " + ((AdminPane)Repeat.admprod.get(b)).getName()) == javafx.scene.control.Dialogs.DialogResponse.YES) {
-            Repeat.connectordb.deletProduct(((AdminPane)Repeat.admprod.get(b)).getId());
-            Repeat.connectordb.setLog((AdminPane)Repeat.admprod.get(b), (AdminPane)Repeat.admprod.get(b), 2, Repeat.user.getName());
+            ConnectDB db = new ConnectDB();
+            db.deletProduct(((AdminPane)Repeat.admprod.get(b)).getId());
+            db.setLog((AdminPane)Repeat.admprod.get(b), (AdminPane)Repeat.admprod.get(b), 2, Repeat.user.getName());
             Repeat.admprod.remove(b);
             Dialogs.showInformationDialog(st, "Категория удалена.");
-
-
+            db.closeConnect();
           }
         }
         else
         {
-
           Dialogs.showErrorDialog(st, "Ничего не выбрано");
         }
       }
@@ -1133,7 +1126,7 @@ public class Repeat extends javafx.application.Application
     {
       public void handle(ActionEvent t)
       {
-        Repeat.connectordb.getProductForStatusAdmin(Repeat.admprod, 0);
+        db.getProductForStatusAdmin(Repeat.admprod, 0);
       }
       
     });
@@ -1141,7 +1134,7 @@ public class Repeat extends javafx.application.Application
     {
       public void handle(ActionEvent t)
       {
-        Repeat.connectordb.getProductForStatusAdmin(Repeat.admprod, 1);
+        db.getProductForStatusAdmin(Repeat.admprod, 1);
       }
       
     });
@@ -1149,7 +1142,7 @@ public class Repeat extends javafx.application.Application
     {
       public void handle(ActionEvent t)
       {
-        Repeat.connectordb.getProductForStatusAdmin(Repeat.admprod, 2);
+        db.getProductForStatusAdmin(Repeat.admprod, 2);
       }
       
 
@@ -1208,7 +1201,7 @@ public class Repeat extends javafx.application.Application
       {
         int d = Repeat.admprod.size();
         if (!box.getText().equals("")) {
-          int sid = Repeat.connectordb.setID(box.getText());
+          int sid = db.setID(box.getText());
           for (int i = 0; i < d; i++) if (sid == ((AdminPane)Repeat.admprod.get(i)).getId()) {
               tb.scrollTo(i);
               tb.getSelectionModel().select(i);
@@ -1250,7 +1243,7 @@ public class Repeat extends javafx.application.Application
       public void handle(MouseEvent event)
       {
         ActualStatusProduct abc = new ActualStatusProduct();
-        abc.setProductStatus(2);
+        abc.setProductStatus(2, db);
         abc.start(new Stage());
 
       }
@@ -1294,7 +1287,7 @@ public class Repeat extends javafx.application.Application
           int to = p.indexOf(" ");
           p = p.substring(0, to);
           int group_send = Integer.parseInt(p);
-          Repeat.connectordb.getGroupProductAdmin(Repeat.admprod, group_send, 0);
+          db.getGroupProductAdmin(Repeat.admprod, group_send, 0);
         }
         
         popupgroup.hide();
@@ -1308,6 +1301,7 @@ public class Repeat extends javafx.application.Application
   
   private GridPane createVBoxHistory(final BorderPane root, TableView tb)
   {
+    final ConnectDB db = new ConnectDB();  
     GridPane node = new GridPane();
     node.setPadding(new Insets(20.0D, 20.0D, 20.0D, 20.0D));
     node.setId("but");
@@ -1332,8 +1326,7 @@ public class Repeat extends javafx.application.Application
       public void changed(ObservableValue<? extends Date> ov, Date oldDate, Date newDate)
       {
         dataField.setText(new SimpleDateFormat("yyyy.MM.dd").format(newDate));
-      }
-      
+      }     
 
     });
     Button ok = new Button("Показать");
@@ -1347,10 +1340,9 @@ public class Repeat extends javafx.application.Application
     Button otchetzakup = new Button("История закупок");
     
     Button histmetall = new Button("История металл");
-    if (!user.getRules(20)) { histmetall.setDisable(true);
-    }
-    Button statistic_product = new Button("Управление статусами");
+    if (!user.getRules(20))histmetall.setDisable(true);
     
+    Button statistic_product = new Button("Управление статусами");    
     Button ext = new Button("Hазад");
     
     otchetzakup.setId("dark-blue");
@@ -1398,6 +1390,7 @@ public class Repeat extends javafx.application.Application
     {
       public void handle(MouseEvent event)
       {
+        db.closeConnect();
         root.getChildren().clear();
         root.getChildren().add(but);
       }
@@ -1412,7 +1405,7 @@ public class Repeat extends javafx.application.Application
         Matcher m = p.matcher(dateField.getText());
         Matcher n = p.matcher(dataField.getText());
         if ((m.matches()) && (n.matches())) {
-          Repeat.connectordb.getHistory(dateField.getText(), dataField.getText(), Repeat.historyprod,Repeat.user.getGroup_user());
+          db.getHistory(dateField.getText(), dataField.getText(), Repeat.historyprod,Repeat.user.getGroup_user());
         } else {
           Dialogs.showErrorDialog(st, "Неверный формат даты");
         }
@@ -1423,7 +1416,7 @@ public class Repeat extends javafx.application.Application
       public void handle(MouseEvent event)
       {
         ActualStatusProduct abc = new ActualStatusProduct();
-        abc.setProductStatus(2);
+        abc.setProductStatus(2, db);
         abc.start(new Stage());
       }
     });
@@ -1490,9 +1483,7 @@ public class Repeat extends javafx.application.Application
     node.add(dataField, 1, 2);
     HBox buttongroup1 = new HBox();
     buttongroup1.setSpacing(5.0D);
-    buttongroup1.getChildren().addAll(new Node[] { ok, otchet });
-    
-
+    buttongroup1.getChildren().addAll(ok, otchet);
 
     node.add(buttongroup1, 1, 3, 2, 1);
     node.add(grap, 1, 4, 2, 1);
@@ -1545,11 +1536,9 @@ public class Repeat extends javafx.application.Application
           popupmenu.show(st);
         } else {
           popupmenu.hide();
-        }
-        
+        }       
       }
       
-
     });
     return main;
   }
@@ -1578,22 +1567,19 @@ public class Repeat extends javafx.application.Application
     
     TableColumn actual_status = new TableColumn("Статус");
     actual_status.setMinWidth(60.0D);
-    actual_status.setCellValueFactory(new PropertyValueFactory("actual_status"));
-    
+    actual_status.setCellValueFactory(new PropertyValueFactory("actual_status"));    
 
     TableColumn col = new TableColumn("Остаток");
     col.setMinWidth(70.0D);
-    col.setCellValueFactory(new PropertyValueFactory("size"));
-    
+    col.setCellValueFactory(new PropertyValueFactory("size"));   
 
     TableColumn price = new TableColumn("Стоимость");
     price.setMinWidth(100.0D);
-    price.setCellValueFactory(new PropertyValueFactory("price"));
-    
+    price.setCellValueFactory(new PropertyValueFactory("price"));    
 
     table.setStyle("-fx-font: normal 11 Arial;-fx-font-header: normal 11 Arial;");
   
-    table.getColumns().addAll(new TableColumn[] { code, id, name, helf, actual_status, col, price });
+    table.getColumns().addAll(code, id, name, helf, actual_status, col, price );
     table.setItems(prices);
     
     return table;
@@ -1604,7 +1590,7 @@ public class Repeat extends javafx.application.Application
   {
     VBox a = new VBox();
     a.setSpacing(2.0D);
-    
+    final ConnectDB db = new ConnectDB();
 
     Button menu = new Button(" Меню");
     Button ext = new Button("Назад");
@@ -1619,22 +1605,18 @@ public class Repeat extends javafx.application.Application
         if (popupmenu.isShowing()) popupmenu.hide();
         Repeat.this.clearPane(root);
         root.setRight(but);
-
-      }
-      
-
+        db.closeConnect();
+      }      
     });
     ext.setId("dark-blue");
     menu.setId("dark-blue");
     a.setAlignment(Pos.CENTER_RIGHT);
-    a.getChildren().addAll(new Node[] { menu, ext });
-    
+    a.getChildren().addAll(menu, ext);
 
-
-    GridPane gridmenu = getGridJournal(root, t, popupmenu);
+    GridPane gridmenu = getGridJournal(root, t, popupmenu,db);
     final Dimension sSize = Toolkit.getDefaultToolkit().getScreenSize();
     
-    popupmenu.getContent().addAll(new Node[] { gridmenu });
+    popupmenu.getContent().addAll(gridmenu);
     
     menu.setOnMouseClicked(new EventHandler<MouseEvent>()
     {
@@ -1645,23 +1627,17 @@ public class Repeat extends javafx.application.Application
           popupmenu.setY(65.0D);
           popupmenu.show(st);
         }
-        else
-        {
-          popupmenu.hide();
-
-        }
-        
-      }
-      
-
+        else popupmenu.hide();
+     
+      }     
     });
     return a;
   }
   
-  private GridPane getGridJournal(BorderPane root, final TableView<Log_view> a, final Popup popupmenu)
+  private GridPane getGridJournal(BorderPane root, final TableView<Log_view> a, final Popup popupmenu,final ConnectDB db)
   {
     GridPane node = new GridPane();
-    final ConnectDB db = new ConnectDB();
+    //final ConnectDB db = new ConnectDB();
     
     node.setId("but");
     node.setVgap(8.0D);
@@ -1685,17 +1661,12 @@ public class Repeat extends javafx.application.Application
       {
         dataField.setText(new SimpleDateFormat("yyyy.MM.dd").format(newDate));
       }
-      
-
     });
     final Popup popupfiltr = new Popup();
-    
 
-
-    VBox vboxfiltr = createFiltrHistory(a, popupfiltr);
+    VBox vboxfiltr = createFiltrHistory(a, popupfiltr,db);
     
-    popupfiltr.getContent().add(vboxfiltr);
-    
+    popupfiltr.getContent().add(vboxfiltr);  
 
     Button ok = new Button("Показать");
     Button f = new Button("Фильтр");
@@ -1708,7 +1679,7 @@ public class Repeat extends javafx.application.Application
     HBox box = new HBox();
     
     box.setSpacing(8.0D);
-    box.getChildren().addAll(new Node[] { ok, f });
+    box.getChildren().addAll(ok, f );
     
     final CheckBox add = new CheckBox();
     final CheckBox cor = new CheckBox();
@@ -1728,14 +1699,10 @@ public class Repeat extends javafx.application.Application
     
     ext.setOnMouseClicked(new EventHandler<MouseEvent>()
     {
-
       public void handle(MouseEvent event)
       {
-
         if (popupfiltr.isShowing()) popupfiltr.hide();
-        if (popupmenu.isShowing()) { popupmenu.hide();
-        }
-        
+        if (popupmenu.isShowing())popupmenu.hide();                
       }
     });
     final Dimension sSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -1766,13 +1733,14 @@ public class Repeat extends javafx.application.Application
           a.setItems(db.getJournal(dateField.getText(), dataField.getText() + " 23:59", add.selectedProperty().get(), del.selectedProperty().get(), cor.selectedProperty().get()));
         } else {
           Dialogs.showErrorDialog(st, "Неверный формат даты");
+          
         }
       }
     });
     return node;
   }
   
-  private VBox createFiltrHistory(final TableView<Log_view> a, final Popup popupfiltr) {
+  private VBox createFiltrHistory(final TableView<Log_view> a, final Popup popupfiltr,final ConnectDB db) {
     VBox menu = new VBox();
     
     menu.setSpacing(8.0D);
@@ -1782,8 +1750,8 @@ public class Repeat extends javafx.application.Application
     ObservableList<String> data = FXCollections.observableArrayList();
     ObservableList<Integer> datacode = FXCollections.observableArrayList();
     
-    connectordb.loadProduct(data);
-    connectordb.loadProductId(datacode);
+    db.loadProduct(data, datacode);
+    //connectordb.loadProductId(datacode);
     
     final AutoFillTextBox box = new AutoFillTextBox(data);
     final AutoFillTextBox boxcode = new AutoFillTextBox(datacode);
@@ -1837,13 +1805,13 @@ public class Repeat extends javafx.application.Application
         String id_product = boxcode.getText();
         if (name.length() > 0)
         {
-          int id = Repeat.connectordb.setID(name);
+          int id = db.setID(name);
           Pattern p = Pattern.compile("2[0]\\d{2}\\.([0][1-9]|[1][0-2])\\.([0][1-9]|[1-2][0-9]|[3][0-1])");
           
           Matcher m = p.matcher(d1.getText());
           Matcher n = p.matcher(d2.getText());
           if ((m.matches()) && (n.matches())) {
-            a.setItems(Repeat.connectordb.getJournalFiltr(d1.getText(), d2.getText() + " 23:59", id));
+            a.setItems(db.getJournalFiltr(d1.getText(), d2.getText() + " 23:59", id));
             popupfiltr.hide();
           } else {
             Dialogs.showErrorDialog(st, "Неверный формат даты");
@@ -1857,13 +1825,11 @@ public class Repeat extends javafx.application.Application
             Matcher m = p.matcher(d1.getText());
             Matcher n = p.matcher(d2.getText());
             if ((m.matches()) && (n.matches())) {
-              a.setItems(Repeat.connectordb.getJournalFiltr(d1.getText(), d2.getText() + " 23:59", id));
+              a.setItems(db.getJournalFiltr(d1.getText(), d2.getText() + " 23:59", id));
               popupfiltr.hide();
             } else {
               Dialogs.showErrorDialog(st, "Неверный формат даты");
             }
-            
-
           }
           catch (NumberFormatException ex) {}
         }

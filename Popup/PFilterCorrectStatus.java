@@ -21,13 +21,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Popup;
 
-
-
-
-
-
-
-
 public class PFilterCorrectStatus
 {
   private Popup main;
@@ -37,19 +30,16 @@ public class PFilterCorrectStatus
     return main;
   }
   
-
-  public PFilterCorrectStatus(ObservableList<Prices> prod, Label info, TableView table)
+  public PFilterCorrectStatus(ObservableList<Prices> prod, Label info, TableView table,final ConnectDB db)
   {
     main = new Popup();
-    
 
-
-    VBox vboxfiltr = createFiltr(prod, main, info, table);
+    VBox vboxfiltr = createFiltr(prod, main, info, table, db);
     
     main.getContent().add(vboxfiltr);
   }
   
-  private VBox createFiltr(final ObservableList<Prices> prod, final Popup popupfiltr, final Label info, final TableView table) {
+  private VBox createFiltr(final ObservableList<Prices> prod, final Popup popupfiltr, final Label info, final TableView table, final ConnectDB db) {
     VBox menu = new VBox();
     
     menu.setSpacing(8.0D);
@@ -61,16 +51,12 @@ public class PFilterCorrectStatus
     final RadioButton st0 = new RadioButton();
     final RadioButton st1 = new RadioButton();
     final RadioButton st2 = new RadioButton();
-    
 
     st0.setToggleGroup(tggroup);
     st1.setToggleGroup(tggroup);
     st2.setToggleGroup(tggroup);
     
     final CheckBox abc = new CheckBox();
-    
-
-
     HBox sort1 = new HBox();
     sort1.setSpacing(8.0D);
     HBox sort2 = new HBox();
@@ -157,15 +143,15 @@ public class PFilterCorrectStatus
         int tindex = table.getSelectionModel().getSelectedIndex();
         
         if ((abc.isSelected()) && (status >= 0)) {
-          setGroupStatus(prod, status);
-          getProduct(prod, status);
+          setGroupStatus(prod, status, db);
+          getProduct(prod, status, db);
           PFilterCorrectStatus.this.setLabelInfo(info, status);
           
           popupfiltr.hide();
         }
         
         if ((!abc.isSelected()) && (status >= 0) && (tindex != -1)) {
-          setProductIdStatus(((Prices)prod.get(tindex)).getId(), status);
+          setProductIdStatus(((Prices)prod.get(tindex)).getId(), status, db);
           
           Prices a = (Prices)prod.get(tindex);
           
@@ -189,26 +175,23 @@ public class PFilterCorrectStatus
     return menu;
   }
   
-  public void setGroupStatus(ObservableList<Prices> prod, int status)
+  public void setGroupStatus(ObservableList<Prices> prod, int status, ConnectDB db)
   {
-    ConnectDB db = new ConnectDB();
+    //ConnectDB db = new ConnectDB();
     db.setGroupStatus(prod, status);
   }
   
 
-  public void setProductIdStatus(int id, int status)
+  public void setProductIdStatus(int id, int status, ConnectDB db)
   {
-    ConnectDB mysql = new ConnectDB();
+    //ConnectDB mysql = new ConnectDB();
     
-    mysql.setProductStatus(id, status);
+    db.setProductStatus(id, status);
   }
   
-  public void getProduct(ObservableList<Prices> prod, int ostatus)
+  public void getProduct(ObservableList<Prices> prod, int ostatus, ConnectDB db)
   {
-    ConnectDB mysql = new ConnectDB();
-    
-
-    mysql.getProductForStatus(prod, ostatus);
+    db.getProductForStatus(prod, ostatus);
   }
   
 

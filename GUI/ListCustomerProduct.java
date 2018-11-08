@@ -1,12 +1,10 @@
 package GUI;
 
 import Collection.ListCustProduct;
-import Collection.Person;
 import Connect.ConnectDB;
 import autofilltextbox.AutoFillTextBox;
 import fxuidemo.Repeat;
 import java.awt.Desktop;
-import java.io.PrintStream;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -16,13 +14,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Dialogs;
-import javafx.scene.control.Dialogs.DialogResponse;
-import javafx.scene.control.ListView;
-import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TableView.TableViewSelectionModel;
-import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -30,7 +23,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 
 public class ListCustomerProduct
 {
@@ -43,9 +35,10 @@ public class ListCustomerProduct
   
   public void start(Stage stage) {
     BorderPane root = new BorderPane();
-    TableView<ListCustProduct> table = createTable();
+    final ConnectDB db = new ConnectDB();
+    TableView<ListCustProduct> table = createTable(db);
     root.setLeft(table);
-    VBox box = createBut(stage, table);
+    VBox box = createBut(stage, table, db);
     root.setId("bp");
     box.setSpacing(10.0D);
     root.setRight(box);
@@ -63,12 +56,9 @@ public class ListCustomerProduct
   }
   
 
-  private VBox createBut(final Stage stage, final TableView table)
+  private VBox createBut(final Stage stage, final TableView table,final ConnectDB db)
   {
     VBox node = new VBox();
-    
-
-    final ConnectDB db = new ConnectDB();
     
     final Button add = new Button("Добавить");
     add.setDisable(!Repeat.user.getRules(13));
@@ -137,7 +127,7 @@ public class ListCustomerProduct
         
         if (b != -1)
           if (Dialogs.showConfirmDialog(stage, "Удалить: " + ((ListCustProduct)ListCustomerProduct.list.get(b)).getName() + " ?") == Dialogs.DialogResponse.YES) {
-            ConnectDB db = new ConnectDB();
+            //ConnectDB db = new ConnectDB();
             db.deletCustProduct(((ListCustProduct)ListCustomerProduct.list.get(b)).getId_product());
             db.setLog((ListCustProduct)ListCustomerProduct.list.get(b), 2, Repeat.user.getName());
             ListCustomerProduct.list.remove(b);
@@ -192,18 +182,10 @@ public class ListCustomerProduct
     pop_group_go.setId("dark-blue");
     
     button3.getChildren().addAll(new Node[] { search, pop_group_go });
-    
 
-
-    final ChoiceBox<String> chois = new ChoiceBox(groups);
-    
+    final ChoiceBox<String> chois = new ChoiceBox(groups);    
 
     chois.setMinWidth(290.0D);
-    
-
-
-
-
 
     VBox popupsearch = new VBox();
     HBox popupbut1 = new HBox();
@@ -268,14 +250,8 @@ public class ListCustomerProduct
     search.setOnMouseClicked(new EventHandler<MouseEvent>()
     {
 
-
-
-
       public void handle(MouseEvent event)
       {
-
-
-
 
         if (!popup.isShowing()) {
           popup.setX(event.getScreenX() - 620.0D);
@@ -320,8 +296,8 @@ public class ListCustomerProduct
     return node;
   }
   
-  private TableView<ListCustProduct> createTable() {
-    TableView<ListCustProduct> table = new TableView<ListCustProduct>();
+  private TableView<ListCustProduct> createTable(ConnectDB db) {
+    TableView<ListCustProduct> table = new TableView<>();
     table.setStyle("-fx-font: normal 11 Arial;");
     table.columnResizePolicyProperty();
     table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
@@ -356,12 +332,13 @@ public class ListCustomerProduct
     table.setMinWidth(768.0D);
     table.getColumns().addAll(id, name, dstart, dend, price);
     
-    getContract();
+    getContract(db);
     table.setItems(list);
     return table;
   }
   
-  public void getContract() { ConnectDB mysql = new ConnectDB();
-    mysql.loadProductCustomer(list);
+  public void getContract(ConnectDB db) { 
+    
+    db.loadProductCustomer(list);
   }
 }

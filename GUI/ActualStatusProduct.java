@@ -30,6 +30,7 @@ public class ActualStatusProduct
   public ActualStatusProduct() {}
   
   private static ObservableList<Prices> no_actual = FXCollections.observableArrayList();
+  //ConnectDB db = new ConnectDB();
   
   public void start(Stage stage) {
     BorderPane root = new BorderPane();
@@ -64,12 +65,13 @@ public class ActualStatusProduct
   
   private VBox createBut(final Stage stage, Label info, TableView table)
   {
+    final ConnectDB db = new ConnectDB();
     VBox node = new VBox();
     
-    PFilterActualInfoProduct PFilter = new PFilterActualInfoProduct(no_actual, info);
+    PFilterActualInfoProduct PFilter = new PFilterActualInfoProduct(no_actual, info,db);
     final Popup mainfilter = PFilter.getMain();
     
-    PFilterCorrectStatus PFilterCorrect = new PFilterCorrectStatus(no_actual, info, table);
+    PFilterCorrectStatus PFilterCorrect = new PFilterCorrectStatus(no_actual, info, table,db);
     final Popup correctfilter = PFilterCorrect.getMain();
     
 
@@ -86,6 +88,7 @@ public class ActualStatusProduct
     close.setOnMouseClicked(new EventHandler<MouseEvent>(){
       public void handle(MouseEvent event)
       {
+        db.closeConnect();
         stage.close();
       }
     });
@@ -113,20 +116,17 @@ public class ActualStatusProduct
   }
   
   private TableView<Prices> createTable() {
-    TableView<Prices> table = new TableView<Prices>();
+    TableView<Prices> table = new TableView<>();
     
     TableColumn<Prices,Integer> index = new TableColumn<Prices,Integer>("№");
     index.setMinWidth(20.0);
     index.setMaxWidth(40.0);
     index.setCellValueFactory(new PropertyValueFactory("code"));
-    //index.setCellFactory(value);
-    
 
     TableColumn<Prices, String> name = new TableColumn<Prices, String>("Наименование");
     name.setMinWidth(400.0);
     
-    name.setCellValueFactory(new PropertyValueFactory("name"));
-    
+    name.setCellValueFactory(new PropertyValueFactory("name"));   
 
     TableColumn<Prices,Integer> id = new TableColumn<Prices,Integer>("Код");
     id.setMinWidth(20.0);
@@ -136,20 +136,17 @@ public class ActualStatusProduct
     TableColumn<Prices,Integer> size = new TableColumn<Prices,Integer>("Кол.eд.");
     size.setMinWidth(40.0);
     size.setMaxWidth(60.0);
-    size.setCellValueFactory(new PropertyValueFactory("size"));
-    
+    size.setCellValueFactory(new PropertyValueFactory("size"));   
 
     TableColumn<Prices,Double> price = new TableColumn<Prices,Double>("Цена");
     price.setMinWidth(50.0);
     
-    price.setCellValueFactory(new PropertyValueFactory("price"));
-    
+    price.setCellValueFactory(new PropertyValueFactory("price"));   
 
     TableColumn<Prices,Integer> group = new TableColumn<Prices,Integer>("Группа");
     group.setMinWidth(20.0);
     
-    group.setCellValueFactory(new PropertyValueFactory("group"));
-    
+    group.setCellValueFactory(new PropertyValueFactory("group"));  
 
     TableColumn<Prices,Integer> status = new TableColumn<Prices,Integer>("Статус");
     status.setMinWidth(20.0);
@@ -158,23 +155,17 @@ public class ActualStatusProduct
 
     table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     table.setMinWidth(970.0);
-    table.setMinHeight(610.0);
-    
+    table.setMinHeight(610.0);   
 
     table.setStyle("-fx-font: normal 11 Arial;");
     table.setItems(no_actual);
     table.getColumns().addAll(index, id, name, group, size, price, status);  
     
-
-  //  table.getColumns().addAll(elements)
-    //                                    (int id, int co, String name, int group, int size, double price, int as)
     return table;
   }
   
-  public void setProductStatus(int status) { no_actual.clear();
-    ConnectDB db = new ConnectDB();
+  public void setProductStatus(int status, ConnectDB db) { 
+    no_actual.clear();
     db.getProductForStatus(no_actual, status);
   }
-  
-  public void setShortOtchet() {}
 }

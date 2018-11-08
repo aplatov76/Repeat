@@ -11,11 +11,8 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TableView.TableViewSelectionModel;
-import javafx.scene.control.TextField;
+
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -25,6 +22,8 @@ import javafx.stage.Popup;
 public class PFilterPriceView
 {
   private Popup main;
+  private final ConnectDB connectordb = new ConnectDB();
+    
   
   public Popup getMain()
   {
@@ -35,9 +34,6 @@ public class PFilterPriceView
   public PFilterPriceView(ObservableList<Prices> prod, TableView table)
   {
     main = new Popup();
-    
-
-
     VBox vboxfiltr = createFiltr(prod, main, table);
     
     main.getContent().add(vboxfiltr);
@@ -96,10 +92,9 @@ public class PFilterPriceView
 
       public void handle(MouseEvent event)
       {
+        connectordb.closeConnect();
         popupfiltr.hide();
-
-      }
-      
+      }     
 
     });
     ok.setOnMouseClicked(new EventHandler<MouseEvent>()
@@ -150,22 +145,18 @@ public class PFilterPriceView
   
   public void getProduct(ObservableList<String> data, ObservableList<Integer> code, ObservableList<String> group)
   {
-    ConnectDB connectordb = new ConnectDB();
-    
     connectordb.loadProduct(data);
     connectordb.loadGroupList(group);
     connectordb.loadProductId(code);
   }
   
   public int getProductId(String name) {
-    ConnectDB connectordb = new ConnectDB();
-    
+
     return connectordb.setID(name);
   }
   
   public void getProductFromGroup(ObservableList<Prices> prod, int group) {
-    ConnectDB connectordb = new ConnectDB();
-    
+
     connectordb.getGroupPrices(prod, group, 0);
   }
 }

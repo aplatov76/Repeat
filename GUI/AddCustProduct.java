@@ -1,10 +1,8 @@
 package GUI;
 
 import Collection.ListCustProduct;
-import Collection.Person;
 import Connect.ConnectDB;
 import fxuidemo.Repeat;
-import java.net.URL;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -15,16 +13,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-
-
-
 
 public class AddCustProduct
   extends Application
@@ -47,8 +41,7 @@ public class AddCustProduct
     final ChoiceBox<String> chois = new ChoiceBox(group);
     final TextField price = new TextField();
     
-    final Label top = new Label();
-    
+    final Label top = new Label();  
 
     name.setMinWidth(500.0D);
     grid.add(top, 0, 0, 2, 1);
@@ -112,6 +105,7 @@ public class AddCustProduct
     });
     close.setOnMouseClicked(new EventHandler<MouseEvent>() {
       public void handle(MouseEvent event) {
+        db.closeConnect();
         stage.close();
       }
       

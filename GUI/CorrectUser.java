@@ -3,7 +3,6 @@ package GUI;
 import Collection.Rules;
 import Collection.Users;
 import Connect.ConnectDB;
-import java.net.URL;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -11,13 +10,10 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Dialogs;
-import javafx.scene.control.Dialogs.DialogResponse;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TableView.TableViewSelectionModel;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -26,8 +22,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-
-
 public class CorrectUser
 {
   public CorrectUser() {}
@@ -35,9 +29,11 @@ public class CorrectUser
   public static ObservableList<Users> prod = FXCollections.observableArrayList();
   public static ObservableList<Rules> rules = FXCollections.observableArrayList();
   
-  public void start(Stage stage) { BorderPane root = new BorderPane();
+  final ConnectDB db = new ConnectDB();
+  
+  public void start(Stage stage) { 
+    BorderPane root = new BorderPane();
     
-
     TableView<Users> tbu = createTable();
     TableView tbr = createTableRules();
     VBox box = createBut(stage, tbu, tbr);
@@ -64,7 +60,6 @@ public class CorrectUser
   private VBox createBut(final Stage stage, final TableView tb, final TableView tbr)
   {
     VBox node = new VBox();
-    final ConnectDB db = new ConnectDB();
     
     Button add = new Button("Добавить");
     Button cor = new Button("Изменить");
@@ -80,6 +75,7 @@ public class CorrectUser
     {
       public void handle(MouseEvent event)
       {
+        db.closeConnect();
         stage.close();
       }
       
@@ -147,26 +143,6 @@ public class CorrectUser
         int b = tbr.getSelectionModel().getSelectedIndex();
         if (b != -1) {
           db.setRules(((Rules)CorrectUser.rules.get(b)).getName(), ((Rules)CorrectUser.rules.get(b)).getRegistr().isSelected(), ((Rules)CorrectUser.rules.get(b)).getLook_price().isSelected(), ((Rules)CorrectUser.rules.get(b)).getAdd_product().isSelected(), ((Rules)CorrectUser.rules.get(b)).getClear_product().isSelected(), ((Rules)CorrectUser.rules.get(b)).getCorrect_product().isSelected(), ((Rules)CorrectUser.rules.get(b)).getLook_history().isSelected(), ((Rules)CorrectUser.rules.get(b)).getLook_journal().isSelected(), ((Rules)CorrectUser.rules.get(b)).getCorrect_user().isSelected(), ((Rules)CorrectUser.rules.get(b)).getUse_group().isSelected(), ((Rules)CorrectUser.rules.get(b)).getFull_otchet().isSelected(), ((Rules)CorrectUser.rules.get(b)).getFull_registration().isSelected(), ((Rules)CorrectUser.rules.get(b)).getInstallment_paid().isSelected(), ((Rules)CorrectUser.rules.get(b)).getCustomer_order().isSelected(), ((Rules)CorrectUser.rules.get(b)).getOrder_product_add().isSelected(), ((Rules)CorrectUser.rules.get(b)).getOrder_product_cor().isSelected(), ((Rules)CorrectUser.rules.get(b)).getOrder_product_del().isSelected(), ((Rules)CorrectUser.rules.get(b)).getZacup_product_add().isSelected(), ((Rules)CorrectUser.rules.get(b)).getZacup_product_cor().isSelected(), ((Rules)CorrectUser.rules.get(b)).getZacup_product_del().isSelected(), ((Rules)CorrectUser.rules.get(b)).getZacup_product_ok().isSelected(), ((Rules)CorrectUser.rules.get(b)).getLook_hist_metall().isSelected());
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
           Dialogs.showInformationDialog(stage, "Данные успешно сохранены", null);
         } else {
@@ -185,9 +161,6 @@ public class CorrectUser
   
   private TableView createTable() {
     TableView<Users> table = new TableView<Users>();
-    
-    ConnectDB mysql = new ConnectDB();
-    
 
     table.columnResizePolicyProperty();
     
@@ -210,14 +183,12 @@ public class CorrectUser
     table.setMaxWidth(890.0D);
     table.setMaxHeight(180.0D);
     table.getColumns().addAll(name, rule);
-    mysql.loadUser(prod);
+    db.loadUser(prod);
     return table;
   }
   
   private TableView createTableRules() {
     TableView<Rules> table = new TableView<Rules>();
-    
-    ConnectDB mysql = new ConnectDB();
     
 
     table.columnResizePolicyProperty();
@@ -331,7 +302,7 @@ public class CorrectUser
     table.setMaxHeight(180.0D);
     table.getColumns().addAll(name, reg, rule, add_product, clear_product, correct_product, look_history, look_journal, correct_user, use_group, full_otchet, full_registration, installment_paid, customer_order, order_product_add, order_product_cor, order_product_del, zacup_product_add, zacup_product_cor, zacup_product_del, zacup_product_ok, look_hist_metall);
     
-    mysql.loadRulesCorrect(rules);
+    db.loadRulesCorrect(rules);
     
     return table;
   }

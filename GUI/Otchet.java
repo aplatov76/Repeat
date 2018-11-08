@@ -1,11 +1,9 @@
 package GUI;
 
-import Collection.Person;
 import Collection.Repot;
 import Connect.ConnectDB;
 import fxuidemo.Print;
 import fxuidemo.Repeat;
-import java.net.URL;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -21,16 +19,15 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-
-
-
 public class Otchet
 {
   public Otchet() {}
   
   private final ObservableList<Repot> collect_otchet = FXCollections.observableArrayList();
+  private final ConnectDB mysql = new ConnectDB();
   
-  public void start(Stage stage) { BorderPane root = new BorderPane();
+  public void start(Stage stage) {
+    BorderPane root = new BorderPane();
     root.setLeft(createTable());
     VBox box = createBut(stage);
     root.setId("bp");
@@ -63,6 +60,7 @@ public class Otchet
     {
       public void handle(MouseEvent event)
       {
+        mysql.closeConnect();
         stage.close();
       }
     });
@@ -81,7 +79,6 @@ public class Otchet
   private TableView<Repot> createTable() {
     TableView<Repot> table = new TableView<Repot>();
     
-    ConnectDB mysql = new ConnectDB();
     
     table.columnResizePolicyProperty();
     
@@ -121,19 +118,19 @@ public class Otchet
   }
   
   public void setProdHistory(String a, String b) { collect_otchet.clear();
-    ConnectDB mysql = new ConnectDB();
+    //ConnectDB mysql = new ConnectDB();
     mysql.getOtchet(collect_otchet, a, b, Repeat.user.getGroup_user());
     System.out.println("function comment");
   }
   
   public void setFullOtchet() { collect_otchet.clear();
-    ConnectDB mysql = new ConnectDB();
+    //ConnectDB mysql = new ConnectDB();
     mysql.getOtchet(collect_otchet, Repeat.user.getGroup_user());
     System.out.println("function comment");
   }
   
   public void setShortOtchet() { collect_otchet.clear();
-    ConnectDB mysql = new ConnectDB();
+    //ConnectDB mysql = new ConnectDB();
     mysql.getOtchet(collect_otchet, Repeat.user.getGroup_user());
     System.out.println("function comment");
   }

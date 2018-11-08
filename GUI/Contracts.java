@@ -1,17 +1,15 @@
 package GUI;
 
-import Collection.Person;
 import Collection.contract;
 import Connect.ConnectDB;
 import fxuidemo.Repeat;
 import java.awt.Desktop;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -20,7 +18,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Dialogs;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TableView.TableViewSelectionModel;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -38,6 +35,8 @@ public class Contracts
   Desktop desktop = null;
   public static int indexnewcontract = -1;
   public static int typecontract = 0;
+  
+  private ConnectDB db = new ConnectDB();
   
   public void start(Stage stage) {
     BorderPane root = new BorderPane();
@@ -64,8 +63,7 @@ public class Contracts
 
   private VBox createBut(final Stage stage, final TableView table)
   {
-    VBox node = new VBox();
-    
+    VBox node = new VBox();   
 
     Button add = new Button("Добавить");
     Button isnow = new Button("Active");
@@ -76,8 +74,8 @@ public class Contracts
     Button paidadd = new Button("Paid");
     
     if (typecontract == 0) add.setDisable(!Repeat.user.getRules(11));
-    if (typecontract == 1) { add.setDisable(!Repeat.user.getRules(12));
-    }
+    if (typecontract == 1) add.setDisable(!Repeat.user.getRules(12));
+    
     final Popup popup = new Popup();
     final VBox boxpopup = new VBox();
     
@@ -115,9 +113,11 @@ public class Contracts
     {
       public void handle(MouseEvent event) {
         int t = table.getSelectionModel().getSelectedIndex();
-        System.out.print("t: " + t);
-        ContractPaid ca; if (t != -1)
-          ca = new ContractPaid(t); else {
+        //System.out.print("t: " + t);
+        ContractPaid ca; 
+        if (t != -1)
+          ca = new ContractPaid(t); 
+        else {
           Dialogs.showErrorDialog(stage, "Ошибка номер 405, выделите договор. ", "Error Dialog", "");
         }
         
@@ -126,6 +126,7 @@ public class Contracts
     close.setOnMouseClicked(new EventHandler<MouseEvent>()
     {
       public void handle(MouseEvent event) {
+        db.closeConnect();
         stage.close();
       }
     });
@@ -159,8 +160,6 @@ public class Contracts
               boxpopup.getChildren().add(new Text("ФИО: " + ((contract)Contracts.contract.get(n)).getName()));
               boxpopup.getChildren().add(new Text("Phone: " + ((contract)Contracts.contract.get(n)).getPhone()));
               boxpopup.getChildren().add(new Text("Адрес :" + ((contract)Contracts.contract.get(n)).getAdress()));
-              
-
 
               popup.setX(event.getScreenX());
               popup.setY(event.getScreenY());
@@ -177,52 +176,73 @@ public class Contracts
     {
       public void handle(MouseEvent event)
       {
-        try
-        {
+          Controller c = new Controller();
           if ((Contracts.indexnewcontract != -1) && (Contracts.typecontract == 0)) {
-            URI line = new URI("http://localhost/java/fun.php?num=" + Contracts.indexnewcontract);
-            desktop = Desktop.getDesktop();
-            if (Desktop.isDesktopSupported()) {
-              desktop.browse(line);
-              Contracts.indexnewcontract = -1;
-            } else {
+              //System.out.println("A");
+              //HostServicesDelegate hostServices = HostServicesFactory.getInstance(null);
+              //hostServices.showDocument("http://10.8.0.1/java/repeat/fun.php?num=" + Contracts.indexnewcontract);
+              
+              //URI line = new URI("http://10.8.0.1/java/repeat/fun.php?num=" + Contracts.indexnewcontract);
+              //desktop = Desktop.getDesktop();
+              /*if (Desktop.isDesktopSupported()) {
+              //desktop.browse(line);
+              //Contracts.indexnewcontract = -1;
+              } else {
               Dialogs.showErrorDialog(stage, "Ошибка номер 405. ", "Error Dialog", "");
-            }
+              }*/             
           }
           else if (Contracts.typecontract == 0) {
-            int t = table.getSelectionModel().getSelectedIndex();
-            if (t != -1) {
-              URI line = new URI("http://localhost/java/fun.php?num=" + ((contract)Contracts.contract.get(t)).getId());
-              desktop = Desktop.getDesktop();
-              if (Desktop.isDesktopSupported()) desktop.browse(line); else {
-                Dialogs.showErrorDialog(stage, "Ошибка номер 405, выделите договор. ", "Error Dialog", "");
+              int t = table.getSelectionModel().getSelectedIndex();
+              
+              if (t != -1) {
+                  /*URI line = new URI("http://10.8.0.1/java/repeat/fun.php?num=" + ((contract)Contracts.contract.get(t)).getId());
+                  desktop = Desktop.getDesktop();
+                  if (Desktop.isDesktopSupported()) desktop.browse(line); else {
+                  Dialogs.showErrorDialog(stage, "Ошибка номер 405, выделите договор. ", "Error Dialog", "");
+                  }*/
+                  try {
+                      c.openBrowser(new ActionEvent(),"http://10.8.0.1/java/repeat/fun.php?num=" + ((contract)Contracts.contract.get(t)).getId());
+                  } catch (Exception ex) {
+                      Logger.getLogger(Contracts.class.getName()).log(Level.SEVERE, null, ex);
+                  }
+                  
               }
-            }
           }
           if ((Contracts.indexnewcontract != -1) && (Contracts.typecontract == 1)) {
-            URI line = new URI("http://localhost/java/order.php?num=" + Contracts.indexnewcontract);
-            desktop = Desktop.getDesktop();
-            if (Desktop.isDesktopSupported()) {
+              /*URI line = new URI("http://10.8.0.1/java/repeat/order.php?num=" + Contracts.indexnewcontract);
+              desktop = Desktop.getDesktop();
+              if (Desktop.isDesktopSupported()) {
               desktop.browse(line);
               Contracts.indexnewcontract = -1;
-            } else {
+              } else {
               Dialogs.showErrorDialog(stage, "Ошибка номер 405. ", "Error Dialog", "");
-            }
+              }*/
+              try {
+                  c.openBrowser(new ActionEvent(),"http://10.8.0.1/java/repeat/order.php?num=" + Contracts.indexnewcontract);                  
+              } catch (Exception ex) {
+                  Logger.getLogger(Contracts.class.getName()).log(Level.SEVERE, null, ex);
+              }  
           }
           else if (Contracts.typecontract == 1) {
-            int t = table.getSelectionModel().getSelectedIndex();
-            if (t != -1) {
-              URI line = new URI("http://localhost/java/order.php?num=" + ((contract)Contracts.contract.get(t)).getId());
-              desktop = Desktop.getDesktop();
-              if (Desktop.isDesktopSupported()) desktop.browse(line); else {
-                Dialogs.showErrorDialog(stage, "Ошибка номер 405, выделите договор. ", "Error Dialog", "");
-              }
+              int t = table.getSelectionModel().getSelectedIndex();
+              //System.out.println("new uri 1");
+              //HostServicesDelegate hostServices = HostServicesFactory.getInstance(this);
+              //hostServices.showDocument("http://10.8.0.1/java/repeat/fun.php?num=" + Contracts.indexnewcontract);
               
+              if (t != -1) {
+                  /* URI line = new URI("http://10.8.0.1/java/repeat/order.php?num=" + (Contracts.contract.get(t)).getId());
+                  desktop = Desktop.getDesktop();
+                  if (Desktop.isDesktopSupported()) desktop.browse(line); else {
+                  Dialogs.showErrorDialog(stage, "Ошибка номер 405, выделите договор. ", "Error Dialog", "");
+                  }*/
+                  try {
+                      c.openBrowser(new ActionEvent(), "http://10.8.0.1/java/repeat/order.php?num=" + (Contracts.contract.get(t)).getId());
+                  } catch (Exception ex) {
+                      Logger.getLogger(Contracts.class.getName()).log(Level.SEVERE, null, ex);
+                  }
+                }
+
             }
-            
-          }
-        }
-        catch (URISyntaxException|IOException ex) {}
       }
     });
     node.getChildren().addAll(new Node[] { add, isnow, endcontract, allcontract, paidadd, print, close });
@@ -279,7 +299,22 @@ public class Contracts
     return table;
   }
   
-  public void getContract(int i, int j) { ConnectDB mysql = new ConnectDB();
-    mysql.getContractsList(i, j, contract);
+  public void getContract(int i, int j) { 
+    //ConnectDB mysql = new ConnectDB();
+    db.getContractsList(i, j, contract);
   }
+}
+
+class Controller extends Application {
+
+    public void openBrowser(ActionEvent actionEvent, String uri) throws Exception {
+
+        getHostServices().showDocument(uri);
+
+    }
+
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+
+    }
 }

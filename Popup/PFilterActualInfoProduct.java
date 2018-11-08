@@ -24,36 +24,25 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Popup;
 
-public class PFilterActualInfoProduct
+public class PFilterActualInfoProduct 
 {
   private String data1;
   private String data2;
   private Popup main;
+
   
   public Popup getMain()
   {
     return main;
   }
   
-  private void setData1(String data1) {
-    this.data1 = data1;
-  }
-  
-  private void setData2(String data2) {
-    this.data2 = data2;
-  }
-  
-  public PFilterActualInfoProduct(ObservableList<Prices> prod, Label info) {
+  public PFilterActualInfoProduct(ObservableList<Prices> prod, Label info, final ConnectDB db) {
     main = new Popup();
-    
-
-
-    VBox vboxfiltr = createFiltr(prod, main, info);
-    
+    VBox vboxfiltr = createFiltr(prod, main, info, db);  
     main.getContent().add(vboxfiltr);
   }
   
-  private VBox createFiltr(final ObservableList<Prices> prod, final Popup popupfiltr, final Label info) {
+  private VBox createFiltr(final ObservableList<Prices> prod, final Popup popupfiltr, final Label info,final ConnectDB db) {
     VBox menu = new VBox();
     
     menu.setSpacing(8.0D);
@@ -124,7 +113,7 @@ public class PFilterActualInfoProduct
 
 
     ObservableList<String> group_product = FXCollections.observableArrayList();
-    getGroup(group_product);
+    getGroup(group_product,db);
     final ChoiceBox<String> box = new ChoiceBox(group_product);
     box.getSelectionModel().select(0);
     
@@ -151,6 +140,7 @@ public class PFilterActualInfoProduct
 
       public void handle(MouseEvent event)
       {
+        
         popupfiltr.hide();
       }
       
@@ -177,7 +167,7 @@ public class PFilterActualInfoProduct
         }
         
         if ((day > 0) && (offonsize != -1) && (group != -1)) {
-          getProduct(prod, offonsize, day, group);
+          getProduct(prod, offonsize, day, group,db);
           lbl.setText("Запрос выполнен");
           lbl.setTextFill(Color.GREEN);
           
@@ -223,7 +213,7 @@ public class PFilterActualInfoProduct
           info.setText("* Cейчас отображаются категории недоступные к реализации.\n  Баланс данных категорий нулевой и продажи не регистрировались более 3-x месяцев.");
           info.setTextFill(Color.RED);
         }
-        getProduct(prod, status);
+        getProduct(prod, status,db);
         main.hide();
       }
       
@@ -255,23 +245,16 @@ public class PFilterActualInfoProduct
     return menu;
   }
   
-  public void getGroup(ObservableList<String> group_product) {
-    ConnectDB mysql = new ConnectDB();
-    
-    mysql.loadGroupList(group_product);
+  public void getGroup(ObservableList<String> group_product, ConnectDB db) {    
+    db.loadGroupList(group_product);
   }
   
-  public void getProduct(ObservableList<Prices> prod, int status) {
-    ConnectDB mysql = new ConnectDB();
-    
-    mysql.getProductForStatus(prod, status);
+  public void getProduct(ObservableList<Prices> prod, int status, ConnectDB db) { 
+    db.getProductForStatus(prod, status);
   }
   
-  public void getProduct(ObservableList<Prices> prod, int offnosize, int day, int group)
+  public void getProduct(ObservableList<Prices> prod, int offnosize, int day, int group, ConnectDB db)
   {
-    ConnectDB mysql = new ConnectDB();
-    
-
-    mysql.getProductForFilter1(prod, offnosize, day, group);
+    db.getProductForFilter1(prod, offnosize, day, group);
   }
 }

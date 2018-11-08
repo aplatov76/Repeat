@@ -366,12 +366,12 @@ public class AddOrder extends javafx.application.Application
             Dialogs.showWarningDialog(stage, "Внимание:\nДобавляемый продукт иммется в базе, но указанная вами цена не совпадает с установленной.\nКатегория добавленна с ценой, отличной от установленной в базе.");
           }
           
-
+          int type_cash = 0; // оплата наличными по умолчанию
           if ((sc > 0) && (p > 0.0D) && (sum > 0.0D))
           {
             int id = db.getIdProductOrder(sn);
             // не известен первый аргумент AddOrder.this.index
-            gatereg.add(0, new GateReg(AddOrder.this.index, sn, Integer.toString(id), size.getText(), price.getText(), Double.parseDouble(summa.getText()),0));
+            gatereg.add(0, new GateReg(AddOrder.this.index, sn, Integer.toString(id), size.getText(), price.getText(), Double.parseDouble(summa.getText()),0,type_cash));
             int index = gatereg.size() - 1;
             double sumbreak = ((GateReg)gatereg.get(index)).getSum();
             sumbreak += sum;
@@ -471,19 +471,17 @@ public class AddOrder extends javafx.application.Application
                   Dialogs.showErrorDialog(stage, "Ошибка номер 401, возможные причины:\n1. Нет необходимого количества товара\n2. Отрицательные числа\n3. Ошибка в строке #: " + i + "" + "4. Снимок экрана, кнопка  prt sc.", "Error Dialog", "");
                 }
               }
+              if(db.connectCheck()){
+                    db.setContractPaid(idc, pok_firstpaid, pok_total - pok_firstpaid, Repeat.user.getName());
+                    Cassa.cassa += pok_firstpaid;
+                    Cassa.setCassa();
+                    gatereg.clear();
+                    gatereg.add(new GateReg());
               
-
-
-
-              db.setContractPaid(idc, pok_firstpaid, pok_total - pok_firstpaid, Repeat.user.getName());
-              Cassa.cassa += pok_firstpaid;
-              Cassa.setCassa();
-              gatereg.clear();
-              gatereg.add(new GateReg());
-              
-              Dialogs.showInformationDialog(stage, "Договор создан");
-              Contracts.indexnewcontract = idc;
-              stage.close();
+                    Dialogs.showInformationDialog(stage, "Договор создан");
+                    Contracts.indexnewcontract = idc;
+                    stage.close();
+                } else Dialogs.showErrorDialog(stage, "Ошибка номер 403. Нет соединения", "Error Dialog", "");
             }
             else if (validateinfo == 0) { Dialogs.showErrorDialog(stage, "Ошибка номер 403, первоначальный взнос отрицателен. ", "Error Dialog", "");
             } else if (validateinfo == 1) { Dialogs.showErrorDialog(stage, "Ошибка номер 403, ФИО слишком короткое. ", "Error Dialog", "");

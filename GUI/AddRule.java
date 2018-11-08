@@ -2,9 +2,7 @@ package GUI;
 
 import Collection.Rules;
 import Connect.ConnectDB;
-import java.net.URL;
 import javafx.application.Application;
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -16,9 +14,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-
-
-
 
 public class AddRule
   extends Application
@@ -52,6 +47,7 @@ public class AddRule
     close.setOnMouseClicked(new EventHandler<MouseEvent>()
     {
       public void handle(MouseEvent event) {
+        db.closeConnect();
         stage.close();
       }
     });

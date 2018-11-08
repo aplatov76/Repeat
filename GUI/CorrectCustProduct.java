@@ -1,11 +1,8 @@
 package GUI;
 
 import Collection.ListCustProduct;
-import Collection.Person;
 import Connect.ConnectDB;
 import fxuidemo.Repeat;
-import java.io.PrintStream;
-import java.net.URL;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -17,7 +14,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Dialogs;
 import javafx.scene.control.Label;
-import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
@@ -58,7 +54,7 @@ public class CorrectCustProduct
         break;
       }
     }
-    System.out.print("Nomer " + iget + "\n");
+    //System.out.print("Nomer " + iget + "\n");
     final TextField name = new TextField(temp.getName());
     final ChoiceBox<String> chois = new ChoiceBox(group);
     chois.getSelectionModel().select(iget);
@@ -112,6 +108,7 @@ public class CorrectCustProduct
     });
     close.setOnMouseClicked(new EventHandler<MouseEvent>() {
       public void handle(MouseEvent event) {
+        db.closeConnect();
         stage.close();
       }
     });

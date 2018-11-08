@@ -12,6 +12,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Dialogs;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
@@ -91,20 +92,20 @@ public class AdminCorrect
     grid.add(chois, 1, 2);
     //grid.add(new Label("Вес в списке: "), 0, 3);
     //grid.add(helf, 1, 3);
-    grid.add(new Label("Склады: "), 0, 3);
-    grid.add(stock, 1, 3);
-    grid.add(new Label("Склад В: "), 0, 4);
-    grid.add(stock_0, 1, 4);
-    grid.add(new Label("Склад И: "), 0,5);
-    grid.add(stock_1, 1, 5);
-    grid.add(new Label("Общее: "), 0, 6);
-    grid.add(size, 1, 6);
-    grid.add(new Label("Cтоимость: "), 0, 7);
-    grid.add(price, 1, 7);
-    grid.add(new Label("Cтатус: "), 0, 8);
-    grid.add(actual_status, 1, 8);
-    grid.add(new Label("Мин. остат.: "), 0, 9);
-    grid.add(min_remainder, 1, 9);
+    //grid.add(new Label("Склады: "), 0, 3);
+    //grid.add(stock, 1, 3);
+    grid.add(new Label("Склад В: "), 0, 3);
+    grid.add(stock_0, 1, 3);
+    grid.add(new Label("Склад И: "), 0,4);
+    grid.add(stock_1, 1, 4);
+    grid.add(new Label("Общее: "), 0, 5);
+    grid.add(size, 1, 5);
+    grid.add(new Label("Cтоимость: "), 0, 6);
+    grid.add(price, 1, 6);
+    grid.add(new Label("Cтатус: "), 0, 7);
+    grid.add(actual_status, 1, 7);
+    grid.add(new Label("Мин. остат.: "), 0, 8);
+    grid.add(min_remainder, 1, 8);
     
     
     Button ok = new Button("Готово");
@@ -114,8 +115,8 @@ public class AdminCorrect
     HBox button = new HBox();
     button.setSpacing(5.0D);
     button.getChildren().addAll(new Node[] { ok, close });
-    grid.add(button, 1, 10);
-    grid.add(warning, 1, 11, 2, 1);
+    grid.add(button, 1, 9);
+    grid.add(warning, 1, 10, 2, 1);
     Scene scene = new Scene(grid);
     grid.setId("add");
     scene.getStylesheets().add(getClass().getResource("/css/login.css").toExternalForm());
@@ -240,16 +241,17 @@ public class AdminCorrect
             int as = Integer.parseInt(actual_status.getText());
             
             String articul_i = articul.getText();
-                                    
-            db.updatePrice(p_prev.getId(), name.getText(), name.getText(), gr, hl, pr, sp, as,Integer.parseInt(stock_full),Integer.parseInt(stock_0i),Integer.parseInt(stock_1i),min_remainder_i,articul_i);
-            AdminPane p_next = new AdminPane(select, p_prev.getId(), cor_name, cor_sname, gr, hl, sp, pr, as,Integer.parseInt(stock_full),Integer.parseInt(stock_0i),Integer.parseInt(stock_1i),min_remainder_i,articul_i);
-            db.setLog(p_next, p_prev, 1, Repeat.user.getName());
+            if(db.connectCheck()){                        
+                db.updatePrice(p_prev.getId(), name.getText(), name.getText(), gr, hl, pr, sp, as,Integer.parseInt(stock_full),Integer.parseInt(stock_0i),Integer.parseInt(stock_1i),min_remainder_i,articul_i);
+                AdminPane p_next = new AdminPane(select, p_prev.getId(), cor_name, cor_sname, gr, hl, sp, pr, as,Integer.parseInt(stock_full),Integer.parseInt(stock_0i),Integer.parseInt(stock_1i),min_remainder_i,articul_i);
+                db.setLog(p_next, p_prev, 1, Repeat.user.getName());
 
-            Repeat.admprod.set(select, new AdminPane(select, p_prev.getId(), cor_name, cor_sname, gr, hl, sp, pr, as,Integer.parseInt(stock_full),Integer.parseInt(stock_0i),Integer.parseInt(stock_1i),min_remainder_i,articul_i));
-           // if (p_prev.getHelf() != hl)
-             //   db.getGroupProductAdmin(Repeat.admprod, gr, 0);
+                Repeat.admprod.set(select, new AdminPane(select, p_prev.getId(), cor_name, cor_sname, gr, hl, sp, pr, as,Integer.parseInt(stock_full),Integer.parseInt(stock_0i),Integer.parseInt(stock_1i),min_remainder_i,articul_i));
+                // if (p_prev.getHelf() != hl)
+                //   db.getGroupProductAdmin(Repeat.admprod, gr, 0);
             
-            stage.close();
+                stage.close();
+            } else Dialogs.showErrorDialog(stage, "Ошибка номер 403. Нет соединения", "Error Dialog", "");
           } catch (NumberFormatException ex) {
             MessageBox.show(stage, "Вводимые данные некорректны", "Information dialog", 16842752);
           }
@@ -262,6 +264,7 @@ public class AdminCorrect
     });
     close.setOnMouseClicked(new EventHandler<MouseEvent>() {
       public void handle(MouseEvent event) {
+        db.closeConnect();
         stage.close();
       }
     });

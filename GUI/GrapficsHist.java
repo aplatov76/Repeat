@@ -4,7 +4,6 @@ import Connect.ConnectDB;
 import autofilltextbox.AutoFillTextBox;
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.net.URL;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -18,8 +17,6 @@ import javafx.scene.Scene;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.XYChart.Data;
-import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
@@ -128,7 +125,8 @@ public class GrapficsHist
   
 
 
-  public static void main(String[] args) { Application.launch(args); }
+  public static void main(String[] args) { 
+      Application.launch(args); }
   
   private final void addChart(String name, ObservableList<LineChart.Series> series, ObservableList<String> datashow, ObservableList<Integer> sizeshow, ConnectDB db, LineChart<String, Number> chart) {
     int id = db.setID(name);

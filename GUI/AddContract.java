@@ -412,10 +412,12 @@ public class AddContract extends javafx.application.Application
           double p = Double.parseDouble(price.getText());
           double sum = Double.parseDouble(summa.getText());
           
+          int type_cash = 0;// нет выбора оплаты
+          
           if ((sc > 0) && (p > 0.0) && (sum > 0.0) && (bds >= sc))
           {
               // первый аргумент неизвестен - AddContract.this.index
-            gatereg.add(0, new GateReg(AddContract.this.index++, sn, Integer.toString(db.setID(sn)), size.getText(), price.getText(), Double.parseDouble(summa.getText()),stock_gate));
+            gatereg.add(0, new GateReg(AddContract.this.index++, sn, Integer.toString(db.setID(sn)), size.getText(), price.getText(), Double.parseDouble(summa.getText()),stock_gate,type_cash));
             int index = gatereg.size() - 1;
             double sumbreak = ((GateReg)gatereg.get(index)).getSum();
             sumbreak += sum;
@@ -458,12 +460,11 @@ public class AddContract extends javafx.application.Application
     });
     ((Node)((VBox)but.getChildren().get(0)).getChildren().get(0)).setOnMouseClicked(new EventHandler<MouseEvent>()
     {
-
       public void handle(MouseEvent event)
       {
         try
         {
-          int validatesize = AddContract.this.validateSizeProduct(gatereg);
+          int validatesize = AddContract.this.validateSizeProduct(gatereg, db);
           
           if (validatesize == -1)
           {
@@ -480,13 +481,14 @@ public class AddContract extends javafx.application.Application
             
             int validateinfo = AddContract.this.validateInfo(pok_firstpaid, pok_fio, pok_adress, pok_num, year.getText(), pok_customer_doc_cout, pok_phone, pok_dend, pok_total);
             
-
+            if(db.connectCheck()){
             if (validateinfo == -1)
             {
               int idc = db.setNewContract(pok_fio, pok_num, pok_adress, year.getText(), pok_customer_doc_cout, pok_phone, pok_dend, pok_total, pok_firstpaid, pok_total - pok_firstpaid, true, Repeat.user.getName(), 0);
               
               Contracts.contract.add(new contract(idc, pok_fio, pok_num, pok_adress, year.getText(), pok_customer_doc_cout, pok_phone, AddContract.this.Time(), pok_dend, pok_total, pok_firstpaid, pok_total - pok_firstpaid, true, Repeat.user.getName()));
-
+              String[] arrayRefUpd = new String[lim];
+              
               for (int i = 0; i < lim; i++)
               {
                 String name = ((GateReg)gatereg.get(i)).getName();
@@ -523,24 +525,26 @@ public class AddContract extends javafx.application.Application
 //int id, int idproduct, String nameproduct, int size, double price, double sum,int stock_ship                    
                   db.setListContract(idc, id, name, a, c, d,stock_gate);
                   //db.setSize(id, b - a);
-                  db.setSize(pid, balance, stock_gate, balance_event_stock);
+                  arrayRefUpd[i] = (stock_gate == 0) ? "UPDATE `prais` SET `sell` = '" + balance + "', `stock_0` =  '"+balance_event_stock+"' WHERE `prais`.`id` = '" + pid + "'" : "UPDATE `prais` SET `sell` = '" + balance + "', `stock_1` =  '"+balance_event_stock+"' WHERE `prais`.`id` = '" + pid + "'";
+  
+                  //db.setSize(pid, balance, stock_gate, balance_event_stock);
                 } else {
                   Dialogs.showErrorDialog(stage, "Ошибка номер 401.\n1. Ошибка в строке #: " + i + "" + "4. Снимок экрана, кнопка  prt sc.", "Error Dialog", "");
                 }
               }
+              db.setSize(/*pid, balance, stock_gate, balance_event_stock*/arrayRefUpd);
+              if(db.connectCheck()){
+                    db.setContractPaid(idc, pok_firstpaid, pok_total - pok_firstpaid, Repeat.user.getName());
+                    Cassa.cassa += pok_firstpaid;
+                    Cassa.setCassa();
+                    gatereg.clear();
+                    gatereg.add(new GateReg());
               
-
-
-
-              db.setContractPaid(idc, pok_firstpaid, pok_total - pok_firstpaid, Repeat.user.getName());
-              Cassa.cassa += pok_firstpaid;
-              Cassa.setCassa();
-              gatereg.clear();
-              gatereg.add(new GateReg());
-              
-              Dialogs.showInformationDialog(stage, "Договор создан");
-              Contracts.indexnewcontract = idc;
-              stage.close();
+                    Dialogs.showInformationDialog(stage, "Договор создан");
+                    Contracts.indexnewcontract = idc;
+                    db.closeConnect();
+                    stage.close();
+              } else Dialogs.showErrorDialog(stage, "Ошибка номер 403. Нет соединения", "Error Dialog", "");
             }
             else if (validateinfo == 0) { Dialogs.showErrorDialog(stage, "Ошибка номер 403, первоначальный взнос отрицателен. ", "Error Dialog", "");
             } else if (validateinfo == 1) { Dialogs.showErrorDialog(stage, "Ошибка номер 403, ФИО слишком короткое. ", "Error Dialog", "");
@@ -555,6 +559,7 @@ public class AddContract extends javafx.application.Application
           {
             Dialogs.showErrorDialog(stage, "Ошибка номер 402.\nНет необходимого количества товара, номер строки: " + validatesize, "Error Dialog", "");
           }
+          } else Dialogs.showErrorDialog(stage, "Ошибка номер 403. Нет соединения", "Error Dialog", "");
         } catch (NumberFormatException ex) {
           System.out.println("exception");
           Dialogs.showErrorDialog(stage, "Ошибка номер 404, некоторые данные введены некорректно.\nПроверьте правильность вводимых данных и повторите попытку.", "Error Dialog", "");
@@ -623,9 +628,9 @@ public class AddContract extends javafx.application.Application
     return s.format(new Date());
   }
   
-  private int validateSizeProduct(ObservableList<GateReg> g)
+  private int validateSizeProduct(ObservableList<GateReg> g,ConnectDB db)
   {
-    ConnectDB db = new ConnectDB();
+    //ConnectDB db = new ConnectDB();
     /*
     int n = g.size() - 1;
     int errorrow = -1;
@@ -662,11 +667,12 @@ public class AddContract extends javafx.application.Application
   }
   
   private int validateInfo(double pok_firstpaid, String pok_fio, String pok_adress, String pok_num, String pok_year, String coutpas, String phone, String pok_dend, double pok_total) {
-    System.out.println("firstpaid: " + pok_firstpaid + " fio: " + pok_fio + " adress: " + pok_adress + "\nyear: " + pok_year + " total: " + pok_total + " pok_num: " + pok_num + " pok_year: " + pok_year + " coutpas: " + coutpas + "\nphone: " + phone + " pok_end: " + pok_dend + " pok_total: " + pok_total);
+   //System.out.println("firstpaid: " + pok_firstpaid + " fio: " + pok_fio + " adress: " + pok_adress + "\nyear: " + pok_year + " total: " + pok_total + " pok_num: " + pok_num + " pok_year: " + pok_year + " coutpas: " + coutpas + "\nphone: " + phone + " pok_end: " + pok_dend + " pok_total: " + pok_total);
     
 
 
     int valid = -1;
+    
     if (pok_firstpaid < 0.0D) valid = 0;
     if (pok_fio.length() < 10) { valid = 1;
     }
@@ -686,6 +692,7 @@ public class AddContract extends javafx.application.Application
     }
     if (phone.length() < 6) valid = 7;
     if (coutpas.length() < 10) valid = 8;
+    
     return valid;
   }
 }

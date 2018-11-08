@@ -28,13 +28,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-
-
-
-
-
-
-
 public final class AddProductSizeNow
   extends Application
 {
@@ -92,6 +85,7 @@ public final class AddProductSizeNow
     {
       public void handle(MouseEvent event)
       {
+        db.closeConnect();
         stage.close();
       }
       
@@ -195,8 +189,6 @@ public final class AddProductSizeNow
           int id_product = Integer.parseInt(boxcode.getText());
           String name_product = db.getName(id_product);
           box.getTextbox().setText(name_product);
-
-
         }
         catch (NumberFormatException ex) {}
 
@@ -212,15 +204,4 @@ public final class AddProductSizeNow
     stage.show();
   }
   
-  private int searchIndexTable(int indexend) {
-    int size = AddProductGate.expected.size();
-    for (int i = 0; i < size; i++) {
-      if (((Procurement_product_hist)AddProductGate.expected.get(i)).getIndex() == indexend) return i;
-    }
-    return -1;
-  }
-  
-  private String Datenow() { SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd");
-    return s.format(new Date());
-  }
 }

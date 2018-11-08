@@ -1,11 +1,9 @@
 package GUI;
 
 import Collection.AdminPane;
-import Collection.Person;
 import Collection.Procurement_product_hist;
 import Connect.ConnectDB;
 import fxuidemo.Repeat;
-import java.net.URL;
 import java.util.LinkedHashMap;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -17,7 +15,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Dialogs;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TableView.TableViewSelectionModel;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -26,12 +23,12 @@ import javafx.stage.Stage;
 
 public class AddProductGate {
 
-    public AddProductGate() {
+public AddProductGate() {
     }
 
-    public static final ObservableList<Procurement_product_hist> expected = FXCollections.observableArrayList();
-    ;
-  public static int typecontract = 0;
+public static final ObservableList<Procurement_product_hist> expected = FXCollections.observableArrayList();
+public static int typecontract = 0;
+final ConnectDB db = new ConnectDB();
 
     public void start(Stage stage) {
         stage.setTitle("Прием товара");
@@ -103,7 +100,9 @@ public class AddProductGate {
         });
         close.setOnMouseClicked(new EventHandler<MouseEvent>() {
             public void handle(MouseEvent event) {
+                db.closeConnect();
                 stage.close();
+                
             }
         });
         correct.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -192,18 +191,15 @@ public class AddProductGate {
         return table;
     }
 
-    public void getContract() {
-        ConnectDB mysql = new ConnectDB();
-        mysql.getProcurementProductHist(expected);
+    public void getContract() {      
+       db.getProcurementProductHist(expected);
     }
 
     public void updateSize() {
-        ConnectDB mysql = new ConnectDB();
-        mysql.updateSizeAfterAdded();
+        db.updateSizeAfterAdded();
     }
 
     public void updateTable() {
-        ConnectDB mysql = new ConnectDB();
         int ns = expected.size();
         LinkedHashMap<Integer, Integer> map = new LinkedHashMap();
         int n = Repeat.admprod.size();
@@ -225,7 +221,6 @@ public class AddProductGate {
     }
 
     private void deletProductGate(int id) {
-        ConnectDB mysql = new ConnectDB();
-        mysql.deletProductGate(id);
+        db.deletProductGate(id);
     }
 }

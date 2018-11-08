@@ -51,15 +51,13 @@ public class MoveProduct extends Application
   public void start(Stage stage)
   {
     ObservableList<String> data = FXCollections.observableArrayList();
-    
-
     ObservableList<Integer> cdata = FXCollections.observableArrayList();
     ConnectDB db = new ConnectDB();
     db.loadProduct(data);
     db.loadProductId(cdata);
     BorderPane root = new BorderPane();
     root.setPadding(new Insets(20.0D, 20.0, 20.0, 20.0));
-    VBox but = createBut(stage);
+    VBox but = createBut(stage,db);
     
     stage.setTitle("Перемещение товаров");
     root.setId("bp");
@@ -79,7 +77,7 @@ public class MoveProduct extends Application
   }
   
 
-  private VBox createBut(final Stage stage)
+  private VBox createBut(final Stage stage,final ConnectDB db)
   {
     VBox node = new VBox();
     Label lbl = new Label();
@@ -102,8 +100,12 @@ public class MoveProduct extends Application
       {
         if (prod.size() > 1) {
           Dialogs.DialogResponse response = Dialogs.showConfirmDialog(stage, "Список не пуст, закрыть окно?", "Confirm Dialog With Options", "Предупреждение", Dialogs.DialogOptions.OK_CANCEL);
-          if (response == Dialogs.DialogResponse.OK) stage.close();
+          if (response == Dialogs.DialogResponse.OK){
+              db.closeConnect();
+              stage.close();
+          }
         } else {
+          db.closeConnect();
           stage.close();
         }
       }
@@ -273,7 +275,7 @@ public class MoveProduct extends Application
           int ssize = Integer.parseInt(size.getText());
           
           int[] stock_full = db.getSize(id_product);
-          System.out.println(stock_full[0] + " "+stock_full[1]+ " "+stock_full[2]);
+          //System.out.println(stock_full[0] + " "+stock_full[1]+ " "+stock_full[2]);
           
           control.setText(String.valueOf(stock_full[0]));
           
@@ -313,7 +315,7 @@ public class MoveProduct extends Application
             box.getListview().getFocusModel().isFocused(1);
             
             int[] stock_full = db.getSize(id_product);
-            System.out.println(stock_full[0] + " "+stock_full[1]+ " "+stock_full[2]);
+            //System.out.println(stock_full[0] + " "+stock_full[1]+ " "+stock_full[2]);
             
             control.setText(String.valueOf(stock_full[0]));
             
@@ -345,7 +347,7 @@ public class MoveProduct extends Application
             box.getListview().getFocusModel().isFocused(1);
             
             int[] stock_full = db.getSize(id_product);
-            System.out.println(stock_full[0] + " "+stock_full[1]+ " "+stock_full[2]);
+            //System.out.println(stock_full[0] + " "+stock_full[1]+ " "+stock_full[2]);
             control.setText(String.valueOf(stock_full[0]));
             if(st0.isSelected())stock_event.setText(String.valueOf(stock_full[1]));// = stock_full[1];
             else if(st1.isSelected())stock_event.setText(String.valueOf(stock_full[2]));
@@ -421,7 +423,7 @@ public class MoveProduct extends Application
         int lim = prod.size();
       //  int validatesize = validateSizeProduct(prod);
       //  if (validatesize == -1) {
-           System.out.println("lim"+lim);
+           //System.out.println("lim"+lim);
           //int id_check = db.getMaxCheck() +1;
             
           for (int i = 0; i < lim; i++) {
@@ -439,7 +441,11 @@ public class MoveProduct extends Application
                 //db.reliz_day(pid, name, balance, a, stock_gate, c, d, Repeat.USER_NAME,id_check);
                 //Repeat.prod.add(new Registration(AddProduct.this.Time_m(), name, Integer.valueOf(pid), Integer.valueOf(a),stock_gate, c, d, Repeat.USER_NAME));
                 // stock_gate id склада из которого перемещают.
+              if(db.connectCheck()){
                 db.setMove(pid, stock, a,Repeat.user.getName());
+              } else {
+                  Dialogs.showErrorDialog(stage, "Ошибка номер 403. Нет соединения", "Error Dialog", "");
+              }
                 //Cassa.cassa += d;
                 //Cassa.setCassa();
             }

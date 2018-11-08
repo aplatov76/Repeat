@@ -1,12 +1,9 @@
 package GUI;
 
-import Collection.Person;
 import Collection.Procurement_product_hist;
 import Connect.ConnectDB;
 import fxuidemo.Repeat;
-import java.net.URL;
 import javafx.application.Application;
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -79,6 +76,7 @@ public final class AdminCorrectCheck
     {
       public void handle(MouseEvent event)
       {
+        db.closeConnect();
         stage.close();
       }
       
@@ -94,10 +92,11 @@ public final class AdminCorrectCheck
             
             Procurement_product_hist isnow = (Procurement_product_hist)AddProductGate.expected.get(index);
             int size_f = isnow.getSize_first();
-            
-            AddProductGate.expected.set(index, new Procurement_product_hist(isnow.getIndex(), isnow.getDate(), isnow.getName_product(), isnow.getId_product(), size_f, sid, size_f += sid, user_name, true));
-            db.updateSizeCorrectAdded(id_p, sid, user_name);
-            stage.close();
+            if(db.connectCheck()){
+                AddProductGate.expected.set(index, new Procurement_product_hist(isnow.getIndex(), isnow.getDate(), isnow.getName_product(), isnow.getId_product(), size_f, sid, size_f += sid, user_name, true));
+                db.updateSizeCorrectAdded(id_p, sid, user_name);
+                stage.close();
+            } else Dialogs.showErrorDialog(stage, "Ошибка номер 403. Нет соединения", "Error Dialog", "");
           } else {
             Dialogs.showErrorDialog(stage, "Количество отрицательно", "Error Dialog", "Ошибка");
           }

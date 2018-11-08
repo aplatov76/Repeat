@@ -2,8 +2,11 @@ package GUI;
 
 import Collection.MoveProduct;
 import Connect.ConnectDB;
+import Popup.MovePopup;
 import fxuidemo.Repeat;
 import java.awt.Desktop;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -17,6 +20,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
@@ -24,6 +28,8 @@ import javafx.stage.Stage;
 
 public class Move_product_history
 {
+  
+  private ConnectDB db = new ConnectDB();  
   public Move_product_history() {}
   
   Desktop desktop = null;
@@ -33,7 +39,12 @@ public class Move_product_history
     BorderPane root = new BorderPane();
     TableView<MoveProduct> table = createTable();
     root.setLeft(table);
-    VBox box = createBut(stage);
+    
+    final Popup popup = new Popup();
+    MovePopup mp = new MovePopup(table,popup,stage);
+    popup.getContent().add(mp.node);
+    
+    VBox box = createBut(stage,popup);
     root.setId("bp");
     box.setSpacing(10.0);
     root.setRight(box);
@@ -50,26 +61,19 @@ public class Move_product_history
     stage.show();
   }  
 
-  private VBox createBut(final Stage stage)
+  private VBox createBut(final Stage stage,final Popup popup)
   {
     VBox node = new VBox();
     
 
     Button add = new Button("Добавить");
-    //Button isnow = new Button("История");
+    Button isnow = new Button("История");
     Button close = new Button("Закрыть");
     
-    final Popup popup = new Popup();
-    final VBox boxpopup = new VBox();
-    
-    boxpopup.setSpacing(8.0D);
-    boxpopup.setId("dark-popup");
-    boxpopup.setPadding(new Insets(10.0D, 10.0D, 10.0D, 10.0D));
-    popup.getContent().add(boxpopup);
-    popup.setWidth(100.0D);
-    popup.setHeight(50.0D);
+    final Dimension size_stage = Toolkit.getDefaultToolkit().getScreenSize();
     
     add.setMinSize(100.0D, 40.0D);
+    isnow.setMinSize(100.0D, 40.0D);
     close.setMinSize(100.0D, 40.0D);
     //isnow.setMinSize(100.0D, 40.0D);
     
@@ -88,15 +92,28 @@ public class Move_product_history
       }
       
     });
+    isnow.setOnMouseClicked(new EventHandler<MouseEvent>()
+    {
+      public void handle(MouseEvent event) {
+          if (!popup.isShowing()) {
+          popup.setX(size_stage.getWidth() - 240.0D);
+          popup.setY(65.0D);
+          popup.show(stage);
+        }
+        else popup.hide();
+      }
+    });
+    
     close.setOnMouseClicked(new EventHandler<MouseEvent>()
     {
       public void handle(MouseEvent event) {
+        db.closeConnect();
         stage.close();
       }
     });
 
  
-    node.getChildren().addAll(new Node[] { add, close });
+    node.getChildren().addAll(new Node[] { add,isnow, close });
     return node;
   }
   
@@ -145,10 +162,9 @@ public class Move_product_history
     return table;
   }
   
-  public void getReturn() { 
-      ConnectDB mysql = new ConnectDB();
+  public void getReturn() {
       //mysql.getReturnProduct(return_product, 0 ,"2018-08-05 23:59");
       return_product.removeAll(return_product);
-      mysql.getMoveProduct(return_product);
+      db.getMoveProduct(return_product);
   }
 }

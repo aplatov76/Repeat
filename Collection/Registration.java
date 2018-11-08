@@ -11,6 +11,7 @@ public class Registration
   private Double sum;
   private String user;  
   private int stock;
+  private int cash;
   
 
   public Registration()
@@ -24,9 +25,10 @@ public class Registration
     sum = Double.valueOf(0.0D);
     user = "";
     stock = 0;
+    cash = 0;
   }
   
-  public Registration(String date, String name, Integer id, Integer size, Integer stock, double price, double sum, String user) { 
+  public Registration(String date, String name, Integer id, Integer size, Integer stock, double price, double sum, String user,int type_cash) { 
     data = date;
     this.id = id;
     this.name = name;
@@ -35,8 +37,19 @@ public class Registration
     this.sum = Double.valueOf(sum);
     this.user = user;
     this.stock = stock;
+    this.cash = type_cash;
   }
 
+    public String getCash() {
+       // return this.cash;
+        return (cash == 0) ? "Нал" : "Тер";
+    }
+
+    public void setCash(int type_cash) {
+        this.cash = type_cash;
+    }
+
+  
     public void setStock(int stock) {
         this.stock = stock;
     }

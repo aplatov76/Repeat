@@ -1,7 +1,6 @@
 package Connect;
 
 import Collection.AdminPane;
-import Collection.History;
 import Collection.HistoryMetallOtchet;
 import Collection.ListCustProduct;
 import Collection.Log_view;
@@ -13,7 +12,6 @@ import Collection.Procurement_product_hist;
 import Collection.Registration;
 import Collection.Registration_return;
 import Collection.Repot;
-import fxuidemo.Repeat;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -22,34 +20,81 @@ import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.LinkedHashMap;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.collections.ObservableList;
 
 public class ConnectDB {
 
     static Properties properties;
     static String url;
-
+    Connection connection;// = DriverManager.getConnection(url, properties);    
     public ConnectDB() {
-        properties = new Properties();
+        if(true){
+   
+            try {    
+                connection = DriverManager.getConnection(url, properties);
+            } catch (SQLException ex) {
+                Logger.getLogger(ConnectDB.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        else {
+            properties = new Properties();
 
+            try {    
+                connection = DriverManager.getConnection(url, properties);
+            } catch (SQLException ex) {
+                Logger.getLogger(ConnectDB.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    public void closeConnect(){
+        try {
+            connection.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(ConnectDB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public boolean connectCheck(){
+        boolean r = true;
+        
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            ////Connection connection = DriverManager.getConnection(url, properties);
+            String query = "SELECT `id_user` FROM `passworld`;";
+            //if(connection.)
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            
+            rs.close();
+            stmt.close();
+            ////connection.close();
+        } catch (ClassNotFoundException | SQLException e) {
+            System.out.println("err: getIDUser");
+            r = false;
+        }
+        
+        return r;
     }
     
     public int getIdUser(String name){
         int r = 0;
         System.out.println(name);
+        
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            Connection connection = DriverManager.getConnection(url, properties);
+            ////Connection connection = DriverManager.getConnection(url, properties);
             String query = "SELECT `id_user` FROM `passworld` WHERE `name` = '" + name + "';";
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
             
             if (rs.next())
                 r = rs.getInt(1);
-                System.out.println(r);
             rs.close();
-
-            connection.close();
+            stmt.close();
+            ////connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             System.out.println("err: getIDUser");
         }
@@ -61,7 +106,7 @@ public class ConnectDB {
         Person user = null;
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            Connection connection = DriverManager.getConnection(url, properties);
+            ////Connection connection = DriverManager.getConnection(url, properties);
             String query = "SELECT * FROM `passworld` WHERE `name` = '" + name + "';";
             Statement stmt = connection.createStatement();
             
@@ -69,7 +114,6 @@ public class ConnectDB {
             
             if ((rs.next())
                     && (pass.equals(rs.getString(2)))) {
-                //System.out.println(rs.getString(2));
                 user = loadRules(rs.getInt(3));
                 user.setName(rs.getString(1));
                 user.setId_user(rs.getInt(4));
@@ -80,7 +124,7 @@ public class ConnectDB {
 
             rs.close();
 
-            connection.close();
+            ////connection.close();
         } catch (ClassNotFoundException | SQLException e) {
         }
 
@@ -91,20 +135,19 @@ public class ConnectDB {
         user.clear();
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            Connection connection = DriverManager.getConnection(url, properties);
+            ////Connection connection = DriverManager.getConnection(url, properties);
 
             String query = "SELECT `rules`.`name`, `passworld`.`name`,`passworld`.`pass`,`passworld`.`rules`,`passworld`.`id_user` FROM `passworld`,`rules` WHERE `rules`.`id` = `passworld`.`rules`;";
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
 
-            while (rs.next()) {
-                user.add(new Collection.Users(rs.getString(2), rs.getString(3), rs.getString(1), rs.getInt(5)));
-            }
+            while (rs.next())
+                user.add(new Collection.Users(rs.getString(2), rs.getString(3), rs.getString(1), rs.getInt(5)));            
 
             rs.close();
 
-            connection.close();
-        } catch (ClassNotFoundException | SQLException e) {
+            ////connection.close();
+        } catch (ClassNotFoundException | SQLException e) {                             
         }
     }
 
@@ -112,7 +155,7 @@ public class ConnectDB {
         Person user = null;
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            Connection connection = DriverManager.getConnection(url, properties);
+            ////Connection connection = DriverManager.getConnection(url, properties);
             String query = "SELECT * FROM `rules` WHERE `id` = '" + i + "'";
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
@@ -143,7 +186,7 @@ public class ConnectDB {
             }
             rs.close();
 
-            connection.close();
+            ////connection.close();
         } catch (ClassNotFoundException | SQLException e) {
         }
 
@@ -154,7 +197,7 @@ public class ConnectDB {
         rules.clear();
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            Connection connection = DriverManager.getConnection(url, properties);
+            ////Connection connection = DriverManager.getConnection(url, properties);
             String query = "SELECT * FROM `rules`";
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
@@ -163,8 +206,7 @@ public class ConnectDB {
             }
 
             rs.close();
-
-            connection.close();
+            ////connection.close();
         } catch (ClassNotFoundException | SQLException e) {
         }
     }
@@ -172,7 +214,7 @@ public class ConnectDB {
     public void loadProduct(ObservableList<String> data) {
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            Connection connection = DriverManager.getConnection(url, properties);
+            ////Connection connection = DriverManager.getConnection(url, properties);
             String query = "Select `short_name` FROM `prais` WHERE `actual_status` != 2;";
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
@@ -182,15 +224,37 @@ public class ConnectDB {
             }
             rs.close();
             stmt.close();
-            connection.close();
+            ////connection.close();
         } catch (ClassNotFoundException | SQLException e) {
+           
+        }
+    }
+    
+    
+        public void loadProduct(ObservableList<String> data, ObservableList<Integer> id) {
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            ////Connection connection = DriverManager.getConnection(url, properties);
+            String query = "Select `id`, `short_name` FROM `prais` WHERE `actual_status` != 2;";
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+
+            while (rs.next()) {
+                data.add(rs.getString(2));
+                id.add(rs.getInt(1));
+            }
+            rs.close();
+            stmt.close();
+            ////connection.close();
+        } catch (ClassNotFoundException | SQLException e) {
+           
         }
     }
 
     public void loadProductId(ObservableList<Integer> data) {
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             String query = "Select `id` FROM `prais` WHERE `actual_status` != 2;";
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
@@ -200,15 +264,15 @@ public class ConnectDB {
             }
             rs.close();
             stmt.close();
-            connection.close();
-        } catch (ClassNotFoundException | SQLException e) {
+            ////connection.close();
+        } catch (ClassNotFoundException | SQLException e) {           
         }
     }
 
     public void loadCustProductId(ObservableList<Integer> data) {
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             String query = "Select `id` FROM  `customer_order_product`;";
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
@@ -218,8 +282,9 @@ public class ConnectDB {
             }
             rs.close();
             stmt.close();
-            connection.close();
+            ////connection.close();
         } catch (ClassNotFoundException | SQLException e) {
+           
         }
     }
 
@@ -228,7 +293,7 @@ public class ConnectDB {
         data.clear();
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             String query = "Select * FROM `group_product`";
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
@@ -238,9 +303,9 @@ public class ConnectDB {
             }
             rs.close();
             stmt.close();
-            connection.close();
+            ////connection.close();
         } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace();                       
         }
     }
 
@@ -248,7 +313,7 @@ public class ConnectDB {
         data.clear();
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             String query = "Select * FROM `group_product`";
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
@@ -259,7 +324,7 @@ public class ConnectDB {
             }
             rs.close();
             stmt.close();
-            connection.close();
+            ////connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
@@ -268,7 +333,7 @@ public class ConnectDB {
     public void loadRules(ObservableList<String> data) {
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             String query = "Select * FROM `rules`";
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
@@ -278,7 +343,7 @@ public class ConnectDB {
             }
             rs.close();
             stmt.close();
-            connection.close();
+            ////connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
@@ -288,7 +353,7 @@ public class ConnectDB {
         double a = 0.0D;
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
 
             Statement stmt = connection.createStatement();
             String query = "SELECT `value` FROM `prais` WHERE `short_name` = '" + name + "'";
@@ -299,9 +364,9 @@ public class ConnectDB {
             }
             rs.close();
             stmt.close();
-            connection.close();
+            ////connection.close();
         } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace();                      
         }
 
         return a;
@@ -311,7 +376,7 @@ public class ConnectDB {
         double a = 0.0D;
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
 
             Statement stmt = connection.createStatement();
             String query = "SELECT `value` FROM `prais` WHERE `id` = '" + id + "';";
@@ -322,9 +387,9 @@ public class ConnectDB {
             }
             rs.close();
             stmt.close();
-            connection.close();
+            ////connection.close();
         } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace();                
         }
 
         return a;
@@ -335,7 +400,7 @@ public class ConnectDB {
         try {
             Class.forName("com.mysql.jdbc.Driver");
 
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
             String query = "SELECT `id` FROM `prais` WHERE `short_name` = '" + name + "'";
             ResultSet rs = stmt.executeQuery(query);
@@ -346,32 +411,39 @@ public class ConnectDB {
 
             rs.close();
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace();                       
         }
 
         return c;
     }
 
-    public void reliz_day(int idto, String name, int balance, int col_t, int stock_event, double price, double stoimost, String user,int id_check) {
+    public void reliz_day(/*int idto, String name, int balance, int col_t, int stock_event, double price, double stoimost, String user,int id_check,int type_cash,*/ String[] arrayRefVar) {
         try {
             Class.forName("com.mysql.jdbc.Driver");
 
-            Connection connection = DriverManager.getConnection(url, properties);
-            Statement stmt = connection.createStatement();
-            SimpleDateFormat s = new SimpleDateFormat("HH:mm");
+            //Connection connection = DriverManager.getConnection(url, properties);
+            Statement stmt = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+            //stmt.addBatch(query);
+            
+            int n = arrayRefVar.length;
+            
+            for(int i = n-1;i >= 0;i--)stmt.addBatch(arrayRefVar[i]);
+            //SimpleDateFormat s = new SimpleDateFormat("HH:mm");
 
-            java.sql.Time time = java.sql.Time.valueOf(s.format(new java.util.Date()) + ":00");
+            //java.sql.Time time = java.sql.Time.valueOf(s.format(new java.util.Date()) + ":00");
 
-            java.sql.Date sysdate = new java.sql.Date(new java.util.Date().getTime());
+            //java.sql.Date sysdate = new java.sql.Date(new java.util.Date().getTime());
 
-            stmt.executeUpdate("INSERT INTO `registration`(`idop`, `data`, `time`, `idto`, `name`,`balance`,`size`,`stock`, `price`, `sum`, `user`,`id_check`) VALUES ('0','" + sysdate + "','" + time + "','" + idto + "','" + name + "','" + balance + "','" + col_t + "','"+stock_event+"','" + price + "','" + stoimost + "','" + user + "','"+id_check+"')");
-
+            //stmt.executeUpdate("INSERT INTO `registration`(`idop`, `data`, `time`, `idto`, `name`,`balance`,`size`,`stock`, `price`, `sum`, `user`,`id_check`,`type_cash`) VALUES ('0','" + sysdate + "','" + time + "','" + idto + "','" + name + "','" + balance + "','" + col_t + "','"+stock_event+"','" + price + "','" + stoimost + "','" + user + "','"+id_check+"','"+type_cash+"')");
+            stmt.executeBatch();
+           
+            
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace();               
         }
     }
 
@@ -379,7 +451,7 @@ public class ConnectDB {
         try {
             Class.forName("com.mysql.jdbc.Driver");
 
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
             SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -396,9 +468,9 @@ public class ConnectDB {
             }
 
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace();  
         }
     }
 
@@ -406,7 +478,7 @@ public class ConnectDB {
         try {
             Class.forName("com.mysql.jdbc.Driver");
 
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
             SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -423,9 +495,9 @@ public class ConnectDB {
             }
 
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace();                
         }
     }
 
@@ -433,13 +505,13 @@ public class ConnectDB {
         try {
             Class.forName("com.mysql.jdbc.Driver");
 
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
 
             java.sql.Date sysdate = new java.sql.Date(new java.util.Date().getTime());
             stmt.executeUpdate("INSERT INTO `start_work_day`(`date`, `start_sum`,`id`,`user_name`,`group_user`) VALUES ('" + sysdate + "','" + price + "','" + 0 + "','" + user_name + "','"+group_user+"');");
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
@@ -449,7 +521,7 @@ public class ConnectDB {
         int[] size = new int[3];// = 0;
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             String query = "SELECT `sell`,`stock_0`,`stock_1` FROM `prais` WHERE `id` = '" + id + "'";
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
@@ -457,31 +529,35 @@ public class ConnectDB {
                 size[0] = rs.getInt(1);
                 size[1] = rs.getInt(2);
                 size[2] = rs.getInt(3);
+                //size[3] = rs.getDouble(4);
             }
             rs.close();
-            connection.close();
-        } catch (ClassNotFoundException | SQLException e) {
+            //connection.close();
+        } catch (ClassNotFoundException | SQLException e) {           
         }
 
         return size;
     }
 
     public int[] getSize(String name) {
-        int[] size = new int[3];// = 0;
+        int[] size = new int[4];// = 0;
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            Connection connection = DriverManager.getConnection(url, properties);
-            String query = "SELECT `sell`,`stock_0`,`stock_1` FROM `prais` WHERE `short_name` = '" + name + "'";
+            //Connection connection = DriverManager.getConnection(url, properties);
+            String query = "SELECT `id`,`sell`,`stock_0`,`stock_1` FROM `prais` WHERE `short_name` = '" + name + "';";
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
             if (rs.next()) {
-                size[0] = rs.getInt(1);
-                size[1] = rs.getInt(2);
-                size[2] = rs.getInt(3);
+                size[0] = rs.getInt(2);
+                size[1] = rs.getInt(3);
+                size[2] = rs.getInt(4);
+                size[3] = rs.getInt(1);
             }
             rs.close();
-            connection.close();
-        } catch (ClassNotFoundException | SQLException e) {
+            //connection.close();
+        } catch (ClassNotFoundException | SQLException e) {        
+            System.out.println("Error getSize");
+            size[0] = -1;
         }
 
         return size;
@@ -492,7 +568,7 @@ public class ConnectDB {
         try {
             Class.forName("com.mysql.jdbc.Driver");
 
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
             stmt.executeUpdate("INSERT INTO `prais` (`id`,`name`,`short_name`,`group`,`helf`,`value`,`sell`,`actual_status`, `stock`, `stock_0`, `stock_1`,`min_remainder`,`articul`) VALUES ('0','" + name + "'," + "'" + sname + "'," + "'" + gr + "'," + "'" + h + "'," + "'" + p + "'," + "'" + size + "'," + "'0','"+stock+"','"+stock_0+"','"+stock_1+"','"+min_remainder_i+"','"+articul+"');");
             // next запрос INSERT INTO `stock_price` (`id`, `id_price`, `stock_0`, `stock_1`) VALUES (NULL, '"++"', '10', '20');
@@ -503,9 +579,9 @@ public class ConnectDB {
             rs.close();
 
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace();                
         }
         return b;
     }
@@ -515,8 +591,7 @@ public class ConnectDB {
         try {
             Class.forName("com.mysql.jdbc.Driver");
             java.sql.Date sysdate = new java.sql.Date(new java.util.Date().getTime());
-            Connection connection = DriverManager.getConnection(url, properties);
-            //String query = "SELECT `start_sum` FROM `start_work_day` WHERE `date` = '" + sysdate + "' and `user_name` = '" + user_name + "'";
+            //Connection connection = DriverManager.getConnection(url, properties);
             String query = "SELECT `start_sum` FROM `start_work_day` WHERE `date` = '" + sysdate + "' and `group_user` = '" + group_user + "'";
 
             Statement stmt = connection.createStatement();
@@ -525,8 +600,9 @@ public class ConnectDB {
                 start_sum = rs.getDouble(1);
             }
             rs.close();
-            connection.close();
-        } catch (ClassNotFoundException | SQLException e) {
+	    stmt.close();
+            //connection.close();
+        } catch (ClassNotFoundException | SQLException e) {           
         }
 
         return start_sum;
@@ -537,7 +613,7 @@ public class ConnectDB {
         try {
             Class.forName("com.mysql.jdbc.Driver");
 
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             String query = "SELECT `start_sum`,`user_name` FROM `start_work_day` WHERE `date` = '" + data + "' and `group_user` = '"+group_user+"'";
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
@@ -550,8 +626,9 @@ public class ConnectDB {
             map.put("Cтарт: ", Double.valueOf(ipsum));
 
             rs.close();
-            connection.close();
-        } catch (ClassNotFoundException | SQLException e) {
+	    stmt.close();
+            //connection.close();
+        } catch (ClassNotFoundException | SQLException e) {           
         }
 
         return map;
@@ -561,7 +638,7 @@ public class ConnectDB {
         int size = 0;
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
 
             String query = "SELECT `size` FROM `registration` WHERE `idto` = '" + id + "' AND `data` = '" + date + "'";
             Statement stmt = connection.createStatement();
@@ -571,8 +648,9 @@ public class ConnectDB {
                 size += rs.getInt(1);
             }
             rs.close();
-            connection.close();
-        } catch (ClassNotFoundException | SQLException e) {
+	    stmt.close();
+            //connection.close();
+        } catch (ClassNotFoundException | SQLException e) {           
         }
 
         return size;
@@ -582,7 +660,7 @@ public class ConnectDB {
         String group = "?";
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             String query = "SELECT * FROM `group_product` WHERE `id` = '" + id + "'";
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
@@ -590,7 +668,8 @@ public class ConnectDB {
                 group = rs.getString(1);
             }
             rs.close();
-            connection.close();
+	    stmt.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
         }
 
@@ -601,7 +680,7 @@ public class ConnectDB {
         int rid = -1;
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             String query = "INSERT INTO `group_product` (name,id) VALUES ('" + name + "','0');";
             Statement stmt = connection.createStatement();
 
@@ -613,7 +692,7 @@ public class ConnectDB {
             rs.close();
             stmt.close();
 
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
         }
 
@@ -623,33 +702,45 @@ public class ConnectDB {
     public void deletGroup(int id) {
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             String query = "DELETE FROM `group_product` WHERE `id` = '" + id + "'";
             Statement stmt = connection.createStatement();
 
             stmt.executeUpdate(query);
             stmt.close();
 
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
         }
     }
 
-    public void setSize(int id, int full, int stock_event,int stock_size) {
+    public void setSize(/*int id, int full, int stock_event,int stock_size*/String[] arrayRefUpd) {
         try {
             Class.forName("com.mysql.jdbc.Driver");
 
-            Connection connection = DriverManager.getConnection(url, properties);
-            Statement stmt = connection.createStatement();
-            String query = "";
+            //Connection connection = DriverManager.getConnection(url, properties);
+            Statement stmt = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+            /*String query = "";
             if(stock_event == 0)query = "UPDATE `prais` SET `sell` = '" + full + "', `stock_0` =  '"+stock_size+"' WHERE `prais`.`id` = '" + id + "'";
                 else query = "UPDATE `prais` SET `sell` = '" + full + "', `stock_1` =  '"+stock_size+"' WHERE `prais`.`id` = '" + id + "'";
             stmt.executeUpdate(query);
-
+            */
+            //stmt.addBatch(query);
+            
+            int n = arrayRefUpd.length;
+            
+            for(int i = n-1;i >= 0;i--){
+                //System.out.println(arrayRefUpd[i]);
+                stmt.addBatch(arrayRefUpd[i]);
+                
+            }
+            //stmt.executeUpdate(arrayRefUpd);
+            
+            stmt.executeBatch();
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace();                       
         }
     }
     
@@ -657,7 +748,7 @@ public class ConnectDB {
         try {
             Class.forName("com.mysql.jdbc.Driver");
 
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
             String query = "";
             // 1. перемещаем из 0го в 1ый.
@@ -671,9 +762,9 @@ public class ConnectDB {
             stmt.executeUpdate("INSERT INTO `move_stock_product` (`id`, `data`, `id_product`, `size`, `id_stock_get`, `id_user`) VALUES ('0', UNIX_TIMESTAMP(), '"+id+"', '"+size+"', '"+stock_event+"', '"+iduser+"');");
 
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace();                       
         }
     }
 
@@ -682,15 +773,16 @@ public class ConnectDB {
             prod.clear();
             Class.forName("com.mysql.jdbc.Driver");
             java.sql.Date sysd = new java.sql.Date(new java.util.Date().getTime());
-            System.out.println("BC");
+            //System.out.println("BC");
             String query = "SELECT registration.*, passworld.group_user FROM `registration` LEFT JOIN `passworld` ON `registration`.`user` = `passworld`.`name` WHERE `registration`.`data` = '" + sysd + "' and `passworld`.`group_user` = '"+group_user+"';";
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
 
             ResultSet rs = stmt.executeQuery(query);
             double c = 0.0D;
             while (rs.next()) {
-                prod.add(new Registration(rs.getTime(3).toString().substring(0, 5), rs.getString(5), Integer.valueOf(rs.getInt(4)), Integer.valueOf(rs.getInt(7)),rs.getInt(8), rs.getDouble(9), rs.getDouble(10), rs.getString(11)));
+                //System.out.println(rs.getInt(13));
+                prod.add(new Registration(rs.getTime(3).toString().substring(0, 5), rs.getString(5), Integer.valueOf(rs.getInt(4)), Integer.valueOf(rs.getInt(7)),rs.getInt(8), rs.getDouble(9), rs.getDouble(10), rs.getString(11),rs.getInt(13)));
                 c += rs.getDouble(10);
             }
 
@@ -700,8 +792,6 @@ public class ConnectDB {
             if (rs.next()) {
                 c += rs.getDouble(1);
             }
-            System.out.println(sysd);
-            //query = "SELECT SUM(`summa`) AS sum_with FROM `metall_reg` WHERE `data` = '" + sysd + "';";
             query = "SELECT SUM(`return_product`.`summa`) AS sum_with FROM `return_product` LEFT JOIN `passworld` ON `return_product`.`id_user` = `passworld`.`id_user` WHERE FROM_UNIXTIME(`return_product`.`date_return`) >= '" + sysd + "' and `passworld`.`group_user` = '"+group_user+"';";
             rs = stmt.executeQuery(query);
             double mr = 0.0D;
@@ -711,12 +801,11 @@ public class ConnectDB {
             c -= mr;
             Collection.Cassa.cassa = c;
             Collection.Cassa.rasxod = mr;
-            System.out.println("rasxod: "+mr);
             rs.close();
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace();                       
         }
     }
 
@@ -727,13 +816,13 @@ public class ConnectDB {
             java.sql.Date sysd = new java.sql.Date(new java.util.Date().getTime());
 
             String query = "SELECT * FROM `registration` WHERE `data` = '" + sysd + "' and `user` = '" + user_name + "'";
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
 
             ResultSet rs = stmt.executeQuery(query);
             double c = 0.0D;
             while (rs.next()) {
-                prod.add(new Registration(rs.getTime(3).toString().substring(0, 5), rs.getString(5), Integer.valueOf(rs.getInt(4)), Integer.valueOf(rs.getInt(7)),rs.getInt(8), rs.getDouble(9), rs.getDouble(10), rs.getString(11)));
+                prod.add(new Registration(rs.getTime(3).toString().substring(0, 5), rs.getString(5), Integer.valueOf(rs.getInt(4)), Integer.valueOf(rs.getInt(7)),rs.getInt(8), rs.getDouble(9), rs.getDouble(10), rs.getString(11),rs.getInt(13)));
                 c += rs.getDouble(9);
             }
             query = "SELECT SUM(summa_paid) AS sum_with FROM `contract_paid` WHERE `data_paid` = '" + sysd + "' and `user` = '" + user_name + "'";
@@ -755,9 +844,9 @@ public class ConnectDB {
 
             rs.close();
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace();                      
         }
     }
 
@@ -767,8 +856,8 @@ public class ConnectDB {
             Class.forName("com.mysql.jdbc.Driver");
             java.sql.Date sysd = new java.sql.Date(new java.util.Date().getTime());
 
-            Connection connection = DriverManager.getConnection(url, properties);
-            String query = "SELECT `idto` , `name` , `price` , SUM(size) AS sum_size, SUM(sum) AS sum_with FROM `registration` WHERE `data` = '" + sysd + "' and `user` = '" + usr_name + "' GROUP BY `idto`;";
+            //Connection connection = DriverManager.getConnection(url, properties);
+            String query = "SELECT `idto` , `name` , `price` , SUM(size) AS sum_size, SUM(sum),type_check AS sum_with FROM `registration` WHERE `data` = '" + sysd + "' and `user` = '" + usr_name + "' GROUP BY `idto`;";
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next()) {
@@ -820,9 +909,9 @@ public class ConnectDB {
             prod.add(new Repot("", "", "", "Касса : ", cassa_start_short + sum_with + contracts_summa_paid - sum_with_metall));
             rs.close();
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace();                       
         }
     }
 
@@ -832,9 +921,8 @@ public class ConnectDB {
             Class.forName("com.mysql.jdbc.Driver");
             java.sql.Date sysd = new java.sql.Date(new java.util.Date().getTime());
 
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             String query = "SELECT `registration`.`idto` , `registration`.`name` , `registration`.`price` , SUM(`registration`.`size`) AS sum_size, SUM(`registration`.`sum`) AS sum_with FROM `registration` LEFT JOIN `passworld` ON `registration`.`user` = `passworld`.`name` WHERE `registration`.`data` = '" + sysd + "' and `passworld`.`group_user` = '"+group_user+"' GROUP BY `registration`.`idto`;";
-            //System.out.println(query);
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
 
@@ -866,7 +954,7 @@ public class ConnectDB {
             //query = "SELECT SUM(`return_product`.`summa`) AS sum_with FROM `return_product` LEFT JOIN `passworld` ON `return_product`.`id_user` = `passworld`.`id_user` WHERE FROM_UNIXTIME(`return_product`.`date_return`) >= '" + sysd + "' and `passworld`.`group_user` = '"+group_user+"';";
             query = "SELECT `id_product`,`name_product`,`size`,`price`,`summa` FROM `return_product` LEFT JOIN `passworld` ON `return_product`.`id_user` = `passworld`.`id_user` WHERE FROM_UNIXTIME(`date_return`) >= '" + sysd + "' and `passworld`.`group_user` = '"+group_user+"';";
         
-            System.out.println(query);
+            //System.out.println(query);
             rs = stmt.executeQuery(query);
             double sum_with_metall = 0.0D;
 
@@ -890,9 +978,9 @@ public class ConnectDB {
             prod.add(new Repot("", "", "", "Касса : ", ((Double) map.get("Cтарт: ")).doubleValue() + sum_with + contracts_summa_paid - sum_with_metall));
             rs.close();
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace();                      
         }
     }
 
@@ -901,7 +989,7 @@ public class ConnectDB {
         try {
             Class.forName("com.mysql.jdbc.Driver");
 
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             String query = "SELECT `registration`.`idto` , `registration`.`name` , `registration`.`price` , SUM(`registration`.`size`) AS sum_size, SUM(`registration`.`sum`) AS sum_with FROM `registration` LEFT JOIN `passworld` ON `registration`.`user` = `passworld`.`name` WHERE `data` BETWEEN '" + a + "'AND '" + b + "' and `passworld`.`group_user` = '"+group_user+"' GROUP BY `idto`;";
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
@@ -915,7 +1003,6 @@ public class ConnectDB {
             b = b + " 23:59";
             query = "SELECT `id_product`,`name_product`,`size`,`price`,`summa` FROM `return_product` LEFT JOIN `passworld` ON `return_product`.`id_user` = `passworld`.`id_user` WHERE FROM_UNIXTIME(`date_return`)  BETWEEN '" + a + "' and '"+b+"' and `passworld`.`group_user` = '"+group_user+"';";
         
-            //System.out.println("n: "+query);
             rs = stmt.executeQuery(query);
             double sum_with_metall = 0.0D;
 
@@ -959,9 +1046,9 @@ public class ConnectDB {
 
             rs.close();
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace();              
         }
     }
 
@@ -969,7 +1056,7 @@ public class ConnectDB {
         ObservableList<String> category = javafx.collections.FXCollections.observableArrayList();
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
 
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT `data` FROM `registration` WHERE `data` BETWEEN '" + a + "'AND '" + b + "' GROUP BY `data`;");
@@ -979,9 +1066,9 @@ public class ConnectDB {
             }
             rs.close();
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace();         
         }
         return category;
     }
@@ -992,7 +1079,7 @@ public class ConnectDB {
             prod.remove(0, prod.size());
             Class.forName("com.mysql.jdbc.Driver");
 
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
             if (status == 0) {
                 actual = " WHERE `actual_status` = 0;";
@@ -1012,7 +1099,7 @@ public class ConnectDB {
             rs.close();
             stmt.close();
 
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
@@ -1024,7 +1111,7 @@ public class ConnectDB {
             prod.clear();
             Class.forName("com.mysql.jdbc.Driver");
 
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
             if (status == 0) {
                 actual = " WHERE `actual_status` = 0;";
@@ -1046,7 +1133,7 @@ public class ConnectDB {
             rs.close();
             stmt.close();
 
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
@@ -1058,7 +1145,7 @@ public class ConnectDB {
             prod.clear();
             Class.forName("com.mysql.jdbc.Driver");
 
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
             //(`id`, `name`, `short_name`, `group`, `helf`, `value`, `sell`, `actual_status`, `stock`, `stock_0`, `stock_1`)
             String query = "SELECT `id`,`short_name`,`group`,`value`,`sell`,`actual_status`,`stock`,`stock_0`,`stock_1`,`min_remainder`,`articul` FROM `prais`;";
@@ -1073,7 +1160,7 @@ public class ConnectDB {
             rs.close();
             stmt.close();
 
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
@@ -1084,7 +1171,7 @@ public class ConnectDB {
             prod.remove(0, prod.size());
             Class.forName("com.mysql.jdbc.Driver");
 
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
             int idgroup = gr;
             String query = "SELECT * FROM `prais` WHERE `group` = '" + idgroup + "' ORDER BY `id` ASC";
@@ -1097,7 +1184,7 @@ public class ConnectDB {
             rs.close();
             stmt.close();
 
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
@@ -1110,7 +1197,7 @@ public class ConnectDB {
             prod.clear();
             Class.forName("com.mysql.jdbc.Driver");
 
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
             int idgroup = gr;
             //select * from `prais`  right join `stock_price` on `prais`.`id` = `stock_price`.`id_price` WHERE `prais`.`id` = 2;
@@ -1126,7 +1213,7 @@ public class ConnectDB {
             rs.close();
             stmt.close();
 
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
@@ -1137,7 +1224,7 @@ public class ConnectDB {
             prod.remove(0, prod.size());
             Class.forName("com.mysql.jdbc.Driver");
 
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
             int idgroup = Integer.parseInt(gr);
             int count = 0;
@@ -1149,9 +1236,11 @@ public class ConnectDB {
             rs.close();
             stmt.close();
 
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
+            
+            
         }
     }
 
@@ -1159,14 +1248,15 @@ public class ConnectDB {
         try {
             Class.forName("com.mysql.jdbc.Driver");
 
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
             String query = "UPDATE `group_product` SET `name` = '" + gname + "' WHERE `id` = '" + id + "';";
             stmt.executeUpdate(query);
 
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
+           
         }
     }
 
@@ -1174,7 +1264,7 @@ public class ConnectDB {
         try {
             Class.forName("com.mysql.jdbc.Driver");
 
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
 
             String query = "DELETE FROM `prais` WHERE `prais`.`id` = '" + id + "'";
@@ -1182,9 +1272,11 @@ public class ConnectDB {
             stmt.execute(query);
 
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
+            
+            
         }
     }
 
@@ -1192,13 +1284,13 @@ public class ConnectDB {
         try {
             Class.forName("com.mysql.jdbc.Driver");
 
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
 
             String query = "DELETE FROM `passworld` WHERE `passworld`.`name` = '" + name + "';";
             stmt.execute(query);
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
@@ -1208,13 +1300,13 @@ public class ConnectDB {
         try {
             Class.forName("com.mysql.jdbc.Driver");
 
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
 
             String query = "DELETE FROM `rules` WHERE `rules`.`name` = '" + name + "';";
             stmt.execute(query);
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
@@ -1224,16 +1316,18 @@ public class ConnectDB {
         try {
             Class.forName("com.mysql.jdbc.Driver");
 
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
 
             String query = "UPDATE `prais` SET `name` = '" + name + "',`short_name` = '" + sname + "',`group` = '" + group + "',`helf` = '" + helf + "',`value` = '" + price + "',`sell` = '" + size + "',`actual_status`= '" + actual_status + "', `stock` = '"+stock+"',`stock_0` = '"+stock_0+"', `stock_1` = '"+stock_1+"', `min_remainder` = '"+min_remainder+"', `articul` = '"+articul+"' WHERE `id` = '" + id + "'";
             stmt.executeUpdate(query);
 
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
+            
+            
         }
     }
 
@@ -1243,7 +1337,7 @@ public class ConnectDB {
             Class.forName("com.mysql.jdbc.Driver");
             //SELECT registration.*, passworld.group_user FROM `registration` LEFT JOIN `passworld` ON `registration`.`user` = `passworld`.`name` WHERE `registration`.`data` = '" + sysd + "' and `passworld`.`group_user` = '"+group_user+"';";
             String query = "SELECT `registration`.*, `passworld`.`group_user` FROM `registration` LEFT JOIN `passworld` ON `registration`.`user` = `passworld`.`name` WHERE `data` BETWEEN '" + a1 + "'AND '" + a2 + "' and `passworld`.`group_user` = '"+group_user+"';";
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
 
             ResultSet rs = stmt.executeQuery(query);
@@ -1253,7 +1347,7 @@ public class ConnectDB {
             }
             rs.close();
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
@@ -1267,7 +1361,7 @@ public class ConnectDB {
 
             String query = "SELECT * FROM `log`  where FROM_UNIXTIME(`date`) >= '" + a1 + "' and FROM_UNIXTIME(`date`) <= '" + a2 + "' " + validate + ";";
 
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
 
             ResultSet rs = stmt.executeQuery(query);
@@ -1294,7 +1388,7 @@ public class ConnectDB {
 
             rs.close();
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
@@ -1309,7 +1403,7 @@ public class ConnectDB {
 
             String query = "SELECT * FROM `log`  where FROM_UNIXTIME(`date`) >= '" + a1 + "' and FROM_UNIXTIME(`date`) <= '" + a2 + "' " + validate + " and `idproduct` = '" + idproduct + "';";
 
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
 
             ResultSet rs = stmt.executeQuery(query);
@@ -1336,7 +1430,7 @@ public class ConnectDB {
 
             rs.close();
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
@@ -1347,7 +1441,7 @@ public class ConnectDB {
         Log_view log1 = null;
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
 
             String query = "SELECT * FROM `revision_log_product` WHERE `id_operation` = '" + id + "';";
             Statement stmt = connection.createStatement();
@@ -1358,9 +1452,11 @@ public class ConnectDB {
             }
             rs.close();
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
+            
+            
         }
         return log1;
     }
@@ -1369,13 +1465,13 @@ public class ConnectDB {
         try {
             Class.forName("com.mysql.jdbc.Driver");
 
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
             String query = "UPDATE `passworld` SET `name` = '" + name + "',`pass` = '" + pass + "', `rules` = '" + g + "' WHERE `passworld`.`id_user` = '" + id + "';";
             stmt.executeUpdate(query);
 
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
@@ -1386,7 +1482,7 @@ public class ConnectDB {
         try {
             Class.forName("com.mysql.jdbc.Driver");
 
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
             int uk = use_key ? 1 : 0;
             stmt.executeUpdate("INSERT INTO passworld (name, pass, rules, id_user, use_key, flashkey, group_user) VALUES ('" + name + "','" + pass + "', '" + rule + "','0','" + uk + "','" + key + "','"+user_group+"');");
@@ -1395,7 +1491,7 @@ public class ConnectDB {
                 idbreak = rs.getInt(1);
             }
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
@@ -1428,13 +1524,13 @@ public class ConnectDB {
 
             Class.forName("com.mysql.jdbc.Driver");
 
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
             String query = "UPDATE `rules` SET `regist_product` = '" + a1 + "' ," + "`look_price` = '" + b1 + "' ," + "`add_product` = '" + c1 + "'," + "`clear_product` = '" + d1 + "'," + "`correct_product` = '" + ec1 + "'," + "`look_history` = '" + f1 + "'," + "`look_journal` = '" + g1 + "'," + "`correct_user` = '" + t1 + "'," + "`use_group` = '" + u1 + "'," + "`full_otchet` = '" + f2 + "'," + "`full_registration` = '" + f3 + "'," + "`installment_paid` = '" + ip1 + "'," + "`customer_order` = '" + co1 + "'," + "`order_product_add` = '" + opa1 + "'," + "`order_product_cor` = '" + opc1 + "'," + "`order_product_del` = '" + opd1 + "'," + "`zacup_product_add` = '" + zpa1 + "'," + "`zacup_product_cor` = '" + zpc1 + "'," + "`zacup_product_del` = '" + zpd1 + "'," + "`zacup_product_ok` = '" + zpo1 + "'," + "`look_hist_metall` = '" + lhm1 + "'" + " WHERE `rules`.`name` = '" + name + "'";
 
             stmt.executeUpdate(query);
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
@@ -1444,13 +1540,13 @@ public class ConnectDB {
         try {
             Class.forName("com.mysql.jdbc.Driver");
 
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
 
             stmt.executeUpdate("INSERT INTO rules (id,name,regist_product,look_price,add_product,clear_product,correct_product,look_history,look_journal,correct_user,use_group,full_otchet,full_registration,installment_paid,customer_order,order_product_add,order_product_cor,order_product_del,zacup_product_add,zacup_product_add,zacup_product_cor,zacup_product_del,zacup_product_ok,look_hist_metall) VALUES ('0','" + name + "', '0', '0','0','0','0','0','0','0','0','0','0''0','0','0','0','0','0','0','0','0','0');");
 
             stmt.close();
-            connection.close();
+            //connection.close();
 
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
@@ -1461,7 +1557,7 @@ public class ConnectDB {
         String n = "Sorry d'not name.";
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             String query = "SELECT `short_name` FROM `prais` WHERE `id` = '" + id + "'";
 
             Statement stmt = connection.createStatement();
@@ -1472,9 +1568,10 @@ public class ConnectDB {
             }
             rs.close();
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
+            n = null;
         }
         return n;
     }
@@ -1483,7 +1580,7 @@ public class ConnectDB {
         String n = "Sorry d'not name.";
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             String query = "SELECT `short_name` FROM `prais` WHERE `id` = '" + id + "' UNION SELECT `name` FROM `customer_order_product` WHERE `id` ='" + id + "';";
 
             Statement stmt = connection.createStatement();
@@ -1494,7 +1591,7 @@ public class ConnectDB {
             }
             rs.close();
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
@@ -1506,7 +1603,7 @@ public class ConnectDB {
         ObservableList<Integer> helf = javafx.collections.FXCollections.observableArrayList();
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
 
             ResultSet rs = stmt.executeQuery("Select MAX(`helf`) FROM `prais` WHERE `group` = '" + id + "';");
@@ -1531,7 +1628,7 @@ public class ConnectDB {
         try {
             Class.forName("com.mysql.jdbc.Driver");
 
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
 
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT `data`, SUM(size) AS size_with FROM `registration` WHERE `data` BETWEEN '" + a + "'AND '" + b + "' AND `idto` = '" + idto + "'  GROUP BY `data`;");
@@ -1542,7 +1639,7 @@ public class ConnectDB {
 
             rs.close();
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
         }
     }
@@ -1561,7 +1658,7 @@ public class ConnectDB {
             if (i == 2) {
                 query = "SELECT * FROM `contracts` WHERE `type_contract` = '" + j + "';";
             }
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
 
@@ -1571,7 +1668,7 @@ public class ConnectDB {
 
             rs.close();
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
@@ -1583,21 +1680,24 @@ public class ConnectDB {
         try {
             Class.forName("com.mysql.jdbc.Driver");
 
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
             java.sql.Date sysdate = new java.sql.Date(new java.util.Date().getTime());
             java.sql.Date sys = new java.sql.Date(new java.util.Date().getTime());
             stmt.executeUpdate("INSERT INTO `contracts` (id,fio,num,adress,year,doccout,phone,dstart,dend,total,paid,remain,status,user,type_contract) VALUES ('0','" + fio + "'," + "'" + num + "', '" + adress + "'," + "'" + year + "','" + doccout + "','" + phone + "','" + sysdate + "','" + dend + "'," + "'" + total + "','" + paid + "'," + "'" + remain + "','" + st + "','" + user + "','" + type + "');");
 
-            ResultSet rs = stmt.executeQuery("SELECT id FROM `contracts` where `num`='" + num + "' and `dend` = '" + dend + "';");
+            //ResultSet rs = stmt.executeQuery("SELECT id FROM `contracts` where `num`='" + num + "' and `dend` = '" + dend + "';");
+            ResultSet rs = stmt.executeQuery("SELECT MAX(id) FROM `contracts`;");
             if (rs.next()) {
                 index = rs.getInt(1);
             }
             stmt.close();
-            connection.close();
+            //connection.close();
 
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
+            
+            
         }
         return index;
     }
@@ -1606,17 +1706,19 @@ public class ConnectDB {
         try {
             Class.forName("com.mysql.jdbc.Driver");
 
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
             java.sql.Date sysdate = new java.sql.Date(new java.util.Date().getTime());
             java.sql.Date sys = new java.sql.Date(new java.util.Date().getTime());
             stmt.executeUpdate("INSERT INTO `contract_artical` (`id_contract`,`id_product`,`name_object`,`price`,`size` ,`summa` ,`cindex`,`stock_ship`)VALUES ('" + id + "','" + idproduct + "', '" + nameproduct + "', '" + price + "', '" + size + "', '" + sum + "','0','"+stock_ship+"');");
 
             stmt.close();
-            connection.close();
+            //connection.close();
 
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
+            
+            
         }
     }
 
@@ -1624,7 +1726,7 @@ public class ConnectDB {
         try {
             Class.forName("com.mysql.jdbc.Driver");
 
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
             SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -1632,9 +1734,11 @@ public class ConnectDB {
             stmt.executeUpdate("INSERT INTO `contract_paid`(`cindex`, `id_contract`, `data_paid`, `summa_paid`,`remain_paid`,`user`) VALUES ('0','" + id_contract + "','" + sysdate + "','" + summa + "','" + remain + "','" + user + "');");
 
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
+            
+            
         }
     }
 
@@ -1644,15 +1748,18 @@ public class ConnectDB {
         try {
             Class.forName("com.mysql.jdbc.Driver");
 
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
 
             Statement stmt = connection.createStatement();
             String query = "UPDATE `contracts` SET `paid` = '" + paid + "',`remain` = '" + remain + "',`status` = '" + st + "' WHERE `contracts`.`id` ='" + id + "';";
             stmt.executeUpdate(query);
 
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
+            
+            
+            
         }
 
         return size;
@@ -1661,7 +1768,7 @@ public class ConnectDB {
     public void loadProductCustomerOrder(ObservableList<String> data) {
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             String query = "Select `short_name` FROM `prais` UNION Select `name` FROM `customer_order_product`;";
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
@@ -1672,7 +1779,7 @@ public class ConnectDB {
 
             rs.close();
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
@@ -1681,7 +1788,7 @@ public class ConnectDB {
     public void loadProductIdOrder(ObservableList<String> data) {
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             String query = "Select `id` FROM `prais` UNION Select `id` FROM `customer_order_product`;";
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
@@ -1692,7 +1799,7 @@ public class ConnectDB {
 
             rs.close();
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
@@ -1701,7 +1808,7 @@ public class ConnectDB {
     public void loadProductCustomer(ObservableList<ListCustProduct> data) {
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             String query = "Select * FROM `customer_order_product`;";
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
@@ -1713,7 +1820,7 @@ public class ConnectDB {
 
             rs.close();
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
@@ -1723,7 +1830,7 @@ public class ConnectDB {
         double a = 0.0D;
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
 
             Statement stmt = connection.createStatement();
             String query = "SELECT `value` FROM `prais` WHERE `short_name` = '" + name + "' UNION SELECT `price_product` FROM `customer_order_product` WHERE `name` = '" + name + "';";
@@ -1734,9 +1841,11 @@ public class ConnectDB {
             }
             rs.close();
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
+            
+            
         }
 
         return a;
@@ -1747,7 +1856,7 @@ public class ConnectDB {
         try {
             Class.forName("com.mysql.jdbc.Driver");
 
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
             String query = "SELECT `id` FROM `prais` WHERE `short_name` = '" + name + "' UNION SELECT `id` FROM `customer_order_product` WHERE `name` = '" + name + "';";
             ResultSet rs = stmt.executeQuery(query);
@@ -1758,7 +1867,7 @@ public class ConnectDB {
 
             rs.close();
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
@@ -1772,7 +1881,7 @@ public class ConnectDB {
         try {
             Class.forName("com.mysql.jdbc.Driver");
 
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
             java.sql.Date sysdate = new java.sql.Date(new java.util.Date().getTime());
             int st = sttus ? 1 : 0;
@@ -1798,9 +1907,11 @@ public class ConnectDB {
 
             rs.close();
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
+            
+            
         }
         return indexend;
     }
@@ -1811,7 +1922,7 @@ public class ConnectDB {
             Class.forName("com.mysql.jdbc.Driver");
 
             String query = "SELECT `procurement_product_hist`.* , `prais`.`sell` FROM `procurement_product_hist`,`prais` where `procurement_product_hist`.`status` = '1' and `prais`.`id` =`procurement_product_hist`.`id_product`;";
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
 
@@ -1821,7 +1932,7 @@ public class ConnectDB {
 
             rs.close();
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
@@ -1833,7 +1944,7 @@ public class ConnectDB {
             Class.forName("com.mysql.jdbc.Driver");
 
             String query = "SELECT COUNT( * ) FROM `procurement_product_hist` WHERE `status` =1;";
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
 
@@ -1842,7 +1953,7 @@ public class ConnectDB {
             }
             rs.close();
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
@@ -1855,7 +1966,7 @@ public class ConnectDB {
         try {
             Class.forName("com.mysql.jdbc.Driver");
 
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
             Statement stms = connection.createStatement();
 
@@ -1871,9 +1982,11 @@ public class ConnectDB {
 
             rs.close();
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
+            
+            
         }
     }
 
@@ -1881,14 +1994,16 @@ public class ConnectDB {
         try {
             Class.forName("com.mysql.jdbc.Driver");
 
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
             stmt.executeUpdate("UPDATE `procurement_product_hist` SET `size_second` = '" + size_total + "',`user` = '" + user + "' WHERE `status` = '1' and `id_product` ='" + id_product + "';");
 
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
+            
+            
         }
     }
 
@@ -1896,15 +2011,17 @@ public class ConnectDB {
         try {
             Class.forName("com.mysql.jdbc.Driver");
 
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
 
             String query = "DELETE FROM `procurement_product_hist` WHERE `status` = '1' and `id_product` = '" + id_product + "'";
             stmt.execute(query);
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
+            
+            
         }
     }
 
@@ -1958,7 +2075,7 @@ public class ConnectDB {
                 query = "SELECT * FROM `procurement_product_hist` where `status` = 0 and `date` BETWEEN '" + nyear + "'AND '" + sysdate + "';";
             }
 
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
 
@@ -1968,7 +2085,7 @@ public class ConnectDB {
 
             rs.close();
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
@@ -1979,7 +2096,7 @@ public class ConnectDB {
             prod.clear();
             Class.forName("com.mysql.jdbc.Driver");
             String query = "SELECT * FROM `procurement_product_hist` where `status` = 0 and `date` BETWEEN '" + d1 + "'AND '" + d2 + "';";
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
 
@@ -1989,7 +2106,7 @@ public class ConnectDB {
 
             rs.close();
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
@@ -2000,7 +2117,7 @@ public class ConnectDB {
         try {
             Class.forName("com.mysql.jdbc.Driver");
 
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
 
             stmt.executeUpdate("INSERT INTO `customer_order_product` (`id`,`name`, `price_product`, `group`) VALUES ('0','" + name + "','" + p + "','" + gr + "');");
@@ -2009,11 +2126,12 @@ public class ConnectDB {
                 b = rs.getInt(1);
             }
             rs.close();
-
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
+            
+            
         }
         return b;
     }
@@ -2022,15 +2140,17 @@ public class ConnectDB {
         try {
             Class.forName("com.mysql.jdbc.Driver");
 
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
             String query = "UPDATE `customer_order_product` SET `name` = '" + name + "',`price_product` = '" + price + "',`group` = '" + group + "' WHERE `customer_order_product`.`id` = '" + id + "';";
             stmt.executeUpdate(query);
 
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
+            
+            
         }
     }
 
@@ -2038,7 +2158,7 @@ public class ConnectDB {
         try {
             Class.forName("com.mysql.jdbc.Driver");
 
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
 
             String query = "DELETE FROM  `customer_order_product` WHERE  `customer_order_product`.`id` = '" + id + "'";
@@ -2046,9 +2166,11 @@ public class ConnectDB {
             stmt.execute(query);
 
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
+            
+            
         }
     }
 
@@ -2057,7 +2179,7 @@ public class ConnectDB {
 
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             String query = "SELECT COUNT( * ) FROM `prais` WHERE `group` = '" + id + "';";
             Statement stmt = connection.createStatement();
 
@@ -2067,7 +2189,7 @@ public class ConnectDB {
             }
             stmt.close();
 
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
         }
 
@@ -2077,7 +2199,7 @@ public class ConnectDB {
     public void loadMetallName(ObservableList<String> data) {
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             String query = "Select `name` FROM `metall_price`";
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
@@ -2087,7 +2209,7 @@ public class ConnectDB {
             }
             rs.close();
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
         }
     }
@@ -2096,7 +2218,7 @@ public class ConnectDB {
         double a = 0.0D;
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
 
             Statement stmt = connection.createStatement();
             String query = "SELECT `price` FROM `metall_price` WHERE `name` = '" + name + "'";
@@ -2107,7 +2229,7 @@ public class ConnectDB {
             }
             rs.close();
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
@@ -2119,7 +2241,7 @@ public class ConnectDB {
         int a = 0;
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
 
             Statement stmt = connection.createStatement();
             String query = "SELECT `procent` FROM `metall_price` WHERE `name` = '" + name + "'";
@@ -2130,7 +2252,7 @@ public class ConnectDB {
             }
             rs.close();
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
@@ -2142,7 +2264,7 @@ public class ConnectDB {
         try {
             Class.forName("com.mysql.jdbc.Driver");
 
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
             SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -2150,7 +2272,7 @@ public class ConnectDB {
             stmt.executeUpdate("INSERT INTO `metall_reg`(`id`,`data`,`code`,`name`, `price`,`size`,`summa`) VALUES ('0','" + sysdate + "','" + ml.getId() + "','" + ml.getName() + "'," + "'" + ml.getPrice() + "','" + ml.getSize() + "','" + ml.getSumma() + "');");
 
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
@@ -2161,7 +2283,7 @@ public class ConnectDB {
         try {
             Class.forName("com.mysql.jdbc.Driver");
 
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
             String query = "SELECT `id` FROM `metall_price` WHERE `name` = '" + name + "'";
             ResultSet rs = stmt.executeQuery(query);
@@ -2172,7 +2294,7 @@ public class ConnectDB {
 
             rs.close();
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
@@ -2184,7 +2306,7 @@ public class ConnectDB {
         try {
             data.clear();
             Class.forName("com.mysql.jdbc.Driver");
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd");
 
             java.sql.Date sysdate = new java.sql.Date(new java.util.Date().getTime());
@@ -2198,7 +2320,7 @@ public class ConnectDB {
             }
             rs.close();
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
         }
     }
@@ -2212,7 +2334,7 @@ public class ConnectDB {
 
             java.sql.Date sysdate = new java.sql.Date(new java.util.Date().getTime());
 
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             String query = "SELECT `id` ,`code`, `name` , `price`, SUM(`size`) AS sum_size, SUM(`summa`) AS sum_with FROM `metall_reg` WHERE `data` = '" + sysdate + "' GROUP BY `code`;";
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
@@ -2227,7 +2349,7 @@ public class ConnectDB {
 
             rs.close();
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
@@ -2259,7 +2381,7 @@ public class ConnectDB {
             if (typesort == 3) {
                 query = "SELECT `id`,`data`,`code`,`name`,SUM(`size`) as Size_sum,SUM(`summa`) AS Summa_sum,ROUND(avg(`price`),3) FROM `metall_reg` WHERE  `data` >= '" + d1 + "' and `data` <= '" + d2 + "' GROUP BY `data`,`code`;";
             }
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
             int index = 0;
@@ -2269,7 +2391,7 @@ public class ConnectDB {
 
             rs.close();
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
@@ -2326,7 +2448,7 @@ public class ConnectDB {
                 query = "SELECT id,data,code,name,size,summa,price FROM `metall_reg` WHERE `data` BETWEEN '" + nyear + "' AND '" + sysdate + "';";
             }
 
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
 
             ResultSet rs = stmt.executeQuery(query);
@@ -2337,7 +2459,7 @@ public class ConnectDB {
 
             rs.close();
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
@@ -2349,7 +2471,7 @@ public class ConnectDB {
         try {
             Class.forName("com.mysql.jdbc.Driver");
 
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
 
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT `data`, SUM(size) AS size_with FROM `metall_reg` WHERE `data` BETWEEN '" + a + "'AND '" + b + "' AND `code` = '" + idto + "'  GROUP BY `data`;");
@@ -2360,7 +2482,7 @@ public class ConnectDB {
 
             rs.close();
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
         }
     }
@@ -2410,7 +2532,7 @@ public class ConnectDB {
             prod.clear();
             Class.forName("com.mysql.jdbc.Driver");
 
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
 
             String query = "SELECT `prais`.`id`,`prais`.`short_name`,`prais`.`group`,`prais`.`sell`,`prais`.`value`,`prais`.`actual_status` FROM `prais` WHERE " + qgroup + " " + offonsize + " AND `id` NOT IN ( SELECT `registration`.`idto` FROM `registration` WHERE `registration`.`data` >= '" + nyear + "');";
@@ -2423,7 +2545,7 @@ public class ConnectDB {
             rs.close();
             stmt.close();
 
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
@@ -2433,7 +2555,7 @@ public class ConnectDB {
         try {
             Class.forName("com.mysql.jdbc.Driver");
             String query = "";
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
 
             int n = prod.size();
@@ -2444,9 +2566,11 @@ public class ConnectDB {
             stmt.executeUpdate(query);
 
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
+            
+            
         }
     }
 
@@ -2454,16 +2578,18 @@ public class ConnectDB {
         try {
             Class.forName("com.mysql.jdbc.Driver");
 
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
 
             String query = "UPDATE `prais` SET `actual_status` = '" + status + "' WHERE `prais`.`id` = '" + id_product + "';";
             stmt.executeUpdate(query);
 
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
+            
+            
         }
     }
 
@@ -2471,7 +2597,7 @@ public class ConnectDB {
         String key = null;
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             String query = "SELECT `flashkey` FROM `passworld` WHERE `id_user` = '" + id_user + "';";
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
@@ -2479,7 +2605,8 @@ public class ConnectDB {
                 key = rs.getString(1);
             }
             rs.close();
-            connection.close();
+	    stmt.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             System.out.println("Error");
         }
@@ -2497,7 +2624,7 @@ public void getReturnProduct(ObservableList<Registration_return> return_prod, in
                    query = "SELECT return_product.*, passworld.name, registration.data AS reg_data, registration.time AS reg_time FROM `return_product` LEFT JOIN `passworld` ON `return_product`.`id_user` = passworld.id_user LEFT JOIN `registration` ON `return_product`.`id_reliz` = `registration`.`idop` where FROM_UNIXTIME(`date_return`) >= '" + a1 + "' and `return_product`.`status` = 0 ORDER BY return_product.id DESC;";
             }
 
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
 
             ResultSet rs = stmt.executeQuery(query);
@@ -2515,7 +2642,7 @@ public void getReturnProduct(ObservableList<Registration_return> return_prod, in
 
             rs.close();
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
@@ -2526,9 +2653,8 @@ public void getMoveProduct(ObservableList<MoveProduct> return_prod) {
         //ObservableList<Registration> data = javafx.collections.FXCollections.observableArrayList();
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            String query = "SELECT move_stock_product.*, passworld.name, prais.short_name FROM `move_stock_product` LEFT JOIN `passworld` ON `move_stock_product`.`id_user` = passworld.id_user LEFT JOIN `prais` ON `move_stock_product`.`id_product` = `prais`.`id` ORDER BY move_stock_product.id DESC;";
-
-            Connection connection = DriverManager.getConnection(url, properties);
+              String query = "SELECT move_stock_product.*, passworld.name, prais.short_name FROM `move_stock_product` LEFT JOIN `passworld` ON `move_stock_product`.`id_user` = passworld.id_user LEFT JOIN `prais` ON `move_stock_product`.`id_product` = `prais`.`id` ORDER BY move_stock_product.id DESC LIMIT 30;";
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
 
             ResultSet rs = stmt.executeQuery(query);
@@ -2547,11 +2673,45 @@ public void getMoveProduct(ObservableList<MoveProduct> return_prod) {
 
             rs.close();
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
         //return data;
+    }
+
+public ObservableList<MoveProduct> getMoveProductHistory(String d_start, String d_end) {
+        //ObservableList<Registration> data = javafx.collections.FXCollections.observableArrayList();
+        ObservableList<MoveProduct> data = javafx.collections.FXCollections.observableArrayList();
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            //tring query = "SELECT * FROM `log`  where FROM_UNIXTIME(`date`) >= '" + a1 + "' and FROM_UNIXTIME(`date`) <= '" + a2 + "' " + validate + ";";
+            String query = "SELECT move_stock_product.*, passworld.name, prais.short_name FROM `move_stock_product` LEFT JOIN `passworld` ON `move_stock_product`.`id_user` = passworld.id_user LEFT JOIN `prais` ON `move_stock_product`.`id_product` = `prais`.`id` WHERE FROM_UNIXTIME(`move_stock_product`.`data`) BETWEEN '" + d_start + "'AND '" + d_end + "' ORDER BY move_stock_product.id DESC;";
+            //System.out.println(query);
+            //Connection connection = DriverManager.getConnection(url, properties);
+            Statement stmt = connection.createStatement();
+
+            ResultSet rs = stmt.executeQuery(query);
+
+            int index = 0;
+            while (rs.next()) {
+                //System.out.println(rs.getString(4));
+                long e = rs.getLong(2);
+                java.util.Date date = new java.util.Date(e * 1000L);
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                String time = sdf.format(date);
+                //String date_return, String name, Integer id, Integer size, String user
+                data.add(new MoveProduct(time, rs.getString(8), rs.getInt(3), rs.getInt(4),rs.getInt(5), rs.getString(7)));
+            }
+            //System.out.println(return_prod.size());
+
+            rs.close();
+            stmt.close();
+            //connection.close();
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+        }
+        return data;
     }
 
 
@@ -2562,7 +2722,7 @@ public int getReturnProductIdOperation(int idop) {
             Class.forName("com.mysql.jdbc.Driver");
             String query = "SELECT SUM(size) AS size_g FROM `return_product` WHERE id_reliz = '"+idop+"';";
 
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
 
             ResultSet rs = stmt.executeQuery(query);
@@ -2571,7 +2731,7 @@ public int getReturnProductIdOperation(int idop) {
 
             rs.close();
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
@@ -2582,7 +2742,7 @@ public int getReturnProductIdOperation(int idop) {
         try {
             Class.forName("com.mysql.jdbc.Driver");
 
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
             SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -2600,9 +2760,11 @@ public int getReturnProductIdOperation(int idop) {
             
             
             stmt.close();
-            connection.close();
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
+            
+            
         }
     }
     
@@ -2610,7 +2772,7 @@ public int getMaxCheck(){
         int r = 0;
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            Connection connection = DriverManager.getConnection(url, properties);
+            //Connection connection = DriverManager.getConnection(url, properties);
             String query = "SELECT MAX(`id_check`) FROM `registration`;";
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
@@ -2618,10 +2780,11 @@ public int getMaxCheck(){
             if (rs.next())
                 r = rs.getInt(1);
             rs.close();
-
-            connection.close();
+            stmt.close();//if(connection.is)
+            //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
             System.out.println("err: getMaxCheck");
+            r = -1;
         }
         
         return r;

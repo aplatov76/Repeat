@@ -3,13 +3,11 @@ package GUI;
 import Collection.Procurement_product_hist;
 import Connect.ConnectDB;
 import calendar.SimpleCalendar;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javafx.application.Application;
-import javafx.beans.property.ObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -34,6 +32,7 @@ import javafx.stage.Stage;
 public class HistoryProcurement
 {
   public static final ObservableList<Procurement_product_hist> contract = FXCollections.observableArrayList();
+  private ConnectDB db = new ConnectDB();
   
   public HistoryProcurement() {}
   
@@ -138,6 +137,7 @@ public class HistoryProcurement
     close.setOnMouseClicked(new EventHandler<MouseEvent>()
     {
       public void handle(MouseEvent event) {
+        db.closeConnect();
         stage.close();
       }
     });
@@ -210,12 +210,13 @@ public class HistoryProcurement
     return table;
   }
   
-  public void getContract(int day) { ConnectDB mysql = new ConnectDB();
-    mysql.getProcurementHist(contract, day);
+  public void getContract(int day) { 
+    //ConnectDB mysql = new ConnectDB();
+    db.getProcurementHist(contract, day);
   }
   
   private void dateShowMe(String d1, String d2) {
-    ConnectDB mysql = new ConnectDB();
-    mysql.getProcurementHist(contract, d1, d2);
+    //ConnectDB mysql = new ConnectDB();
+    db.getProcurementHist(contract, d1, d2);
   }
 }

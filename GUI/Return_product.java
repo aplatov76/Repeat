@@ -1,15 +1,8 @@
 package GUI;
 
-import Collection.Person;
 import Collection.Registration_return;
 import Connect.ConnectDB;
-import fxuidemo.Repeat;
 import java.awt.Desktop;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -17,15 +10,12 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Dialogs;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TableView.TableViewSelectionModel;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
 
@@ -36,6 +26,7 @@ public class Return_product
   
   Desktop desktop = null;
   private static ObservableList<Collection.Registration_return> return_product = FXCollections.observableArrayList();
+  private final ConnectDB db = new ConnectDB();
   
   public void start(Stage stage) {
     BorderPane root = new BorderPane();
@@ -93,6 +84,7 @@ public class Return_product
     close.setOnMouseClicked(new EventHandler<MouseEvent>()
     {
       public void handle(MouseEvent event) {
+        db.closeConnect();
         stage.close();
       }
     });
@@ -112,9 +104,7 @@ public class Return_product
       
     TableView<Registration_return> table = new TableView();
     table.setStyle("-fx-font: normal 11 Arial;");
-    
-     
-    //table.columnResizePolicyProperty();
+
     table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     
     TableColumn time_r = new TableColumn("Возврат");
@@ -163,7 +153,6 @@ public class Return_product
   }
   
   public void getReturn() { 
-      ConnectDB mysql = new ConnectDB();
-      mysql.getReturnProduct(return_product, 0 ,"2018-08-05 23:59");
+      db.getReturnProduct(return_product, 0 ,"2018-08-05 23:59");
   }
 }
