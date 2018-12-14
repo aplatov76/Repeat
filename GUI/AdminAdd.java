@@ -22,6 +22,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 public class AdminAdd
@@ -60,12 +61,29 @@ public class AdminAdd
     final TextField price = new TextField();
     
     final TextField min_remainder = new TextField();
-    final TextField articul = new TextField();
+    final TextField articul = new TextField() {
+    @Override public void replaceText(int start, int end, String text) {
+        // If the replaced text would end up being invalid, then simply
+        // ignore this call!
+        if (!text.matches("[а-я]")) {
+            super.replaceText(start, end, text);
+        }
+    }
+
+    @Override public void replaceSelection(String text) {
+        if (!text.matches("[а-я]")) {
+            super.replaceSelection(text);
+        }
+    }
+};
     
     name.setMinWidth(500.0D);
     /*grid.add(new Label("Полное наименование: "), 0, 0);
     grid.add(name, 1, 0);*/
-    grid.add(new Label("Артикул: "), 0, 1);
+    Label art_l = new Label("Артикул: ");
+    art_l.setTextFill(Color.RED);
+    
+    grid.add(art_l, 0, 1);
     grid.add(articul, 1, 1);
     grid.add(new Label("Наименование: "), 0, 2);
     grid.add(name, 1, 2);

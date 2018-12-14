@@ -1,5 +1,6 @@
 package GUI;
 
+
 import Collection.Cassa;
 import Collection.GateReg;
 import Collection.Registration;
@@ -8,9 +9,12 @@ import autofilltextbox.AutoFillTextBox;
 import fxuidemo.Repeat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -122,16 +126,16 @@ public class AddProduct extends Application
     final AutoFillTextBox codebox = new AutoFillTextBox(cdata);
     
     final RadioButton st0 = new RadioButton();
-          st0.setSelected(true);
+          
     final RadioButton st1 = new RadioButton();
-    
+            st1.setSelected(true);
     ToggleGroup tggroup = new ToggleGroup();
     st0.setToggleGroup(tggroup);
     st1.setToggleGroup(tggroup);
     
     HBox rb = new HBox();
     
-    rb.getChildren().addAll(new Label("Воронцово: "),st0,new Label("Ильинск: "),st1,new Label("(0 - Воронцово, 1 - Ильинск)"));        
+    rb.getChildren().addAll(st0,new Label(" - Воронцово "),st1,new Label(" - Ильинск "),new Label("(0 - Воронцово, 1 - Ильинск)"));        
    
     final RadioButton pay0 = new RadioButton();
           pay0.setSelected(true);
@@ -142,10 +146,10 @@ public class AddProduct extends Application
     pay1.setToggleGroup(paygroup);
     
     final CheckBox car = new CheckBox();
-    
+    final CheckBox print_check = new CheckBox();
     HBox pay_h = new HBox();
     
-    pay_h.getChildren().addAll(new Label("Наличные: "), pay0, new Label("Терминал: "), pay1,new Label("Доставка: "),car);
+    pay_h.getChildren().addAll(pay0, new Label(" - Наличные "),pay1, new Label(" - Терминал "),car,new Label("Доставка "),print_check,new Label("Печать чека "));
     
     
     box.setListLimit(100);
@@ -593,11 +597,32 @@ public class AddProduct extends Application
                     //db.setSize(request);
                     Cassa.cassa += d;
                     Cassa.setCassa();
+
                 //}
                 //else Dialogs.showErrorDialog(stage, "Ошибка номер 403. Нет соединения", "Error Dialog", "");
               }
             }
           }
+            if(car.isSelected()){
+                try {
+                        // final Popup.Controller c = new Popup.Controller();
+                    final ControllerURL url = new ControllerURL();
+                            //url.openBrowser(new ActionEvent(),"http://10.8.0.1/java/repeat/run/", id_check);
+                        url.openBrowser(new ActionEvent(),"http://10.8.0.1/java/run/demo/index.php", id_check);
+                } catch (Exception ex) {
+                        Logger.getLogger(AddProduct.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                }
+            if(print_check.isSelected()){
+                try {
+                        // final Popup.Controller c = new Popup.Controller();
+                    final ControllerURL url = new ControllerURL();
+                        //url.openBrowser(new ActionEvent(),"http://java/check/demo/index.php", id_check);
+                        url.openBrowser(new ActionEvent(),"http://10.8.0.1/java/check/demo/index.php", id_check);
+                    } catch (Exception ex) {
+                        Logger.getLogger(AddProduct.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
             //System.out.println(request);
 
             prod.remove(0, prod.size());
@@ -708,8 +733,6 @@ public class AddProduct extends Application
 }
 }
 
-
-
 class MyThread implements Runnable {
     
     private String[] arrayRefVar;
@@ -737,3 +760,5 @@ class MyThread implements Runnable {
      //   System.out.printf("%s finished... \n", Thread.currentThread().getName());
     }
 }
+
+

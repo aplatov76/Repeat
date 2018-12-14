@@ -37,11 +37,11 @@ public class MovePopup {
     
     public GridPane node;
     
-    public MovePopup(final TableView<MoveProduct> table, final Popup popupmenu, final Stage st) {
+    public MovePopup(final TableView<MoveProduct> table, final Popup popupmenu, final Stage st,final ConnectDB db) {
         
     node = new GridPane();
         
-    final ConnectDB db = new ConnectDB();
+    //final ConnectDB db = new ConnectDB();
     
     node.setId("but");
     node.setVgap(8.0D);
@@ -100,7 +100,7 @@ public class MovePopup {
         
       }
     });
-    final Dimension sSize = Toolkit.getDefaultToolkit().getScreenSize();
+    //final Dimension sSize = Toolkit.getDefaultToolkit().getScreenSize();
 
     ok.setOnMouseClicked(new EventHandler<MouseEvent>()
     {

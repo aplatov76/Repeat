@@ -22,13 +22,12 @@ import calendar.SimpleCalendar;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.io.PrintStream;
+import Popup.PFilterWeb;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javafx.animation.ScaleTransition;
-import javafx.beans.property.ObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -404,7 +403,7 @@ public class Repeat extends javafx.application.Application
   {
     TableView<Collection.Registration> table = new TableView<>();
     //ConnectDB db = new ConnectDB();
-    table.setMinWidth(sSize.width - sSize.width*0.27);    
+    table.setMinWidth(sSize.width - sSize.width*0.2);    
     table.setColumnResizePolicy( TableView.CONSTRAINED_RESIZE_POLICY);
     //table.autosize();
     
@@ -646,11 +645,11 @@ public class Repeat extends javafx.application.Application
     
     gridPane.add(new Label("Login : "), 0, 0);
     final TextField login = new TextField();
-    login.setText("godvin");
+    login.setText("");
     gridPane.add(login, 1, 0, 2, 1);
     gridPane.add(new Label("Password : "), 0, 1);
     final PasswordField pass = new PasswordField();
-    pass.setText("767690");
+    pass.setText("");
     gridPane.add(pass, 1, 1, 2, 1);
     
     Button log = createButton(new Runnable() { public void run() {} }, "Войти");
@@ -901,7 +900,7 @@ public class Repeat extends javafx.application.Application
     if (!user.getRules(4)) cor.setDisable(true);
     if (!user.getRules(4)) move.setDisable(true);
     if (!user.getRules(3)) del.setDisable(true);
-    if (!user.getRules(8)) { cgroup.setDisable(true);
+    if (!user.getRules(8)){ cgroup.setDisable(true);
     }
     add.setOnMouseClicked(new EventHandler<MouseEvent>()
     {
@@ -983,9 +982,6 @@ public class Repeat extends javafx.application.Application
         Contracts.typecontract = 0;
         gdb.start(new Stage());
         gdb.getContract(1, 0);
-
-
-
       }
 
     });
@@ -1160,8 +1156,8 @@ public class Repeat extends javafx.application.Application
     pop_group_go.setId("dark-blue");
     status.setId("dark-blue");
     
-    button3.getChildren().addAll(new Node[] { search, pop_group_go, status });
-    button6.getChildren().addAll(new Node[] { status, show_status });
+    button3.getChildren().addAll(search, pop_group_go, status );
+    button6.getChildren().addAll(status, show_status );
     
     final ChoiceBox<String> chois = new ChoiceBox(group);
     
@@ -1201,7 +1197,9 @@ public class Repeat extends javafx.application.Application
       {
         int d = Repeat.admprod.size();
         if (!box.getText().equals("")) {
+          ConnectDB db = new ConnectDB();  
           int sid = db.setID(box.getText());
+          db.closeConnect();
           for (int i = 0; i < d; i++) if (sid == ((AdminPane)Repeat.admprod.get(i)).getId()) {
               tb.scrollTo(i);
               tb.getSelectionModel().select(i);
@@ -1287,7 +1285,9 @@ public class Repeat extends javafx.application.Application
           int to = p.indexOf(" ");
           p = p.substring(0, to);
           int group_send = Integer.parseInt(p);
+          ConnectDB db = new ConnectDB();
           db.getGroupProductAdmin(Repeat.admprod, group_send, 0);
+          db.closeConnect();
         }
         
         popupgroup.hide();
@@ -1489,10 +1489,10 @@ public class Repeat extends javafx.application.Application
     node.add(grap, 1, 4, 2, 1);
     node.add(l2, 0, 5, 2, 1);
     node.add(otchetzakup, 1, 6, 2, 1);
-    node.add(l3, 0, 7, 2, 1);
-    node.add(histmetall, 1, 8, 2, 1);
-    node.add(grapmetall, 1, 9, 2, 1);
-    node.add(ext, 1, 11, 1, 1);
+    //node.add(l3, 0, 7, 2, 1);
+    //node.add(histmetall, 1, 8, 2, 1);
+    //node.add(grapmetall, 1, 9, 2, 1);
+    node.add(ext, 1, 7, 1, 1);
     
     return node;
   }
@@ -1502,11 +1502,15 @@ public class Repeat extends javafx.application.Application
     main.setSpacing(2.0D);
     main.setPadding(new Insets(10.0D, 10.0D, 10.0D, 10.0D));
     Button menu = new Button(" Меню");
+    Button web = new Button(" WebR");
     Button ext = new Button("Назад");
     menu.setMinHeight(60.0D);
     ext.setMinHeight(60.0D);
     PFilterPriceView abc = new PFilterPriceView(prices, tb);
     final Popup popupmenu = abc.getMain();
+    
+    final PFilterWeb web_popup = new PFilterWeb();
+    final Popup web_shown = web_popup.getMain();
     
     ext.setOnMouseClicked(new EventHandler<MouseEvent>()
     {
@@ -1519,10 +1523,11 @@ public class Repeat extends javafx.application.Application
       
     });
     ext.setId("dark-blue");
+    web.setId("dark-blue");
     menu.setId("dark-blue");
     
     main.setAlignment(Pos.CENTER_RIGHT);
-    main.getChildren().addAll(new Node[] { menu, ext });
+    main.getChildren().addAll(new Node[] { menu,web, ext });
     
     final Dimension sSize = Toolkit.getDefaultToolkit().getScreenSize();
     
@@ -1536,6 +1541,21 @@ public class Repeat extends javafx.application.Application
           popupmenu.show(st);
         } else {
           popupmenu.hide();
+        }       
+      }
+      
+    });
+    
+    web.setOnMouseClicked(new EventHandler<MouseEvent>()
+    {
+      public void handle(MouseEvent event)
+      {
+        if (!web_shown.isShowing()){
+          web_shown.setX(sSize.getWidth() / 2.0D - 100.0D);
+          web_shown.setY(sSize.getHeight() / 2.0D - 150.0D);
+          web_shown.show(st);
+        } else {
+          web_shown.hide();
         }       
       }
       

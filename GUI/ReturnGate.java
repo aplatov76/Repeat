@@ -145,7 +145,7 @@ private final ConnectDB db = new ConnectDB();
           if (n != -1) {
             if (gateEvent == 0) {
                 gateEvent = 1;
-                ReturnGateway popupClass = new ReturnGateway(hist.get(n));
+                ReturnGateway popupClass = new ReturnGateway(hist.get(n),db);
                 
                 Popup popup = popupClass.getMain();
                 

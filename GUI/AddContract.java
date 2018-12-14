@@ -395,6 +395,7 @@ public class AddContract extends javafx.application.Application
         try {
           int sc = Integer.parseInt(size.getText());
           int bds_full[] = db.getSize(sn);
+          int idto = bds_full[3];
           
           int bds = -1;
           int stock_gate = -1;
@@ -413,11 +414,13 @@ public class AddContract extends javafx.application.Application
           double sum = Double.parseDouble(summa.getText());
           
           int type_cash = 0;// нет выбора оплаты
+          int nodoubleid = noDoubleIdProduct(idto);
+          if(nodoubleid == -1)Dialogs.showErrorDialog(stage, "Дублирование товара", "Warning Dialog", "");
           
-          if ((sc > 0) && (p > 0.0) && (sum > 0.0) && (bds >= sc))
+          if ((sc > 0) && (p > 0.0) && (sum > 0.0) && (bds >= sc) && nodoubleid == 0)
           {
               // первый аргумент неизвестен - AddContract.this.index
-            gatereg.add(0, new GateReg(AddContract.this.index++, sn, Integer.toString(db.setID(sn)), size.getText(), price.getText(), Double.parseDouble(summa.getText()),stock_gate,type_cash));
+            gatereg.add(0, new GateReg(AddContract.this.index++, sn, String.valueOf(idto), size.getText(), price.getText(), Double.parseDouble(summa.getText()),stock_gate,type_cash));
             int index = gatereg.size() - 1;
             double sumbreak = ((GateReg)gatereg.get(index)).getSum();
             sumbreak += sum;
@@ -668,9 +671,6 @@ public class AddContract extends javafx.application.Application
   
   private int validateInfo(double pok_firstpaid, String pok_fio, String pok_adress, String pok_num, String pok_year, String coutpas, String phone, String pok_dend, double pok_total) {
    //System.out.println("firstpaid: " + pok_firstpaid + " fio: " + pok_fio + " adress: " + pok_adress + "\nyear: " + pok_year + " total: " + pok_total + " pok_num: " + pok_num + " pok_year: " + pok_year + " coutpas: " + coutpas + "\nphone: " + phone + " pok_end: " + pok_dend + " pok_total: " + pok_total);
-    
-
-
     int valid = -1;
     
     if (pok_firstpaid < 0.0D) valid = 0;
@@ -695,4 +695,17 @@ public class AddContract extends javafx.application.Application
     
     return valid;
   }
+
+  private int noDoubleIdProduct(int id){
+
+    int n = gatereg.size()-1;
+    
+    for(int i = 0; i < n;i++)
+        
+        if(id == Integer.parseInt(gatereg.get(i).getId())) return -1;
+        
+    return 0;
+
+}  
+  
 }

@@ -2,30 +2,21 @@ package Popup;
 
 import Collection.Cassa;
 import Collection.History;
-import Collection.Person;
-import Collection.Prices;
 import Connect.ConnectDB;
 import GUI.ReturnGate;
 import fxuidemo.Repeat;
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Dialogs;
+
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TableView.TableViewSelectionModel;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Popup;
 
@@ -40,15 +31,15 @@ public class ReturnGateway
   }
   
 
-  public ReturnGateway(Collection.History prod)
+  public ReturnGateway(Collection.History prod,final ConnectDB db)
   {
     main = new Popup();    
 
-    GridPane vboxfiltr = createFiltr(prod, main);    
+    GridPane vboxfiltr = createFiltr(prod, main,db);    
     main.getContent().add(vboxfiltr);
   }
   
-  private GridPane createFiltr(final Collection.History prod, final Popup popupfiltr) {
+  private GridPane createFiltr(final Collection.History prod, final Popup popupfiltr,final ConnectDB db) {
       
     GridPane grid = new GridPane();
     grid.setId("pfilter");
@@ -57,12 +48,6 @@ public class ReturnGateway
     grid.setVgap(5.0D);  
     grid.setMinWidth(650);
     grid.setMinHeight(270);
-      
-  //  VBox menu = new VBox();
-    
-  //  menu.setSpacing(8.0D);
-  //  menu.setId("pfilter");
- //   menu.setPadding(new Insets(10.0D, 10.0D, 10.0D, 10.0D
     
     final RadioButton c_stock_0 = new RadioButton();
     final RadioButton c_stock_1 = new RadioButton();
@@ -70,6 +55,7 @@ public class ReturnGateway
     ToggleGroup tggroup = new ToggleGroup();
     c_stock_0.setToggleGroup(tggroup);
     c_stock_1.setToggleGroup(tggroup);
+    c_stock_0.setSelected(true);
     
     HBox c_stock = new HBox();
     c_stock.getChildren().addAll(new Label("Воронцово: "),c_stock_0,new Label("Ильинск: "),c_stock_1);
@@ -122,7 +108,7 @@ public class ReturnGateway
           //System.out.println(t.getCode() +", ");
         try {
            
-          int full_bd =  getFullSize(prod.getIdop());
+          int full_bd =  getFullSize(prod.getIdop(),db);
           int event_size = Integer.parseInt(size.getText());
           System.out.println(full_bd + " " + event_size);
           
@@ -162,7 +148,7 @@ public class ReturnGateway
       public void handle(MouseEvent event)
       {
           ReturnGate.gateEvent = 0;
-          int full_bd =  getFullSize(prod.getIdop());
+          int full_bd =  getFullSize(prod.getIdop(),db);
           System.out.println(full_bd);
           int event_size = Integer.parseInt(size.getText());
           System.out.println(event_size);
@@ -176,7 +162,6 @@ public class ReturnGateway
               info.setTextFill(Color.RED);
           }
           else {
-              ConnectDB db = new ConnectDB();
               if(db.connectCheck()){
                     ok.setDisable(false);
                     info.setText("");
@@ -197,9 +182,8 @@ public class ReturnGateway
     return grid;
   }
   
-  public int getFullSize(int idop)
+  public int getFullSize(int idop, ConnectDB db)
   {
-        ConnectDB db = new ConnectDB();
         int r = db.getReturnProductIdOperation(idop);
     return r;
   }

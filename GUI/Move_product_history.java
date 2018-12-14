@@ -29,7 +29,7 @@ import javafx.stage.Stage;
 public class Move_product_history
 {
   
-  private ConnectDB db = new ConnectDB();  
+  private final ConnectDB db = new ConnectDB();  
   public Move_product_history() {}
   
   Desktop desktop = null;
@@ -41,7 +41,7 @@ public class Move_product_history
     root.setLeft(table);
     
     final Popup popup = new Popup();
-    MovePopup mp = new MovePopup(table,popup,stage);
+    MovePopup mp = new MovePopup(table,popup,stage,db);
     popup.getContent().add(mp.node);
     
     VBox box = createBut(stage,popup);

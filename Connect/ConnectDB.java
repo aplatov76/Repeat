@@ -31,7 +31,7 @@ public class ConnectDB {
     Connection connection;// = DriverManager.getConnection(url, properties);    
     public ConnectDB() {
         if(true){
-   
+
             try {    
                 connection = DriverManager.getConnection(url, properties);
             } catch (SQLException ex) {
@@ -40,7 +40,11 @@ public class ConnectDB {
         }
         else {
             properties = new Properties();
-
+            properties.setProperty("user", "root");
+            properties.setProperty("password", "767690");
+            properties.setProperty("useUnicode", "true");
+            properties.setProperty("characterEncoding", "cp1251");
+            url = "jdbc:mysql://localhost/aplatov762_stock";
             try {    
                 connection = DriverManager.getConnection(url, properties);
             } catch (SQLException ex) {
@@ -922,7 +926,7 @@ public class ConnectDB {
             java.sql.Date sysd = new java.sql.Date(new java.util.Date().getTime());
 
             //Connection connection = DriverManager.getConnection(url, properties);
-            String query = "SELECT `registration`.`idto` , `registration`.`name` , `registration`.`price` , SUM(`registration`.`size`) AS sum_size, SUM(`registration`.`sum`) AS sum_with FROM `registration` LEFT JOIN `passworld` ON `registration`.`user` = `passworld`.`name` WHERE `registration`.`data` = '" + sysd + "' and `passworld`.`group_user` = '"+group_user+"' GROUP BY `registration`.`idto`;";
+            String query = "SELECT `r`.`idto` , ANY_VALUE(`r`.`name`) as 'rn' , ANY_VALUE(`r`.`price`) as 'rp' , SUM(`r`.`size`) as 'rs1', SUM(`r`.`sum`) as 'rs2' FROM `registration` r LEFT JOIN `passworld` p ON `r`.`user` = `p`.`name` WHERE `r`.`data` = '" + sysd + "' and `p`.`group_user` = '"+group_user+"' GROUP BY `r`.`idto`;";
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
 
@@ -938,7 +942,7 @@ public class ConnectDB {
             }
             prod.add(new Repot("", "", "", "Итого : ", sum_with));
 
-            query = "SELECT `contract_paid`.`id_contract`, SUM(`contract_paid`.`summa_paid`) AS sum_with FROM `contract_paid` LEFT JOIN `passworld` ON `contract_paid`.`user` = `passworld`.`name` WHERE `contract_paid`.`data_paid` = '" + sysd + "' and `passworld`.`group_user` = '"+group_user+"' GROUP BY `contract_paid`.`id_contract`";
+            query = "SELECT `contract_paid`.`id_contract`, SUM(`contract_paid`.`summa_paid`) AS sum_with FROM `contract_paid` LEFT JOIN `passworld` ON `contract_paid`.`user` = `passworld`.`name` WHERE `contract_paid`.`data_paid` = '" + sysd + "' and `passworld`.`group_user` = '"+group_user+"' GROUP BY `contract_paid`.`id_contract`;";
 
             rs = stmt.executeQuery(query);
             double contracts_summa_paid = 0.0D;
@@ -950,7 +954,7 @@ public class ConnectDB {
             if (contracts_summa_paid != 0.0D) {
                 prod.add(new Repot("", "", "", "Итого: ", contracts_summa_paid));
             }
-            query = "SELECT `code`, `name` , `price`, SUM(`size`) AS sum_size, SUM(`summa`) AS sum_with FROM `metall_reg` WHERE `data` = '" + sysd + "' GROUP BY `code`;";
+            //query = "SELECT `code`, `name` , `price`, SUM(`size`) AS sum_size, SUM(`summa`) AS sum_with FROM `metall_reg` WHERE `data` = '" + sysd + "' GROUP BY `code`;";
             //query = "SELECT SUM(`return_product`.`summa`) AS sum_with FROM `return_product` LEFT JOIN `passworld` ON `return_product`.`id_user` = `passworld`.`id_user` WHERE FROM_UNIXTIME(`return_product`.`date_return`) >= '" + sysd + "' and `passworld`.`group_user` = '"+group_user+"';";
             query = "SELECT `id_product`,`name_product`,`size`,`price`,`summa` FROM `return_product` LEFT JOIN `passworld` ON `return_product`.`id_user` = `passworld`.`id_user` WHERE FROM_UNIXTIME(`date_return`) >= '" + sysd + "' and `passworld`.`group_user` = '"+group_user+"';";
         
@@ -988,9 +992,8 @@ public class ConnectDB {
         prod.remove(0, prod.size());
         try {
             Class.forName("com.mysql.jdbc.Driver");
-
-            //Connection connection = DriverManager.getConnection(url, properties);
-            String query = "SELECT `registration`.`idto` , `registration`.`name` , `registration`.`price` , SUM(`registration`.`size`) AS sum_size, SUM(`registration`.`sum`) AS sum_with FROM `registration` LEFT JOIN `passworld` ON `registration`.`user` = `passworld`.`name` WHERE `data` BETWEEN '" + a + "'AND '" + b + "' and `passworld`.`group_user` = '"+group_user+"' GROUP BY `idto`;";
+            //SELECT `r`.`idto` , ANY_VALUE(`r`.`name`) as 'rn' , ANY_VALUE(`r`.`price`) as 'rp' , SUM(`r`.`size`) as 'rs1', SUM(`r`.`sum`) as 'rs2' FROM `registration` r LEFT JOIN `passworld` p ON `r`.`user` = `p`.`name` WHERE `r`.`data` = '" + sysd + "' and `p`.`group_user` = '"+group_user+"' GROUP BY `r`.`idto`;";
+            String query = "SELECT `r`.`idto` , ANY_VALUE(`r`.`name`) as 'rn' , ANY_VALUE(`r`.`price`) as 'rp' , SUM(`r`.`size`) as 'rs1', SUM(`r`.`sum`) as 'rs2' FROM `registration` r LEFT JOIN `passworld` p ON `r`.`user` = `p`.`name` WHERE `r`.`data` BETWEEN '" + a + "'AND '" + b + "' and `p`.`group_user` = '"+group_user+"' GROUP BY `idto`;";
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
             double sum_with = 0.0D;
@@ -1144,7 +1147,6 @@ public class ConnectDB {
             int index = 1;
             prod.clear();
             Class.forName("com.mysql.jdbc.Driver");
-
             //Connection connection = DriverManager.getConnection(url, properties);
             Statement stmt = connection.createStatement();
             //(`id`, `name`, `short_name`, `group`, `helf`, `value`, `sell`, `actual_status`, `stock`, `stock_0`, `stock_1`)
@@ -1201,12 +1203,14 @@ public class ConnectDB {
             Statement stmt = connection.createStatement();
             int idgroup = gr;
             //select * from `prais`  right join `stock_price` on `prais`.`id` = `stock_price`.`id_price` WHERE `prais`.`id` = 2;
-            String query = "SELECT * FROM `prais` WHERE `group` = '" + idgroup + "';";
+            //String query = "SELECT * FROM `prais` WHERE `group` = '" + idgroup + "';";
+            String query = "SELECT `id`,`short_name`,`group`,`value`,`sell`,`actual_status`,`stock`,`stock_0`,`stock_1`,`min_remainder`,`articul` FROM `prais` WHERE `group` = '" + idgroup + "';";
             //String query = "select * from `prais`  right join `stock_price` on `prais`.`id` = `stock_price`.`id_price` WHERE `group` = '" + idgroup + "' ORDER BY `helf` ASC;";
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next()) {
                 // запрос не верен
               //  prod.add(new AdminPane(index, rs.getInt(1), rs.getString(2), rs.getString(3), idgroup, rs.getInt(5), rs.getInt(7), rs.getDouble(6), rs.getInt(8),0,rs.getInt(11),rs.getInt(13),rs.getInt(12)));
+                prod.add(new AdminPane(index++, rs.getInt(1), rs.getString(2), rs.getString(2), rs.getInt(3), 0, rs.getInt(5), rs.getDouble(4), rs.getInt(6),rs.getInt(7),rs.getInt(8),rs.getInt(9),rs.getInt(10),rs.getString(11)));
                 index++;
             }
 
@@ -2755,10 +2759,9 @@ public int getReturnProductIdOperation(int idop) {
             String query = "";
             if(stock_event == 0)query = "UPDATE `prais` SET `sell` = '" + balance + "', `stock_0` =  '"+ balance_event_stock +"' WHERE `prais`.`id` = '" + p.getIdpr()  + "'";
                 else query = "UPDATE `prais` SET `sell` = '" + balance + "', `stock_1` =  '"+ balance_event_stock +"' WHERE `prais`.`id` = '" + p.getIdpr() + "'";
-            
+            System.out.println(query);
             stmt.executeUpdate(query);
-            
-            
+     
             stmt.close();
             //connection.close();
         } catch (ClassNotFoundException | SQLException e) {
